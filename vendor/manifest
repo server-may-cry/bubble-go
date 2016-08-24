@@ -2,6 +2,14 @@
 	"version": 0,
 	"dependencies": [
 		{
+			"importpath": "github.com/brandfolder/gin-gorelic",
+			"repository": "https://github.com/brandfolder/gin-gorelic",
+			"vcs": "git",
+			"revision": "b3200fd6d4c7c434fd4d4d7ecb39a3c43aa8253c",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/dustin/go-broadcast",
 			"repository": "https://github.com/dustin/go-broadcast",
 			"vcs": "git",
@@ -36,6 +44,33 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/influxdata/influxdb/models",
+			"repository": "https://github.com/influxdata/influxdb",
+			"vcs": "git",
+			"revision": "a30f9b6c70d1f5cc9003171a2a2f2a771701ae92",
+			"branch": "master",
+			"path": "/models",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/influxdata/influxdb/pkg/escape",
+			"repository": "https://github.com/influxdata/influxdb",
+			"vcs": "git",
+			"revision": "a30f9b6c70d1f5cc9003171a2a2f2a771701ae92",
+			"branch": "master",
+			"path": "pkg/escape",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/influxdb/influxdb/client",
+			"repository": "https://github.com/influxdb/influxdb",
+			"vcs": "git",
+			"revision": "a30f9b6c70d1f5cc9003171a2a2f2a771701ae92",
+			"branch": "master",
+			"path": "/client",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/manucorporat/sse",
 			"repository": "https://github.com/manucorporat/sse",
 			"vcs": "git",
@@ -52,6 +87,46 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/rcrowley/go-metrics",
+			"repository": "https://github.com/rcrowley/go-metrics",
+			"vcs": "git",
+			"revision": "bdb33529eca3e55eac7328e07c57012a797af602",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/stathat/go",
+			"repository": "https://github.com/stathat/go",
+			"vcs": "git",
+			"revision": "74669b9f388d9d788c97399a0824adbfee78400e",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/yvasiyarov/go-metrics",
+			"repository": "https://github.com/yvasiyarov/go-metrics",
+			"vcs": "git",
+			"revision": "c25f46c4b94079672242ec48a545e7ca9ebe3aec",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/yvasiyarov/gorelic",
+			"repository": "https://github.com/yvasiyarov/gorelic",
+			"vcs": "git",
+			"revision": "ae09aa139a2b7f638e2412baceaceebd41eff115",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/yvasiyarov/newrelic_platform_go",
+			"repository": "https://github.com/yvasiyarov/newrelic_platform_go",
+			"vcs": "git",
+			"revision": "9c099fbc30e90de5bb5c5f94aa5fd08f2daeaacd",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "golang.org/x/net/context",
 			"repository": "https://go.googlesource.com/net",
 			"vcs": "git",
@@ -61,10 +136,26 @@
 			"notests": true
 		},
 		{
+			"importpath": "gopkg.in/bsm/ratelimit.v1",
+			"repository": "https://gopkg.in/bsm/ratelimit.v1",
+			"vcs": "git",
+			"revision": "db14e161995a5177acef654cb0dd785e8ee8bc22",
+			"branch": "v1",
+			"notests": true
+		},
+		{
 			"importpath": "gopkg.in/go-playground/validator.v8",
 			"repository": "https://gopkg.in/go-playground/validator.v8",
 			"vcs": "git",
 			"revision": "5f57d2222ad794d0dffb07e664ea05e2ee07d60c",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/redis.v4",
+			"repository": "https://gopkg.in/redis.v4",
+			"vcs": "git",
+			"revision": "49f197e6d11de35192fce19b2b9fd2f9b8b13c4a",
 			"branch": "master",
 			"notests": true
 		},
