@@ -1,0 +1,14 @@
+{
+  "name": "bubble-go",
+  "description": "bubble-golang",
+  "keywords": [
+    "getting-started",
+    "go",
+    "sample",
+    "example"
+  ],
+  "image": "heroku/go:1.7",
+  "mount_dir": "src/github.com/server-may-cry/bubble-go",
+  "website": "https://github.com/server-may-cry/bubble-go",
+  "repository": "https://github.com/server-may-cry/bubble-go"
+}
