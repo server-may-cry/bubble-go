@@ -14,6 +14,10 @@ import (
 
 var i = 0
 
+func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+}
+
 func main() {
 	t := models.Test{
 		Ttt: 4,
