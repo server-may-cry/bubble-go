@@ -2,19 +2,14 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 
 	gorelic "github.com/brandfolder/gin-gorelic"
 	"github.com/gin-gonic/gin"
 	"github.com/server-may-cry/bubble-go/controllers"
-	"github.com/server-may-cry/bubble-go/protocol"
+	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/redis.v4"
-)
-
-var (
-	redisClient *redis.Client
 )
 
 func init() {
@@ -29,7 +24,7 @@ func init() {
 		log.Fatal(err)
 	}
 	password, _ := redisURL.User.Password()
-	redisClient = redis.NewClient(&redis.Options{
+	storage.Redis = redis.NewClient(&redis.Options{
 		Addr:     redisURL.Host,
 		Password: password,
 		DB:       0, // default database
@@ -50,16 +45,7 @@ func main() {
 
 	r.GET("/", controllers.Index)
 	r.GET("/test", controllers.Test)
-	r.GET("/redis", func(c *gin.Context) {
-		pong, err := redisClient.Ping().Result()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		c.JSON(http.StatusOK, protocol.RedisResponse{
-			Ping: pong,
-		})
-	})
+	r.GET("/redis", controllers.Redis)
 
 	port := os.Getenv("PORT")
 	if port == "" {

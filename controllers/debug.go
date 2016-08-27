@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/protocol"
+	"github.com/server-may-cry/bubble-go/storage"
 )
 
 var i = 0
@@ -30,5 +31,17 @@ func Test(c *gin.Context) {
 	log.Println(t)
 	c.JSON(http.StatusOK, protocol.TestResponse{
 		Test: t,
+	})
+}
+
+// Redis used for send "ping" and receive "pong" from redis
+func Redis(c *gin.Context) {
+	pong, err := storage.Redis.Ping().Result()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusOK, protocol.RedisResponse{
+		Ping: pong,
 	})
 }
