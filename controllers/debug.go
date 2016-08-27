@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/protocol"
 )
 
 var i = 0
@@ -13,10 +14,11 @@ var i = 0
 // Index control index route
 func Index(c *gin.Context) {
 	i = i + 1
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "posted",
-		"message": "msg",
-		"i":       i,
+
+	c.JSON(http.StatusOK, protocol.IndexResponse{
+		Status:  "posted",
+		Message: "msg",
+		I:       i,
 	})
 }
 
@@ -26,7 +28,7 @@ func Test(c *gin.Context) {
 		Ttt: 4,
 	}
 	log.Println(t)
-	c.JSON(http.StatusOK, gin.H{
-		"test": t,
+	c.JSON(http.StatusOK, protocol.TestResponse{
+		Test: t,
 	})
 }

@@ -9,6 +9,7 @@ import (
 	gorelic "github.com/brandfolder/gin-gorelic"
 	"github.com/gin-gonic/gin"
 	"github.com/server-may-cry/bubble-go/controllers"
+	"github.com/server-may-cry/bubble-go/protocol"
 	"gopkg.in/redis.v4"
 )
 
@@ -54,8 +55,9 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"ping": pong,
+
+		c.JSON(http.StatusOK, protocol.RedisResponse{
+			Ping: pong,
 		})
 	})
 
