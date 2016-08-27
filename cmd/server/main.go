@@ -12,23 +12,35 @@ import (
 	"gopkg.in/redis.v4"
 )
 
-var i = 0
+var (
+	i           = 0
+	redisClient *redis.Client
+)
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
 
-func main() {
-	t := models.Test{
-		Ttt: 4,
+	redisURI := os.Getenv("REDIS_URL")
+	redisURL, err := url.Parse(redisURI)
+	if err != nil {
+		log.Fatal(err)
 	}
-	log.Println(t)
-	r := gin.Default()
+	password, _ := redisURL.User.Password()
+	redisClient = redis.NewClient(&redis.Options{
+		Addr:     redisURL.Host,
+		Password: password,
+		DB:       0, // default database
+	})
+
 	newRelicLicenseKey := os.Getenv("NEW_RELIC_LICENSE_KEY")
 	if newRelicLicenseKey == "" {
 		log.Fatal("$NEW_RELIC_LICENSE_KEY must be set")
 	}
 	gorelic.InitNewrelicAgent(newRelicLicenseKey, "bubble-go", true)
+}
+
+func main() {
+	r := gin.Default()
 	r.Use(gorelic.Handler)
 	r.Use(gin.Logger())
 	r.GET("/", func(c *gin.Context) {
@@ -40,23 +52,24 @@ func main() {
 		})
 	})
 	r.GET("/redis", func(c *gin.Context) {
-		redisURI := os.Getenv("REDIS_URL")
-		redisURL, err := url.Parse(redisURI)
+		pong, err := redisClient.Ping().Result()
 		if err != nil {
 			log.Fatal(err)
 		}
-		password, _ := redisURL.User.Password()
-		client := redis.NewClient(&redis.Options{
-			Addr:     redisURL.Host,
-			Password: password,
-			DB:       0, // default database
-		})
-
-		pong, err := client.Ping().Result()
 		c.JSON(http.StatusOK, gin.H{
 			"ping": pong,
 		})
 	})
+	r.GET("/test", func(c *gin.Context) {
+		t := models.Test{
+			Ttt: 4,
+		}
+		log.Println(t)
+		c.JSON(http.StatusOK, gin.H{
+			"test": t,
+		})
+	})
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("$PORT must be set")
