@@ -8,12 +8,11 @@ import (
 
 	gorelic "github.com/brandfolder/gin-gorelic"
 	"github.com/gin-gonic/gin"
-	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/controllers"
 	"gopkg.in/redis.v4"
 )
 
 var (
-	i           = 0
 	redisClient *redis.Client
 )
 
@@ -44,16 +43,12 @@ func init() {
 
 func main() {
 	r := gin.Default()
+
 	r.Use(gorelic.Handler)
 	r.Use(gin.Logger())
-	r.GET("/", func(c *gin.Context) {
-		i = i + 1
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "posted",
-			"message": "msg",
-			"i":       i,
-		})
-	})
+
+	r.GET("/", controllers.Index)
+	r.GET("/test", controllers.Test)
 	r.GET("/redis", func(c *gin.Context) {
 		pong, err := redisClient.Ping().Result()
 		if err != nil {
@@ -61,15 +56,6 @@ func main() {
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"ping": pong,
-		})
-	})
-	r.GET("/test", func(c *gin.Context) {
-		t := models.Test{
-			Ttt: 4,
-		}
-		log.Println(t)
-		c.JSON(http.StatusOK, gin.H{
-			"test": t,
 		})
 	})
 
