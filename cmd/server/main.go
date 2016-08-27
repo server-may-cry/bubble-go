@@ -15,11 +15,11 @@ import (
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 
-	redisURI := os.Getenv("REDIS_URL")
-	if redisURI == "" {
+	rawRedisURL := os.Getenv("REDIS_URL")
+	if rawRedisURL == "" {
 		log.Fatal("$REDIS_URL must be set")
 	}
-	redisURL, err := url.Parse(redisURI)
+	redisURL, err := url.Parse(rawRedisURL)
 	if err != nil {
 		log.Fatal(err)
 	}
