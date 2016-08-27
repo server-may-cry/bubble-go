@@ -18,9 +18,12 @@ var (
 )
 
 func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.SetFlags(log.LstdFlags | log.Llongfile)
 
 	redisURI := os.Getenv("REDIS_URL")
+	if redisURI == "" {
+		log.Fatal("$REDIS_URL must be set")
+	}
 	redisURL, err := url.Parse(redisURI)
 	if err != nil {
 		log.Fatal(err)
