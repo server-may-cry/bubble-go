@@ -4,6 +4,9 @@ go:
   - "1.7"
   - tip
 
+services:
+  - redis-server
+
 before_install:
   - go install -race std
   - go get golang.org/x/tools/cmd/cover

@@ -29,19 +29,20 @@ func init() {
 		Password: password,
 		DB:       0, // default database
 	})
-
-	newRelicLicenseKey := os.Getenv("NEW_RELIC_LICENSE_KEY")
-	if newRelicLicenseKey == "" {
-		log.Fatal("$NEW_RELIC_LICENSE_KEY must be set")
-	}
-	gorelic.InitNewrelicAgent(newRelicLicenseKey, "bubble-go", true)
 }
 
 // GetEngine return gin engine instance same for tests and server
 func GetEngine() *gin.Engine {
 	r := gin.Default()
 
-	r.Use(gorelic.Handler)
+	if "release" == os.Getenv("GIN_MODE") {
+		newRelicLicenseKey := os.Getenv("NEW_RELIC_LICENSE_KEY")
+		if newRelicLicenseKey == "" {
+			log.Fatal("$NEW_RELIC_LICENSE_KEY must be set")
+		}
+		gorelic.InitNewrelicAgent(newRelicLicenseKey, "bubble-go", true)
+		r.Use(gorelic.Handler)
+	}
 	r.Use(gin.Logger())
 
 	r.GET("/", controllers.Index)
