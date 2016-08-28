@@ -37,7 +37,8 @@ func init() {
 	gorelic.InitNewrelicAgent(newRelicLicenseKey, "bubble-go", true)
 }
 
-func main() {
+// GetEngine return gin engine instance same for tests and server
+func GetEngine() *gin.Engine {
 	r := gin.Default()
 
 	r.Use(gorelic.Handler)
@@ -47,9 +48,14 @@ func main() {
 	r.GET("/test", controllers.Test)
 	r.GET("/redis", controllers.Redis)
 
+	return r
+}
+
+func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
-	r.Run(":" + port)
+
+	GetEngine().Run(":" + port)
 }
