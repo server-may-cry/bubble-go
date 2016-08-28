@@ -75,6 +75,12 @@
 			"revisionTime": "2016-02-20T15:49:07Z"
 		},
 		{
+			"checksumSHA1": "GPhS/ALlnGUxy1aVN8qG78Rhv6o=",
+			"path": "gopkg.in/check.v1",
+			"revision": "4f90aeace3a26ad7021961c297b22c42160c7b25",
+			"revisionTime": "2016-01-05T16:49:36Z"
+		},
+		{
 			"checksumSHA1": "QSy5NJwFICKehDsWtfHbcVjIZ+o=",
 			"path": "gopkg.in/go-playground/validator.v8",
 			"revision": "5f57d2222ad794d0dffb07e664ea05e2ee07d60c",

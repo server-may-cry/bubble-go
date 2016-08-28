@@ -28,7 +28,6 @@ func Test(c *gin.Context) {
 	t := models.Test{
 		Ttt: 4,
 	}
-	log.Println(t)
 	c.JSON(http.StatusOK, protocol.TestResponse{
 		Test: t,
 	})

@@ -1,24 +1,29 @@
 package main_test
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	main "github.com/server-may-cry/bubble-go/cmd/server"
+	. "gopkg.in/check.v1"
 )
 
-func TestIndexRoute(t *testing.T) {
+// Hook up gocheck into the "go test" runner.
+func Test(t *testing.T) { TestingT(t) }
+
+type MySuite struct{}
+
+var _ = Suite(&MySuite{})
+
+func (s *MySuite) TestIndexRoute(c *C) {
 	testRouter := main.GetEngine()
 	request, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	response := httptest.NewRecorder()
 	testRouter.ServeHTTP(response, request)
-	//assert.Equal(t, response.Code, 200)
-
-	log.Print(request, response)
+	c.Assert(response.Code, Equals, http.StatusOK)
 }

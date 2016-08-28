@@ -4,6 +4,3 @@
 ```sh
 govendor sync
 ```
-
-TODO:
-- [ ] Write tests
