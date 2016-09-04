@@ -39,6 +39,54 @@
 			"revisionTime": "2016-08-23T21:25:17Z"
 		},
 		{
+			"checksumSHA1": "YlmCnNS92brXdmSXwLfBWnKxv08=",
+			"path": "github.com/googollee/go-engine.io",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "6FIMrN6tACwWN92pLJggQ70sW2o=",
+			"path": "github.com/googollee/go-engine.io/message",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "iVQSvmBqQC/zH9DokNSD4Kq6/M8=",
+			"path": "github.com/googollee/go-engine.io/parser",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "C4QtHcNggcGwPbAPZUlGjWZvHmI=",
+			"path": "github.com/googollee/go-engine.io/polling",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "+oKFsNl/ET1R4di8y0qB4VjArYI=",
+			"path": "github.com/googollee/go-engine.io/transport",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "gZMrNsyYBf0sjAMsYRPXIrWpruQ=",
+			"path": "github.com/googollee/go-engine.io/websocket",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "bDP27ZXfAhWN6BLi1y9WguTuKDQ=",
+			"path": "github.com/googollee/go-socket.io",
+			"revision": "e9f0a9b7a61267e1476f9f0a0429337813c39edd",
+			"revisionTime": "2016-08-11T13:18:22Z"
+		},
+		{
+			"checksumSHA1": "mMHT+mzAgdReYgu8zCqQxI1BnLk=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "a69d25be2fe2923a97c2af6849b2f52426f68fc0",
+			"revisionTime": "2016-08-02T13:32:03Z"
+		},
+		{
 			"checksumSHA1": "8sba7NooZnLTY8zidsbqBeDUjxI=",
 			"path": "github.com/manucorporat/sse",
 			"revision": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d",

@@ -13,7 +13,6 @@ before_install:
 
 script:
   - go test -v -race ./cmd/...
-  - go test -v -cover ./cmd/...
 
 matrix:
   allow_failures:
