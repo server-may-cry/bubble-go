@@ -2,18 +2,14 @@ sudo: false
 language: go
 go:
   - "1.7"
-  - tip
 
 services:
   - redis-server
 
 before_install:
   - go install -race std
-  - go get golang.org/x/tools/cmd/cover
+#  - go get golang.org/x/tools/cmd/cover
 
 script:
   - go test -v -race ./cmd/...
-
-matrix:
-  allow_failures:
-    - go: tip
+#  - go test -v -cover ./cmd/...

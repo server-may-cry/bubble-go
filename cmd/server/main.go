@@ -68,7 +68,7 @@ func GetEngine() *gin.Engine {
 	r.GET("/", controllers.Index)
 	r.GET("/test", controllers.Test)
 	r.GET("/redis", controllers.Redis)
-	r.GET("/ws", gin.WrapH(socketioServer))
+	r.GET("/socket.io/", gin.WrapH(socketioServer))
 
 	return r
 }
