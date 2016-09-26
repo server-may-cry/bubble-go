@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/mgo.v2"
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/storage"
+	"gopkg.in/mgo.v2"
 )
 
 func init() {
