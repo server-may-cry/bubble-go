@@ -9,64 +9,40 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "mMHT+mzAgdReYgu8zCqQxI1BnLk=",
-			"path": "github.com/gorilla/websocket",
-			"revision": "2d1e4548da234d9cb742cc3628556fef86aafbac",
-			"revisionTime": "2016-09-12T15:30:41Z"
-		},
-		{
-			"checksumSHA1": "lzxr2rdWylya6Z5Ft4oA0Fvr4TU=",
-			"path": "gopkg.in/bsm/ratelimit.v1",
-			"revision": "db14e161995a5177acef654cb0dd785e8ee8bc22",
-			"revisionTime": "2016-02-20T15:49:07Z"
-		},
-		{
-			"checksumSHA1": "GPhS/ALlnGUxy1aVN8qG78Rhv6o=",
+			"checksumSHA1": "I2d7Kn572Fz02mnnlcI4MHXCu0c=",
 			"path": "gopkg.in/check.v1",
 			"revision": "4f90aeace3a26ad7021961c297b22c42160c7b25",
 			"revisionTime": "2016-01-05T16:49:36Z"
 		},
 		{
-			"checksumSHA1": "G+baEeVA9pt1sYnPBk+kWq91R+I=",
-			"path": "gopkg.in/redis.v4",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
+			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
+			"path": "gopkg.in/mgo.v2",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
 		},
 		{
-			"checksumSHA1": "Jd4sA+fn2X8LdUoWKMOEke1UNuE=",
-			"path": "gopkg.in/redis.v4/internal",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
+			"checksumSHA1": "YsB2DChSV9HxdzHaKATllAUKWSI=",
+			"path": "gopkg.in/mgo.v2/bson",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
 		},
 		{
-			"checksumSHA1": "8FgHLpADEycTPwRFcXa2psiEu6s=",
-			"path": "gopkg.in/redis.v4/internal/consistenthash",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
+			"checksumSHA1": "XQsrqoNT1U0KzLxOFcAZVvqhLfk=",
+			"path": "gopkg.in/mgo.v2/internal/json",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
 		},
 		{
-			"checksumSHA1": "3YzzZkFpf3+8oT0KBSbxio2ru7M=",
-			"path": "gopkg.in/redis.v4/internal/errors",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
+			"checksumSHA1": "LEvMCnprte47qdAxWvQ/zRxVF1U=",
+			"path": "gopkg.in/mgo.v2/internal/sasl",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
 		},
 		{
-			"checksumSHA1": "1OmUhja5tJIJ/PugPAkW0mXPjtA=",
-			"path": "gopkg.in/redis.v4/internal/hashtag",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
-		},
-		{
-			"checksumSHA1": "OfPH0LZff1WhgkIJCJrGKET/FLw=",
-			"path": "gopkg.in/redis.v4/internal/pool",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
-		},
-		{
-			"checksumSHA1": "mTCUtw78SmGR12qjcDQa3431mqM=",
-			"path": "gopkg.in/redis.v4/internal/proto",
-			"revision": "4b0862b5fd0a5ae4e63c76476a64655752d6031b",
-			"revisionTime": "2016-09-10T14:09:39Z"
+			"checksumSHA1": "+1WDRPaOphSCmRMxVPIPBV4aubc=",
+			"path": "gopkg.in/mgo.v2/internal/scram",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
 		}
 	],
 	"rootPath": "github.com/server-may-cry/bubble-go"

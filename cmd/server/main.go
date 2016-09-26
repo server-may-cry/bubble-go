@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
-	redis "gopkg.in/redis.v4"
-
+	"gopkg.in/mgo.v2"
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/storage"
 )
@@ -15,17 +15,25 @@ import (
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 
-	rawRedisURL := os.Getenv("REDIS_URL")
+	rawMongoURL := os.Getenv("MONGODB_URI")
 	if rawRedisURL == "" {
-		log.Fatal("$REDIS_URL must be set")
+		log.Fatal("$MONGODB_URI must be set")
 	}
-	redisURL, err := url.Parse(rawRedisURL)
+	mongoURL, err := url.Parse(rawRedisURL)
+	user, _ := mongoURL.User.User()
+	password, _ := mongoURL.User.Password()
+	mongoDBDialInfo := &mgo.DialInfo{
+		Addrs:    []string{mongoURL.Host},
+		Timeout:  60 * time.Second,
+		Database: user,
+		Username: user,
+		Password: password,
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
-	password, _ := redisURL.User.Password()
 	storage.Redis = redis.NewClient(&redis.Options{
-		Addr:     redisURL.Host,
+		Addr:     mongoURL.Host,
 		Password: password,
 		DB:       0, // default database
 	})
