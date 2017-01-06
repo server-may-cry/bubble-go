@@ -1,13 +1,10 @@
 package models
 
-type Test struct {
-	Ttt int
-}
-
+// User struct in storage
 type User struct {
 	id                      int
-	sysId                   uint8
-	extId                   string
+	sysID                   uint8
+	extID                   string
 	reachedStage01          uint8
 	reachedSubStage01       uint8
 	ignoreSavePointBlock    bool
