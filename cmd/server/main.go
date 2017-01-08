@@ -46,10 +46,10 @@ func main() {
 	router.POST("/pay/:platform", controllers.PayPlatform) // vk|ok
 
 	router.GET("/crossdomain.xml", func(c *gin.Context) {
-		c.XML(http.StatusOK, "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" /></cross-domain-policy>")
+		c.String(http.StatusOK, "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" /></cross-domain-policy>")
 	})
 	// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
-	// https://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
+	// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
 	router.POST("/bubble/*filePath", controllers.LoadStatick)
 	router.GET("/cache-clear", controllers.ClearStatickCache)
 
@@ -57,7 +57,7 @@ func main() {
 		log.Fatal("test log.Fatal")
 	})
 	router.GET("/loaderio-some_hash", func(c *gin.Context) {
-		c.String(http.StatusOK, "text/plain", "some_hash")
+		c.String(http.StatusOK, "some_hash")
 	})
 
 	router.Run()
