@@ -1,7 +1,5 @@
-/vendor/*
-!vendor/vendor.json
+/vendor/*/
 
 *.exe
 /server
 /migrate
-/mongo_test
