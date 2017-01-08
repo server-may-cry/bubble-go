@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"fmt"
 	"time"
@@ -144,3 +145,4 @@ func main() {
 	pass2 := time.Since(before2)
 	fmt.Println(pass2)
 }
+*/

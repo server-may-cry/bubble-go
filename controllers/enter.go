@@ -14,7 +14,7 @@ type enterRequest struct {
 }
 
 type enterResponse struct {
-	ReqMsgID               uint       `json:"reqMsgId"`
+	ReqMsgID               uint64     `json:"reqMsgId"`
 	UserID                 uint32     `json:"userId"`
 	ReachedStage01         uint8      `json:"reachedStage01"`
 	ReachedStage02         uint8      `json:"reachedStage02"`
@@ -52,7 +52,7 @@ func ReqEnter(c *gin.Context) {
 	}
 	// logic
 	response := enterResponse{
-		ReqMsgID: request.ExtID,
+		ReqMsgID: request.MsgID,
 	}
 	c.JSON(http.StatusOK, response)
 }
