@@ -1,8 +1,5 @@
 package storage
 
-import redis "gopkg.in/redis.v4"
+import "gopkg.in/mgo.v2"
 
-var (
-	// Redis connection
-	Redis *redis.Client
-)
+var MongoDB *mgo.Session
