@@ -50,7 +50,7 @@ func main() {
 	})
 	// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
 	// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
-	router.POST("/bubble/*filePath", controllers.LoadStatick)
+	router.GET("/bubble/*filePath", controllers.ServeStatick)
 	router.GET("/cache-clear", controllers.ClearStatickCache)
 
 	router.GET("/exception", func(c *gin.Context) {
