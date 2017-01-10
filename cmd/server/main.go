@@ -92,6 +92,7 @@ func signatureValidatorMiddleware(c *gin.Context) {
 	expectedMD5 := md5.Sum(data)
 	expectedAuthKey := string(expectedMD5[:])
 	if expectedAuthKey != request.AuthKey {
+		log.Print(expectedAuthKey)
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Bad auth key %s", request.AuthKey))
 	}
 }
