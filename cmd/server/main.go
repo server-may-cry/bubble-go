@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/md5"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -35,6 +37,7 @@ func main() {
 	})
 
 	securedGroup := router.Group("")
+	securedGroup.Use(signatureValidatorMiddleware)
 	{
 		securedGroup.POST("/ReqEnter", controllers.ReqEnter)
 		securedGroup.POST("/ReqBuyProduct", controllers.ReqBuyProduct)
@@ -56,9 +59,39 @@ func main() {
 	router.GET("/exception", func(c *gin.Context) {
 		log.Fatal("test log.Fatal")
 	})
-	router.GET("/loaderio-some_hash", func(c *gin.Context) {
-		c.String(http.StatusOK, "some_hash")
+
+	loaderio := os.Getenv("LOADERIO")
+	loaderioRoute := fmt.Sprintf("/loaderio-%s", loaderio)
+	router.GET(loaderioRoute, func(c *gin.Context) {
+		c.String(http.StatusOK, loaderio)
 	})
 
 	router.Run()
+}
+
+func signatureValidatorMiddleware(c *gin.Context) {
+	request := controllers.AuthRequestPart{}
+	if err := c.BindJSON(&request); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	var stringToHash string
+	switch request.SysID {
+	case "VK":
+		appID := os.Getenv("VK_APP_ID")
+		secret := os.Getenv("VK_SECRET")
+		stringToHash = fmt.Sprintf("%s_%s_%s", appID, request.ExtID, secret)
+	case "OK":
+		secret := os.Getenv("OK_SECRET")
+		stringToHash = fmt.Sprintf("%s%s%s", request.ExtID, request.SessionKey, secret)
+	default:
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Unknown platform %s", request.SysID))
+	}
+	data := []byte(stringToHash)
+	expectedMD5 := md5.Sum(data)
+	expectedAuthKey := string(expectedMD5[:])
+	if expectedAuthKey != request.AuthKey {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Bad auth key %s", request.AuthKey))
+	}
 }

@@ -2,24 +2,26 @@ package models
 
 // User struct in storage
 type User struct {
-	id                      int
-	sysID                   uint8
-	extID                   string
-	reachedStage01          uint8
-	reachedSubStage01       uint8
-	ignoreSavePointBlock    bool
-	inifinityExtra00        bool
-	inifinityExtra01        bool
-	inifinityExtra02        bool
-	inifinityExtra03        bool
-	inifinityExtra04        bool
-	inifinityExtra05        bool
-	inifinityExtra06        bool
-	inifinityExtra07        bool
-	inifinityExtra08        bool
-	inifinityExtra09        bool
-	remainingTries          uint8
-	restoreTriesAt          int
-	credits                 uint16
-	friendsBonusCreditsTime int
+	tableName               struct{} `sql:"users"`
+	ID                      uint64
+	SysID                   uint8
+	ExtID                   string
+	ReachedStage01          uint8
+	ReachedSubStage01       uint8
+	IgnoreSavePointBlock    uint8
+	InifinityExtra00        uint8
+	InifinityExtra01        uint8
+	InifinityExtra02        uint8
+	InifinityExtra03        uint8
+	InifinityExtra04        uint8
+	InifinityExtra05        uint8
+	InifinityExtra06        uint8
+	InifinityExtra07        uint8
+	InifinityExtra08        uint8
+	InifinityExtra09        uint8
+	RemainingTries          uint8
+	RestoreTriesAt          int64
+	Credits                 uint16
+	FriendsBonusCreditsTime int64
+	ProgressStandart        []interface{} // json
 }

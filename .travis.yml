@@ -6,6 +6,10 @@ go:
 services:
   - mongodb
 
+before_script:
+  - sleep 15 # https://docs.travis-ci.com/user/database-setup/#MongoDB-does-not-immediately-accept-connections
+  - mongo mydb_test --eval 'db.addUser("travis", "test");'
+
 before_install:
   - go install -race std
 #  - go get golang.org/x/tools/cmd/cover
