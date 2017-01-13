@@ -63,7 +63,7 @@ func main() {
 	loaderio := os.Getenv("LOADERIO")
 	loaderioRoute := fmt.Sprintf("/loaderio-%s", loaderio)
 	router.GET(loaderioRoute, func(c *gin.Context) {
-		c.String(http.StatusOK, loaderio)
+		c.String(http.StatusOK, loaderioRoute)
 	})
 
 	router.Run()
