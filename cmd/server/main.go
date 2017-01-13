@@ -90,9 +90,8 @@ func signatureValidatorMiddleware(c *gin.Context) {
 	}
 	data := []byte(stringToHash)
 	expectedMD5 := md5.Sum(data)
-	log.Print("middleware", stringToHash, data, expectedMD5)
+	log.Print("middleware", " ", stringToHash, " ", data, " ", expectedMD5, " ", expectedAuthKey, " ", request.AuthKey)
 	expectedAuthKey := fmt.Sprintf("%x", expectedMD5)
-	log.Print(expectedAuthKey)
 	if expectedAuthKey != request.AuthKey {
 		log.Print(expectedAuthKey)
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Bad auth key %s", request.AuthKey))
