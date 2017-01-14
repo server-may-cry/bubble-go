@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"gopkg.in/gin-gonic/gin.v1"
@@ -50,6 +51,8 @@ func ReqEnter(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, getErrBody(err))
 		return
 	}
+	user := c.MustGet("user").(string)
+	log.Print(user)
 	// logic
 	response := enterResponse{
 		ReqMsgID: request.MsgID,

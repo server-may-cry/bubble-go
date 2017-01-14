@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -65,7 +66,7 @@ func main() {
 	loaderio := os.Getenv("LOADERIO")
 	loaderioRoute := fmt.Sprintf("/loaderio-%s", loaderio)
 	router.GET(loaderioRoute, func(c *gin.Context) {
-		c.String(http.StatusOK, loaderioRoute)
+		c.String(http.StatusOK, fmt.Sprintf("loaderio-%s", loaderio))
 	})
 
 	router.Run()
@@ -74,16 +75,14 @@ func main() {
 func signatureValidatorMiddleware(c *gin.Context) {
 	// TODO try decoder := json.NewDecoder(c.Request.Body)
 	buf, _ := ioutil.ReadAll(c.Request.Body)
-	rdr1 := ioutil.NopCloser(bytes.NewBuffer(buf))
-	rdr2 := ioutil.NopCloser(bytes.NewBuffer(buf))
-	c.Request.Body = rdr1
+	requestBodyCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
+	c.Request.Body = requestBodyCopy
 
 	request := controllers.AuthRequestPart{}
-	if err := c.BindJSON(&request); err != nil {
+	if err := json.Unmarshal(buf, &request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	c.Request.Body = rdr2
 
 	var stringToHash string
 	switch request.SysID {
