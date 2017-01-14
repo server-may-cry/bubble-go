@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"gopkg.in/gin-gonic/gin.v1"
@@ -47,19 +46,7 @@ type enterResponse struct {
 // ReqEnter first request from client. Return user info and user progress
 func ReqEnter(c *gin.Context) {
 	request := enterRequest{}
-	log.Print("before bind")
 	if err := c.BindJSON(&request); err != nil {
-		log.Print(err)
-		request2 := baseRequest{}
-		log.Print("before bind2")
-		if err2 := c.BindJSON(&request2); err2 != nil {
-			log.Print(err2)
-			request3 := AuthRequestPart{}
-			log.Print("before bind3")
-			if err3 := c.BindJSON(&request3); err3 != nil {
-				log.Print(err3)
-			}
-		}
 		c.JSON(http.StatusBadRequest, getErrBody(err))
 		return
 	}

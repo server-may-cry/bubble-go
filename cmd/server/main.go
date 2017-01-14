@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"crypto/md5"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -70,11 +72,18 @@ func main() {
 }
 
 func signatureValidatorMiddleware(c *gin.Context) {
+	// TODO try decoder := json.NewDecoder(c.Request.Body)
+	buf, _ := ioutil.ReadAll(c.Request.Body)
+	rdr1 := ioutil.NopCloser(bytes.NewBuffer(buf))
+	rdr2 := ioutil.NopCloser(bytes.NewBuffer(buf))
+	c.Request.Body = rdr1
+
 	request := controllers.AuthRequestPart{}
 	if err := c.BindJSON(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+	c.Request.Body = rdr2
 
 	var stringToHash string
 	switch request.SysID {
@@ -93,7 +102,9 @@ func signatureValidatorMiddleware(c *gin.Context) {
 	expectedAuthKey := fmt.Sprintf("%x", expectedMD5)
 	if expectedAuthKey != request.AuthKey {
 		log.Print("authorization failure", " ", stringToHash, " ", expectedAuthKey, " ", request.AuthKey)
+		log.Print("expected ", expectedAuthKey)
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Bad auth key %s", request.AuthKey))
+		return
 	}
 
 	log.Print("authorization success")
