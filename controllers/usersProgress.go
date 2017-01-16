@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+
+	"github.com/server-may-cry/bubble-go/models"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -30,6 +33,8 @@ func ReqUsersProgress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, getErrBody(err))
 		return
 	}
+	user := c.MustGet("user").(models.User)
+	log.Print(user)
 	// logic
 	response := usersProgressResponse{}
 	c.JSON(http.StatusOK, response)

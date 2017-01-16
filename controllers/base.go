@@ -13,7 +13,7 @@ type AuthRequestPart struct {
 }
 
 type baseRequest struct {
-	AuthRequestPart
+	// AuthRequestPart not more required
 	MsgID uint64 `json:"msgId,string"` // not required. just for back capability
 }
 

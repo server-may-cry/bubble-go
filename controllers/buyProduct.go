@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+
+	"github.com/server-may-cry/bubble-go/models"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -25,6 +28,8 @@ func ReqBuyProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, getErrBody(err))
 		return
 	}
+	user := c.MustGet("user").(models.User)
+	log.Print(user)
 	// logic
 	response := buyProductResponse{
 		ProductID: request.ProductID,

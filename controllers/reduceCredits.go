@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+
+	"github.com/server-may-cry/bubble-go/models"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -24,6 +27,8 @@ func ReqReduceCredits(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, getErrBody(err))
 		return
 	}
+	user := c.MustGet("user").(models.User)
+	log.Print(user)
 	// logic
 	response := reduceCreditsResponse{
 		Credits: 0, // TODO

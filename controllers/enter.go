@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/server-may-cry/bubble-go/models"
+
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -51,8 +53,13 @@ func ReqEnter(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, getErrBody(err))
 		return
 	}
-	user := c.MustGet("user").(string)
-	log.Print(user)
+	value, exists := c.Get("user")
+	if exists {
+		user := value.(models.User)
+		log.Print(user)
+	} else {
+		// create user
+	}
 	// logic
 	response := enterResponse{
 		ReqMsgID: request.MsgID,
