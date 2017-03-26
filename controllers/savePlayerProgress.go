@@ -54,6 +54,7 @@ func ReqSavePlayerProgress(c *gin.Context) {
 	default:
 		panic("not implemented level mode")
 	}
+	// TODO
 	// logic progress
 	if needUpdate {
 		storage.Gorm.Save(&user)

@@ -1,0 +1,383 @@
+{
+	"bonus04_1": {
+		"price": {
+			"vk": 100,
+			"ok": 769
+		},
+		"title": {
+			"ru": "\\u041e\\u0442\\u043a\\u0440\\u044b\\u0442\\u044c \\u0432\\u0441\\u0435 \\u043e\\u0441\\u0442\\u0440\\u043e\\u0432\\u0430"
+		},
+		"reward": {
+			"set": {
+				"reachedStage01": 7,
+				"reachedSubStage01": 14
+			}
+		}
+	},
+	"bonus04_2": {
+		"price": {
+			"vk": 100,
+			"ok": 769
+		},
+		"title": {
+			"ru": "\\u041e\\u0442\\u043a\\u0440\\u044b\\u0442\\u044c \\u0432\\u0441\\u0435 \\u043e\\u0441\\u0442\\u0440\\u043e\\u0432\\u0430"
+		},
+		"reward": {
+			"set": {
+				"reachedStage02": 7,
+				"reachedSubStage02": 14
+			}
+		}
+	},
+	"bonus05": {
+		"price": {
+			"vk": 20,
+			"ok": 449
+		},
+		"reward": {
+			"set": {
+				"ignoreSavePointBlock": 1
+			}
+		},
+		"photo": "bonus05",
+		"title": {
+			"ru": "\\u041d\\u0430\\u0432\\u0441\\u0435\\u0433\\u0434\\u0430 \\u0440\\u0430\\u0437\\u0431\\u043b\\u043e\\u043a\\u0438\\u0440\\u043e\\u0432\\u0430\\u0442\\u044c \\u0432\\u0441\\u0435 \\u0444\\u043b\\u0430\\u0433\\u0438"
+		}
+	},
+	"bonus06_1": {
+		"price": {
+			"vk": 10,
+			"ok": 299
+		},
+		"title": {
+			"ru": "\\u041e\\u0442\\u043a\\u0440\\u044b\\u0442\\u044c \\u0441\\u043b\\u0435\\u0434\\u0443\\u044e\\u0449\\u0438\\u0439 \\u043e\\u0441\\u0442\\u0440\\u043e\\u0432"
+		},
+		"reward": {
+			"set": {
+				"reachedSubStage01": 0
+			},
+			"increase": {
+				"reachedStage01": 1
+			}
+		}
+	},
+	"bonus06_2": {
+		"price": {
+			"vk": 10,
+			"ok": 299
+		},
+		"title": {
+			"ru": "\\u041e\\u0442\\u043a\\u0440\\u044b\\u0442\\u044c \\u0441\\u043b\\u0435\\u0434\\u0443\\u044e\\u0449\\u0438\\u0439 \\u043e\\u0441\\u0442\\u0440\\u043e\\u0432"
+		},
+		"reward": {
+			"set": {
+				"reachedSubStage02": 0
+			},
+			"increase": {
+				"reachedStage02": 1
+			}
+		}
+	},
+	"infExt00Lvl3": {
+		"price": {
+			"vk": 1,
+			"ok": 29
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra00": 1
+			}
+		},
+		"photo": "infExt00Lvl3",
+		"title": {
+			"ru": "\\u0420\\u0430\\u0434\\u0443\\u0436\\u043d\\u044b\\u0439 \\u0448\\u0430\\u0440"
+		}
+	},
+	"infExt01Lvl2": {
+		"price": {
+			"vk": 1,
+			"ok": 29
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra01": 1
+			}
+		},
+		"photo": "infExt01Lvl2",
+		"title": {
+			"ru": "\\u0428\\u0430\\u0440-\\u0431\\u043e\\u043c\\u0431\\u0430"
+		}
+	},
+	"infExt02Lvl1": {
+		"price": {
+			"vk": 3,
+			"ok": 89
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra02": 1
+			}
+		},
+		"photo": "infExt02Lvl1",
+		"title": {
+			"ru": "\\u041e\\u0433\\u043d\\u0435\\u043d\\u043d\\u044b\\u0439 \\u0448\\u0430\\u0440"
+		}
+	},
+	"infExt03Lvl2": {
+		"price": {
+			"vk": 2,
+			"ok": 58
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra03": 1
+			}
+		},
+		"photo": "infExt03Lvl2",
+		"title": {
+			"ru": "\\u0413\\u043e\\u0440\\u0438\\u0437\\u043e\\u043d\\u0442\\u0430\\u043b\\u044c\\u043d\\u0443\\u044e \\u043c\\u043e\\u043b\\u043d\\u0438\\u044f"
+		}
+	},
+	"infExt04Lvl1": {
+		"price": {
+			"vk": 3,
+			"ok": 89
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra04": 1
+			}
+		},
+		"photo": "infExt04Lvl1",
+		"title": {
+			"ru": "\\u0421\\u0443\\u043f\\u0435\\u0440 \\u0431\\u043e\\u043c\\u0431\\u0430"
+		}
+	},
+	"infExt05Lvl2": {
+		"price": {
+			"vk": 2,
+			"ok": 58
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra05": 1
+			}
+		},
+		"photo": "infExt05Lvl2",
+		"title": {
+			"ru": "\\u0412\\u0435\\u0440\\u0442\\u0438\\u043a\\u0430\\u043b\\u044c\\u043d\\u0443\\u044e \\u043c\\u043e\\u043b\\u043d\\u0438\\u044f"
+		}
+	},
+	"infExt06Lvl1": {
+		"price": {
+			"vk": 3,
+			"ok": 89
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra06": 1
+			}
+		},
+		"photo": "infExt06Lvl1",
+		"title": {
+			"ru": "\\u0428\\u0430\\u0440-\\u0447\\u0435\\u0440\\u043d\\u0430\\u044f \\u0434\\u044b\\u0440\\u0430"
+		}
+	},
+	"infExt07Lvl1": {
+		"price": {
+			"vk": 4,
+			"ok": 116
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra07": 1
+			}
+		},
+		"photo": "infExt07Lvl1",
+		"title": {
+			"ru": "\\u0414\\u043e\\u043f\\u043e\\u043b\\u043d\\u0438\\u0442\\u0430\\u043b\\u044c\\u043d\\u044b\\u0435 5 \\u0432\\u044b\\u0441\\u0442\\u0440\\u0435\\u043b\\u043e\\u0432"
+		}
+	},
+	"infExt08Lvl1": {
+		"price": {
+			"vk": 4,
+			"ok": 116
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra08": 1
+			}
+		},
+		"photo": "infExt08Lvl1",
+		"title": {
+			"ru": "\\u0414\\u043e\\u043f\\u043e\\u043b\\u043d\\u0438\\u0442\\u0435\\u043b\\u044c\\u043d\\u044b\\u0435 30 \\u0441\\u0435\\u043a\\u0443\\u043d\\u0434"
+		}
+	},
+	"infExt09Lvl1": {
+		"price": {
+			"vk": 3,
+			"ok": 89
+		},
+		"reward": {
+			"set": {
+				"inifinityExtra09": 1
+			}
+		},
+		"photo": "infExt09Lvl1",
+		"title": {
+			"ru": "\\u0418\\u043c\\u043c\\u0443\\u043d\\u0438\\u0442\\u0435\\u0442 \\u043a \\u044f\\u0434\\u043e\\u0432\\u0438\\u0442\\u044b\\u043c \\u0448\\u0430\\u0440\\u0430\\u043c"
+		}
+	},
+	"helpPack01": {
+		"price": {
+			"vk": 1,
+			"ok": 29
+		},
+		"reward": {
+			"increase": {
+				"remainingTries": 5,
+				"credits": 650
+			}
+		},
+		"photo": "helpPack01",
+		"title": {
+			"ru": "\\u042d\\u043a\\u0441\\u0442\\u0440\\u0430 \\u043f\\u043e\\u043c\\u043e\\u0449\\u044c"
+		}
+	},
+	"additionalShots": {
+		"price": {
+			"vk": 1,
+			"ok": 89
+		},
+		"reward": [],
+		"photo": "additionalShots",
+		"title": {
+			"ru": "\\u0414\\u043e\\u043f\\u043e\\u043b\\u043d\\u0438\\u0442\\u0435\\u043b\\u044c\\u043d\\u044b\\u0435 \\u0432\\u044b\\u0441\\u0442\\u0440\\u0435\\u043b\\u044b"
+		}
+	},
+	"additionalTime": {
+		"price": {
+			"vk": 1,
+			"ok": 89
+		},
+		"reward": [],
+		"photo": "additionalTime",
+		"title": {
+			"ru": "\\u0414\\u043e\\u043f\\u043e\\u043b\\u043d\\u0438\\u0442\\u0435\\u043b\\u044c\\u043d\\u043e\\u0435 \\u0432\\u0440\\u0435\\u043c\\u044f"
+		}
+	},
+	"creditsPack01": {
+		"price": {
+			"vk": 1,
+			"ok": 29
+		},
+		"reward": {
+			"increase": {
+				"credits": 140
+			}
+		},
+		"photo": "creditsPack01",
+		"title": {
+			"ru": "140 \\u0437\\u043e\\u043b\\u043e\\u0442\\u044b\\u0445 \\u043c\\u043e\\u043d\\u0435\\u0442"
+		}
+	},
+	"creditsPack01_test": {
+		"price": {
+			"vk": 1,
+			"ok": 1
+		},
+		"reward": {
+			"increase": {
+				"credits": 1
+			}
+		},
+		"photo": "creditsPack01",
+		"title": {
+			"ru": "\\u0422\\u0435\\u0441\\u0442\\u043e\\u0432\\u0430\\u044f \\u043f\\u043e\\u043a\\u0443\\u043f\\u043a\\u0430 \\u043e\\u0434\\u043d\\u043e\\u0439 \\u043c\\u043e\\u043d\\u0435\\u0442\\u044b"
+		}
+	},
+	"creditsPack02": {
+		"price": {
+			"vk": 2,
+			"ok": 89
+		},
+		"reward": {
+			"increase": {
+				"credits": 650
+			}
+		},
+		"photo": "creditsPack02",
+		"title": {
+			"ru": "650 \\u0437\\u043e\\u043b\\u043e\\u0442\\u044b\\u0445 \\u043c\\u043e\\u043d\\u0435\\u0442"
+		}
+	},
+	"creditsPack03": {
+		"price": {
+			"vk": 9,
+			"ok": 299
+		},
+		"reward": {
+			"increase": {
+				"credits": 3000
+			}
+		},
+		"photo": "creditsPack03",
+		"title": {
+			"ru": "3000 \\u0437\\u043e\\u043b\\u043e\\u0442\\u044b\\u0445 \\u043c\\u043e\\u043d\\u0435\\u0442"
+		}
+	},
+	"creditsPack04": {
+		"price": {
+			"vk": 16,
+			"ok": 449
+		},
+		"reward": {
+			"increase": {
+				"credits": 6000
+			}
+		},
+		"photo": "creditsPack04",
+		"title": {
+			"ru": "6000 \\u0437\\u043e\\u043b\\u043e\\u0442\\u044b\\u0445 \\u043c\\u043e\\u043d\\u0435\\u0442"
+		}
+	},
+	"creditsPack05": {
+		"price": {
+			"vk": 34,
+			"ok": 769
+		},
+		"reward": {
+			"increase": {
+				"credits": 16000
+			}
+		},
+		"photo": "creditsPack05",
+		"title": {
+			"ru": "16000 \\u0437\\u043e\\u043b\\u043e\\u0442\\u044b\\u0445 \\u043c\\u043e\\u043d\\u0435\\u0442"
+		}
+	},
+	"bonus01": {
+		"reward": {
+			"increase": {
+				"credits": -75,
+				"remainingTries": 1
+			}
+		}
+	},
+	"bonus02": {
+		"reward": {
+			"increase": {
+				"credits": -300,
+				"remainingTries": 5
+			}
+		}
+	},
+	"bonus03": {
+		"reward": {
+			"increase": {
+				"credits": -500,
+				"remainingTries": 10
+			}
+		}
+	}
+}

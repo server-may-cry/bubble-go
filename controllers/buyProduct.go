@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/storage"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -29,11 +30,11 @@ func ReqBuyProduct(c *gin.Context) {
 		return
 	}
 	user := c.MustGet("user").(models.User)
-	log.Print(user)
-	// logic
+	market.Buy(&user, request.ProductID)
 	response := buyProductResponse{
 		ProductID: request.ProductID,
-		Credits:   0, // TODO
+		Credits:   user.Credits,
 	}
+	storage.Gorm.Save(&user)
 	c.JSON(http.StatusOK, response)
 }

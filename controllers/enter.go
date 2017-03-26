@@ -11,6 +11,7 @@ import (
 
 type enterRequest struct {
 	baseRequest
+	AuthRequestPart
 	AppFriends uint8  `json:"appFriends,string" binding:"required"`
 	Referer    string `json:"referer" binding:"required"`
 	SrcExtID   string `json:"srcExtId" binding:"required"`
@@ -54,13 +55,37 @@ func ReqEnter(c *gin.Context) {
 		return
 	}
 	value, exists := c.Get("user")
+	var user models.User
 	if exists {
-		user := value.(models.User)
-		log.Print(user)
+		user = value.(models.User)
+		// time rewards logic
 	} else {
-		// create user
+		user = models.User{
+			// TODO SysID:                   request.SysID, // TODO int?
+			ExtID:                   request.ExtID,
+			ReachedStage01:          0,
+			ReachedSubStage01:       0,
+			IgnoreSavePointBlock:    0,
+			InifinityExtra00:        0,
+			InifinityExtra01:        0,
+			InifinityExtra02:        0,
+			InifinityExtra03:        0,
+			InifinityExtra04:        0,
+			InifinityExtra05:        0,
+			InifinityExtra06:        0,
+			InifinityExtra07:        0,
+			InifinityExtra08:        0,
+			InifinityExtra09:        0,
+			RemainingTries:          5,
+			RestoreTriesAt:          0, // TODO
+			Credits:                 0, // TODO
+			FriendsBonusCreditsTime: 0, // TODO
+			// TODO ProgressStandart:        [][]int8 // json
+		}
 	}
+	log.Println(user)
 	// logic
+	// add users progress
 	response := enterResponse{
 		ReqMsgID: request.MsgID,
 	}
