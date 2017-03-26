@@ -1,5 +1,9 @@
 package storage
 
-import "gopkg.in/mgo.v2"
+import (
+	"github.com/jinzhu/gorm"
+	"gopkg.in/mgo.v2"
+)
 
 var MongoDB *mgo.Session
+var Gorm *gorm.DB

@@ -3,7 +3,7 @@ package models
 // User struct in storage
 type User struct {
 	tableName               struct{} `sql:"users"`
-	ID                      uint64
+	ID                      uint64   `gorm:"primary_key"`
 	SysID                   uint8
 	ExtID                   string
 	ReachedStage01          uint8

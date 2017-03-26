@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/storage"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -21,10 +21,9 @@ func ReqReduceTries(c *gin.Context) {
 		return
 	}
 	user := c.MustGet("user").(models.User)
-	log.Print(user)
-	// logic
-	// Response [4]
+	user.RemainingTries--
+	storage.Gorm.Save(&user)
 	response := make([]uint8, 1)
-	response[0] = 123
+	response[0] = user.RemainingTries
 	c.JSON(http.StatusOK, response)
 }

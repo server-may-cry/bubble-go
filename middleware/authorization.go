@@ -12,6 +12,7 @@ import (
 
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -29,28 +30,46 @@ func AuthorizationMiddleware(c *gin.Context) {
 	}
 
 	var stringToHash string
+	var platformID uint8
 	switch request.SysID {
 	case "VK":
-		appID := os.Getenv("VK_APP_ID")
-		secret := os.Getenv("VK_SECRET")
-		stringToHash = fmt.Sprintf("%s_%s_%s", appID, request.ExtID, secret)
+		platformID = 1
+		stringToHash = fmt.Sprintf(
+			"%s_%s_%s",
+			os.Getenv("VK_APP_ID"),
+			request.ExtID,
+			os.Getenv("VK_SECRET"),
+		)
 	case "OK":
-		secret := os.Getenv("OK_SECRET")
-		stringToHash = fmt.Sprintf("%s%s%s", request.ExtID, request.SessionKey, secret)
+		platformID = 2
+		stringToHash = fmt.Sprintf(
+			"%s%s%s",
+			request.ExtID,
+			request.SessionKey,
+			os.Getenv("OK_SECRET"),
+		)
 	default:
 		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Unknown platform %s", request.SysID))
 	}
 	data := []byte(stringToHash)
-	expectedMD5 := md5.Sum(data)
-	expectedAuthKey := fmt.Sprintf("%x", expectedMD5)
+	expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
 	if expectedAuthKey != request.AuthKey {
-		log.Print("authorization failure", " ", stringToHash, " ", expectedAuthKey, " ", request.AuthKey)
-		log.Print("expected ", expectedAuthKey)
+		log.Printf(
+			"authorization failure %s %s %s",
+			stringToHash,
+			expectedAuthKey,
+			request.AuthKey,
+		)
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Bad auth key %s", request.AuthKey))
 		return
 	}
 
 	log.Print("authorization success")
-	c.Set("user", models.User{}) // TODO
+	db := storage.Gorm
+	var user models.User
+	db.First(&user, "sysID = ? AND extID = ?", platformID, request.ExtID)
+	if user.SysID == platformID { // check user exists
+		c.Set("user", user)
+	}
 	c.Next()
 }

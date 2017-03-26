@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/middleware"
 	"github.com/server-may-cry/bubble-go/storage"
@@ -25,6 +27,12 @@ func init() {
 		log.Fatal(err)
 	}
 	storage.MongoDB = mongoConnection
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	storage.Gorm = db
 }
 
 func main() {

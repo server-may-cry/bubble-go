@@ -1,7 +1,7 @@
 {
 	"comment": "",
 	"heroku": {
-		"goVersion": "go1.7",
+		"goVersion": "go1.8",
 		"install": [
 			"./cmd/..."
 		]
@@ -25,6 +25,12 @@
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "8ee79997227bf9b34611aee7946ae64735e6fd93",
 			"revisionTime": "2016-11-17T03:31:26Z"
+		},
+		{
+			"checksumSHA1": "Jo1cMlZwUmSlt4SB2c/aurzXCTI=",
+			"path": "github.com/jinzhu/gorm",
+			"revision": "66d5b42ee9d071458e9a430efeb135b29e51e896",
+			"revisionTime": "2017-03-24T01:28:06Z"
 		},
 		{
 			"checksumSHA1": "8sba7NooZnLTY8zidsbqBeDUjxI=",
