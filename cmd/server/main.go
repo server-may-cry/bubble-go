@@ -30,10 +30,10 @@ func init() {
 	}
 	storage.MongoDB = mongoConnection
 
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", "test.sqlite3")
 	db.AutoMigrate(&models.User{})
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatal("failed to connect database")
 	}
 	storage.Gorm = db
 

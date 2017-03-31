@@ -23,5 +23,5 @@ type User struct {
 	RestoreTriesAt          int64
 	Credits                 uint16
 	FriendsBonusCreditsTime int64
-	ProgressStandart        [][]int8 // json
+	// ProgressStandart        [][]int8 // json // gorm conflict
 }

@@ -3,3 +3,4 @@
 *.exe
 /server
 /migrate
+/test.sqlite3
