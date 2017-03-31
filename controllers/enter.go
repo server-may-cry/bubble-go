@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/platforms"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -60,8 +61,9 @@ func ReqEnter(c *gin.Context) {
 		user = value.(models.User)
 		// time rewards logic
 	} else {
+		platformID := platforms.GetByName(request.SysID)
 		user = models.User{
-			// TODO SysID:                   request.SysID, // TODO int?
+			SysID:                   platformID,
 			ExtID:                   request.ExtID,
 			ReachedStage01:          0,
 			ReachedSubStage01:       0,

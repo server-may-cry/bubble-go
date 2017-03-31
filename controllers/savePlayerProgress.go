@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/models"
@@ -52,7 +53,7 @@ func ReqSavePlayerProgress(c *gin.Context) {
 			user.ReachedSubStage01 = request.ReachedSubStage
 		}
 	default:
-		panic("not implemented level mode")
+		log.Panicf("not implemented level mode %s", request.LevelMode)
 	}
 	// TODO
 	// logic progress

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 	"reflect"
 
 	"github.com/server-may-cry/bubble-go/models"
@@ -28,10 +29,9 @@ var marketConfig marketConfigStruct
 
 // Buy get user and item name (from market config). Change user
 func Buy(user *models.User, packName string) {
-	initializeMarket()
 	pack, exist := marketConfig[packName]
 	if !exist {
-		log.Printf("try buy not existed pack %s", packName)
+		log.Fatalf("try buy not existed pack %s", packName)
 	}
 	for parameter, amount := range pack.Reward.Increase {
 		r := reflect.ValueOf(user)
@@ -42,16 +42,17 @@ func Buy(user *models.User, packName string) {
 		r := reflect.ValueOf(user)
 		reflect.Indirect(r).FieldByName(parameter).SetInt(amount)
 	}
-	// TODO
+	// TODO wat?
 }
 
-func initializeMarket() {
+// InitializeMarket load market config from market.json
+func InitializeMarket() {
 	if len(marketConfig) > 1 {
 		return
 	}
-	file, err := ioutil.ReadFile("./config/market.json")
+	file, err := ioutil.ReadFile(filepath.ToSlash("./market/market.json"))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	json.Unmarshal(file, &marketConfig)

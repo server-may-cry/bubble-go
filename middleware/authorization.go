@@ -30,10 +30,9 @@ func AuthorizationMiddleware(c *gin.Context) {
 	}
 
 	var stringToHash string
-	var platformID uint8
+	platformID := platforms.GetByName(request.SysID)
 	switch request.SysID {
 	case "VK":
-		platformID = 1
 		stringToHash = fmt.Sprintf(
 			"%s_%s_%s",
 			os.Getenv("VK_APP_ID"),
@@ -41,7 +40,6 @@ func AuthorizationMiddleware(c *gin.Context) {
 			os.Getenv("VK_SECRET"),
 		)
 	case "OK":
-		platformID = 2
 		stringToHash = fmt.Sprintf(
 			"%s%s%s",
 			request.ExtID,

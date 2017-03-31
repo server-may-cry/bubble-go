@@ -33,6 +33,12 @@
 			"revisionTime": "2017-03-24T01:28:06Z"
 		},
 		{
+			"checksumSHA1": "4VZ1gLZHMumRjV3fclS1aX8S1aQ=",
+			"path": "github.com/jinzhu/gorm/dialects/sqlite",
+			"revision": "45ccb134373e7d9fa76d5987a6fed6cd5a5adfd4",
+			"revisionTime": "2017-03-27T15:13:47Z"
+		},
+		{
 			"checksumSHA1": "8sba7NooZnLTY8zidsbqBeDUjxI=",
 			"path": "github.com/manucorporat/sse",
 			"revision": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d",
@@ -45,10 +51,16 @@
 			"revisionTime": "2016-11-23T14:36:37Z"
 		},
 		{
-			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"checksumSHA1": "Ef3+gi97QEvLS9VonbjOF/cZnDQ=",
+			"path": "github.com/mattn/go-sqlite3",
+			"revision": "b2e464529e88db676302aa63a4ce36711633950e",
+			"revisionTime": "2017-03-24T00:12:00Z"
+		},
+		{
+			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",
 			"path": "golang.org/x/net/context",
-			"revision": "b7883d29650d340156352196ef5e434db117757b",
-			"revisionTime": "2017-01-07T09:56:23Z"
+			"revision": "ffcf1bedda3b04ebb15a168a59800a73d6dc0f4d",
+			"revisionTime": "2017-03-29T01:43:45Z"
 		},
 		{
 			"checksumSHA1": "uTQtOqR0ePMMcvuvAIksiIZxhqU=",

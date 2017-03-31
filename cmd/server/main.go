@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/server-may-cry/bubble-go/controllers"
+	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/middleware"
 	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/gin-gonic/gin.v1"
@@ -33,6 +34,8 @@ func init() {
 		panic("failed to connect database")
 	}
 	storage.Gorm = db
+
+	market.InitializeMarket()
 }
 
 func main() {

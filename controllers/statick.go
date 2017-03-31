@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -29,8 +28,7 @@ func ServeStatick(c *gin.Context) {
 		}
 		tmpDirName = dir
 	}
-	fullFilePath := tmpDirName + "/bubble" + filePath
-	fullFilePath = strings.Replace(fullFilePath, "/", string(os.PathSeparator), -1)
+	fullFilePath := filepath.ToSlash(tmpDirName + "/bubble" + filePath)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
 		dirToStoreFile := filepath.Dir(fullFilePath)
 		if _, err = os.Stat(dirToStoreFile); os.IsNotExist(err) {
