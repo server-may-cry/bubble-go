@@ -66,8 +66,9 @@ func AuthorizationMiddleware(c *gin.Context) {
 	log.Print("authorization success")
 	db := storage.Gorm
 	var user models.User
-	db.First(&user, "sysID = ? AND extID = ?", platformID, request.ExtID)
-	if user.SysID == platformID { // check user exists
+	db.Where("SysID = ? AND ExtID = ?", platformID, request.ExtID).First(&user)
+	if user.ID != 0 { // check user exists
+		log.Print("user found")
 		c.Set("user", user)
 	}
 	c.Next()
