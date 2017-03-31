@@ -85,7 +85,7 @@ func ReqEnter(c *gin.Context) {
 			FriendsBonusCreditsTime: 0, // TODO
 			// TODO ProgressStandart:        [][]int8 // json
 		}
-		success := storage.Gorm.NewRecord(user)
+		success := storage.Gorm.NewRecord(&user)
 		if !success {
 			log.Fatalf("can`t create user %v", user)
 		}

@@ -11,6 +11,7 @@ import (
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/middleware"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/gin-gonic/gin.v1"
 	"gopkg.in/mgo.v2"
@@ -30,6 +31,7 @@ func init() {
 	storage.MongoDB = mongoConnection
 
 	db, err := gorm.Open("sqlite3", "test.db")
+	db.AutoMigrate(&models.User{})
 	if err != nil {
 		panic("failed to connect database")
 	}
