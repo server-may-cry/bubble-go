@@ -36,7 +36,7 @@ func ReqUsersProgress(c *gin.Context) {
 	user := c.MustGet("user").(models.User)
 	usersLen := len(request.SocIDs)
 	users := make([]models.User, usersLen)
-	storage.Gorm.Where("SysID = ? and ExtID in (?)", user.SysID, request.SocIDs).Find(&users)
+	storage.Gorm.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
 	response := usersProgressResponse{
 		UsersProgress: make([]userProgres, usersLen),
 	}
