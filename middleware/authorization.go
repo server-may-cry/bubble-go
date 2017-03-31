@@ -12,6 +12,7 @@ import (
 
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/platforms"
 	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/gin-gonic/gin.v1"
 )

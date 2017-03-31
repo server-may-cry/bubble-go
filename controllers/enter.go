@@ -6,6 +6,7 @@ import (
 
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
+	"github.com/server-may-cry/bubble-go/storage"
 
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -83,6 +84,10 @@ func ReqEnter(c *gin.Context) {
 			Credits:                 0, // TODO
 			FriendsBonusCreditsTime: 0, // TODO
 			// TODO ProgressStandart:        [][]int8 // json
+		}
+		success := storage.Gorm.NewRecord(user)
+		if !success {
+			log.Fatalf("can`t create user %v", user)
 		}
 	}
 	log.Println(user)
