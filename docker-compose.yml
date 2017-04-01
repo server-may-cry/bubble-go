@@ -1,0 +1,7 @@
+version: '2'
+services:
+  go:
+    build: .
+    working_dir: /go/src/github.com/server-may-cry/bubble-go
+    volumes:
+     - .:/go/src/github.com/server-may-cry/bubble-go
