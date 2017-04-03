@@ -1,16 +1,14 @@
 package market
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
-	"path/filepath"
 	"reflect"
 
 	"github.com/server-may-cry/bubble-go/models"
 )
 
-type marketConfigStruct map[string]struct {
+// Config struct for market offers and packs
+type Config map[string]struct {
 	Price struct {
 		Vk int `json:"vk"`
 		Ok int `json:"ok"`
@@ -25,7 +23,7 @@ type marketConfigStruct map[string]struct {
 	Photo string `json:"photo"`
 }
 
-var marketConfig marketConfigStruct
+var marketConfig Config
 
 // Buy get user and item name (from market config). Change user
 func Buy(user *models.User, packName string) {
@@ -42,18 +40,9 @@ func Buy(user *models.User, packName string) {
 		r := reflect.ValueOf(user)
 		reflect.Indirect(r).FieldByName(parameter).SetInt(amount)
 	}
-	// TODO wat?
 }
 
 // InitializeMarket load market config from market.json
-func InitializeMarket() {
-	if len(marketConfig) > 1 {
-		return
-	}
-	file, err := ioutil.ReadFile(filepath.ToSlash("./market/market.json"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	json.Unmarshal(file, &marketConfig)
+func InitializeMarket(config Config) {
+	marketConfig = config
 }

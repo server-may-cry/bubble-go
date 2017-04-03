@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -19,14 +22,26 @@ import (
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 
-	db, err := gorm.Open("sqlite3", "test.sqlite3")
+	sqliteFile, err := ioutil.TempFile("", "bubble.sqlite3")
+	if err != nil {
+		log.Fatal(err)
+	}
+	db, err := gorm.Open("sqlite3", sqliteFile.Name())
 	if err != nil {
 		log.Fatalf("failed to connect database: %s", err)
 	}
 	db.AutoMigrate(&models.User{})
 	storage.Gorm = db
 
-	market.InitializeMarket()
+	marketConfigFile := "./config/market.json"
+	file, err := ioutil.ReadFile(filepath.ToSlash(marketConfigFile))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var marketConfig market.Config
+	json.Unmarshal(file, &marketConfig)
+	market.InitializeMarket(marketConfig)
 }
 
 func main() {

@@ -13,8 +13,6 @@ import (
 type buyProductRequest struct {
 	baseRequest
 	ProductID string `json:"productId" binding:"required"`
-
-	LevelMode string `json:"levelMode" binding:"required"`
 }
 
 type buyProductResponse struct {
