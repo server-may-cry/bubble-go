@@ -14,27 +14,16 @@ import (
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/gin-gonic/gin.v1"
-	"gopkg.in/mgo.v2"
 )
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 
-	rawMongoURL := os.Getenv("MONGODB_URI")
-	if rawMongoURL == "" {
-		log.Fatal("$MONGODB_URI must be set")
-	}
-	mongoConnection, err := mgo.Dial(rawMongoURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	storage.MongoDB = mongoConnection
-
 	db, err := gorm.Open("sqlite3", "test.sqlite3")
-	db.AutoMigrate(&models.User{})
 	if err != nil {
-		log.Fatal("failed to connect database")
+		log.Fatalf("failed to connect database: %s", err)
 	}
+	db.AutoMigrate(&models.User{})
 	storage.Gorm = db
 
 	market.InitializeMarket()

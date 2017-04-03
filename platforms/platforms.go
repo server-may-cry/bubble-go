@@ -3,11 +3,13 @@ package platforms
 import "log"
 
 const (
-	vk = iota
+	vk = iota + 1 // 1
+	ok            // 2
 )
 
 var platformsMap = map[string]uint8{
 	"VK": vk,
+	"OK": ok,
 }
 
 // GetByName return platform id

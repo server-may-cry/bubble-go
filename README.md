@@ -5,4 +5,7 @@
 govendor sync
 ```
 
-Use mongodb cause https://mlab.com/ give 500MB for free
+###### Packages
+* gopkg.in/gin-gonic/gin.v1
+* github.com/jinzhu/gorm
+* github.com/jinzhu/gorm/dialects/sqlite
