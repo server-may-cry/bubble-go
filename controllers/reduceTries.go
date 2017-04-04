@@ -23,7 +23,7 @@ func ReqReduceTries(c *gin.Context) {
 	user := c.MustGet("user").(models.User)
 	user.RemainingTries--
 	storage.Gorm.Save(&user)
-	response := make([]uint8, 1)
+	response := make([]int8, 1)
 	response[0] = user.RemainingTries
 	c.JSON(http.StatusOK, response)
 }

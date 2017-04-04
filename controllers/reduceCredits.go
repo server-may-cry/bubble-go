@@ -11,13 +11,13 @@ import (
 
 type reduceCreditsRequest struct {
 	baseRequest
-	Amount uint16 `json:"amount,string" binding:"required"`
+	Amount int16 `json:"amount,string" binding:"required"`
 }
 
 type reduceCreditsResponse struct {
 	ReqMsgID string `json:"reqMsgId"`
 	UserID   string `json:"userId"`
-	Credits  uint16 `json:"credits"`
+	Credits  int16  `json:"credits"`
 }
 
 // ReqReduceCredits reduce user credits. Get amount from request
@@ -25,6 +25,9 @@ func ReqReduceCredits(c *gin.Context) {
 	request := reduceCreditsRequest{}
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, getErrBody(err))
+		return
+	}
+	if request.Amount < 0 {
 		return
 	}
 	user := c.MustGet("user").(models.User)

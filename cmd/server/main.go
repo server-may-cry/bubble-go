@@ -41,7 +41,7 @@ func init() {
 
 	var marketConfig market.Config
 	json.Unmarshal(file, &marketConfig)
-	market.InitializeMarket(marketConfig)
+	market.Initialize(marketConfig)
 }
 
 func main() {

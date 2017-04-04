@@ -1,8 +1,9 @@
 package market
 
 import (
-	"log"
+	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/server-may-cry/bubble-go/models"
 )
@@ -29,20 +30,22 @@ var marketConfig Config
 func Buy(user *models.User, packName string) {
 	pack, exist := marketConfig[packName]
 	if !exist {
-		log.Fatalf("try buy not existed pack %s", packName)
+		panic(fmt.Sprintf("try buy not existed pack %s", packName))
 	}
 	for parameter, amount := range pack.Reward.Increase {
+		Parameter := strings.Title(parameter)
 		r := reflect.ValueOf(user)
-		was := reflect.Indirect(r).FieldByName(parameter).Int()
-		reflect.Indirect(r).FieldByName(parameter).SetInt(was + amount)
+		was := reflect.Indirect(r).FieldByName(Parameter).Int()
+		reflect.Indirect(r).FieldByName(Parameter).SetInt(was + amount)
 	}
 	for parameter, amount := range pack.Reward.Set {
+		Parameter := strings.Title(parameter)
 		r := reflect.ValueOf(user)
-		reflect.Indirect(r).FieldByName(parameter).SetInt(amount)
+		reflect.Indirect(r).FieldByName(Parameter).SetInt(amount)
 	}
 }
 
-// InitializeMarket load market config from market.json
-func InitializeMarket(config Config) {
+// Initialize load market config from market.json
+func Initialize(config Config) {
 	marketConfig = config
 }

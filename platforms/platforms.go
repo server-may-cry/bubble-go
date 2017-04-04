@@ -1,6 +1,6 @@
 package platforms
 
-import "log"
+import "fmt"
 
 const (
 	vk = iota + 1 // 1
@@ -16,7 +16,7 @@ var platformsMap = map[string]uint8{
 func GetByName(name string) uint8 {
 	platformID, exist := platformsMap[name]
 	if !exist {
-		log.Fatalf("unknowwn platform %s", name)
+		panic(fmt.Sprintf("unknowwn platform %s", name))
 	}
 
 	return platformID
