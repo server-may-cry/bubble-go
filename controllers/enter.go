@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -87,7 +88,7 @@ func ReqEnter(c *gin.Context) {
 		}
 		success := storage.Gorm.NewRecord(&user)
 		if !success {
-			log.Fatalf("can`t create user %v", user)
+			panic(fmt.Sprintf("can`t create user %v", user))
 		}
 	}
 	log.Println(user)

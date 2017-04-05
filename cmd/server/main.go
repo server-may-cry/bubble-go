@@ -74,7 +74,7 @@ func main() {
 	router.GET("/cache-clear", controllers.ClearStatickCache)
 
 	router.GET("/exception", func(c *gin.Context) {
-		log.Fatal("test log.Fatal")
+		panic("test log.Fatal")
 	})
 
 	loaderio := os.Getenv("LOADERIO")

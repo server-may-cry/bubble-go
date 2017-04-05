@@ -3,7 +3,6 @@ package controllers
 import (
 	"io"
 	"io/ioutil"
-	"log"
 	"mime"
 	"net/http"
 	"os"
@@ -18,50 +17,53 @@ const (
 
 var tmpDirName string
 
-// ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)
-func ServeStatick(c *gin.Context) {
-	filePath := c.Param("filePath")
+func init() {
 	if tmpDirName == "" {
 		dir, err := ioutil.TempDir("", "bubble_cache_")
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		tmpDirName = dir
 	}
+}
+
+// ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)
+func ServeStatick(c *gin.Context) {
+	filePath := c.Param("filePath")
 	fullFilePath := filepath.ToSlash(tmpDirName + "/bubble" + filePath)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
 		dirToStoreFile := filepath.Dir(fullFilePath)
 		if _, err = os.Stat(dirToStoreFile); os.IsNotExist(err) {
 			err = os.MkdirAll(dirToStoreFile, 0777)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 		}
 		out, err := os.Create(fullFilePath)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		defer out.Close()
 		resp, err := http.Get(cdnroot + filePath)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		defer resp.Body.Close()
 		_, err = io.Copy(out, resp.Body)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 	}
 
 	dat, err := ioutil.ReadFile(fullFilePath)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	ext := filepath.Ext(fullFilePath)
 	c.Writer.Header().Set("Content-Type", mime.TypeByExtension(ext))
 	_, err = c.Writer.WriteString(string(dat))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -69,7 +71,7 @@ func ServeStatick(c *gin.Context) {
 func ClearStatickCache(c *gin.Context) {
 	err := os.RemoveAll(tmpDirName)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	c.String(http.StatusOK, "done")
 }
