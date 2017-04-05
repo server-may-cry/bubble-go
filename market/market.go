@@ -48,4 +48,10 @@ func Buy(user *models.User, packName string) {
 // Initialize load market config from market.json
 func Initialize(config Config) {
 	marketConfig = config
+
+	// check all packs valid
+	user := models.User{}
+	for packName := range marketConfig {
+		Buy(&user, packName)
+	}
 }
