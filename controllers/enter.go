@@ -23,25 +23,25 @@ type enterRequest struct {
 type enterResponse struct {
 	ReqMsgID               uint64     `json:"reqMsgId"`
 	UserID                 uint32     `json:"userId"`
-	ReachedStage01         int8       `json:"reachedStage01"`
-	ReachedStage02         int8       `json:"reachedStage02"`
-	ReachedSubStage01      int8       `json:"reachedSubStage01"`
-	ReachedSubStage02      int8       `json:"reachedSubStage02"`
+	ReachedStage01         int8       `json:"reachedStage01,uint8"`
+	ReachedStage02         int8       `json:"reachedStage02,uint8"`
+	ReachedSubStage01      int8       `json:"reachedSubStage01,uint8"`
+	ReachedSubStage02      int8       `json:"reachedSubStage02,uint8"`
 	IgnoreSavePointBlock   bool       `json:"ignoreSavePointBlock"`
-	RemainingTries         int8       `json:"remainingTries"`
-	Credits                uint16     `json:"credits"`
-	InfinityExtra00        bool       `json:"inifinityExtra00"`
-	InfinityExtra01        bool       `json:"inifinityExtra01"`
-	InfinityExtra02        bool       `json:"inifinityExtra02"`
-	InfinityExtra03        bool       `json:"inifinityExtra03"`
-	InfinityExtra04        bool       `json:"inifinityExtra04"`
-	InfinityExtra05        bool       `json:"inifinityExtra05"`
-	InfinityExtra06        bool       `json:"inifinityExtra06"`
-	InfinityExtra07        bool       `json:"inifinityExtra07"`
-	InfinityExtra08        bool       `json:"inifinityExtra08"`
-	InfinityExtra09        bool       `json:"inifinityExtra09"`
-	BonusCredits           int16      `json:"bonusCredits"`
-	AppFriendsBonusCredits int16      `json:"appFriendsBonusCredits"`
+	RemainingTries         int8       `json:"remainingTries,uint8"`
+	Credits                int16      `json:"credits,uint16"`
+	InfinityExtra00        int8       `json:"inifinityExtra00,uint8"`
+	InfinityExtra01        int8       `json:"inifinityExtra01,uint8"`
+	InfinityExtra02        int8       `json:"inifinityExtra02,uint8"`
+	InfinityExtra03        int8       `json:"inifinityExtra03,uint8"`
+	InfinityExtra04        int8       `json:"inifinityExtra04,uint8"`
+	InfinityExtra05        int8       `json:"inifinityExtra05,uint8"`
+	InfinityExtra06        int8       `json:"inifinityExtra06,uint8"`
+	InfinityExtra07        int8       `json:"inifinityExtra07,uint8"`
+	InfinityExtra08        int8       `json:"inifinityExtra08,uint8"`
+	InfinityExtra09        int8       `json:"inifinityExtra09,uint8"`
+	BonusCredits           int16      `json:"bonusCredits,uint16"`
+	AppFriendsBonusCredits int16      `json:"appFriendsBonusCredits,uint16"`
 	OfferAvailable         bool       `json:"offerAvailable"`
 	FirstGame              bool       `json:"firstGame"`
 	StagesProgressStat01   [8]uint32  `json:"stagesProgressStat01"`

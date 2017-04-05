@@ -63,7 +63,7 @@ func main() {
 		securedGroup.POST("/ReqSavePlayerProgress", controllers.ReqSavePlayerProgress)
 		securedGroup.POST("/ReqUsersProgress", controllers.ReqUsersProgress)
 	}
-	router.POST("/pay/:platform", controllers.PayPlatform) // vk|ok
+	router.POST("/VkPay", controllers.VkPay)
 
 	router.GET("/crossdomain.xml", func(c *gin.Context) {
 		c.String(http.StatusOK, "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" /></cross-domain-policy>")
