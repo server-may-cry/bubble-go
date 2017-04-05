@@ -25,11 +25,11 @@ import (
 */
 type savePlayerProgressRequest struct {
 	baseRequest
-	ReachedSubStage            uint8  `json:"reachedSubStage,string" binding:"required"`
-	CurrentStage               uint8  `json:"currentStage,string" binding:"required"`
-	ReachedStage               uint8  `json:"reachedStage,string" binding:"required"`
-	CompleteSubStage           uint8  `json:"completeSubStage,string" binding:"required"`
-	CompleteSubStageRecordStat uint8  `json:"completeSubStageRecordStat,string" binding:"required"`
+	ReachedSubStage            int8   `json:"reachedSubStage,string" binding:"required"`
+	CurrentStage               int8   `json:"currentStage,string" binding:"required"`
+	ReachedStage               int8   `json:"reachedStage,string" binding:"required"`
+	CompleteSubStage           int8   `json:"completeSubStage,string" binding:"required"`
+	CompleteSubStageRecordStat int8   `json:"completeSubStageRecordStat,string" binding:"required"`
 	LevelMode                  string `json:"levelMode,string" binding:"required"`
 }
 

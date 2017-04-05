@@ -6,8 +6,10 @@ type User struct {
 	ID                      uint64   `gorm:"primary_key"`
 	SysID                   uint8
 	ExtID                   string
-	ReachedStage01          uint8
-	ReachedSubStage01       uint8
+	ReachedStage01          int8
+	ReachedSubStage01       int8
+	ReachedStage02          int8 // not used. need in market. TODO remove
+	ReachedSubStage02       int8 // not used. need in market. TODO remove
 	IgnoreSavePointBlock    int8
 	InifinityExtra00        int8
 	InifinityExtra01        int8

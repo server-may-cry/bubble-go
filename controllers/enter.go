@@ -23,12 +23,12 @@ type enterRequest struct {
 type enterResponse struct {
 	ReqMsgID               uint64     `json:"reqMsgId"`
 	UserID                 uint32     `json:"userId"`
-	ReachedStage01         uint8      `json:"reachedStage01"`
-	ReachedStage02         uint8      `json:"reachedStage02"`
-	ReachedSubStage01      uint8      `json:"reachedSubStage01"`
-	ReachedSubStage02      uint8      `json:"reachedSubStage02"`
+	ReachedStage01         int8       `json:"reachedStage01"`
+	ReachedStage02         int8       `json:"reachedStage02"`
+	ReachedSubStage01      int8       `json:"reachedSubStage01"`
+	ReachedSubStage02      int8       `json:"reachedSubStage02"`
 	IgnoreSavePointBlock   bool       `json:"ignoreSavePointBlock"`
-	RemainingTries         uint8      `json:"remainingTries"`
+	RemainingTries         int8       `json:"remainingTries"`
 	Credits                uint16     `json:"credits"`
 	InfinityExtra00        bool       `json:"inifinityExtra00"`
 	InfinityExtra01        bool       `json:"inifinityExtra01"`
@@ -40,8 +40,8 @@ type enterResponse struct {
 	InfinityExtra07        bool       `json:"inifinityExtra07"`
 	InfinityExtra08        bool       `json:"inifinityExtra08"`
 	InfinityExtra09        bool       `json:"inifinityExtra09"`
-	BonusCredits           uint16     `json:"bonusCredits"`
-	AppFriendsBonusCredits uint16     `json:"appFriendsBonusCredits"`
+	BonusCredits           int16      `json:"bonusCredits"`
+	AppFriendsBonusCredits int16      `json:"appFriendsBonusCredits"`
 	OfferAvailable         bool       `json:"offerAvailable"`
 	FirstGame              bool       `json:"firstGame"`
 	StagesProgressStat01   [8]uint32  `json:"stagesProgressStat01"`
