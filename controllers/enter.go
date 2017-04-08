@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
@@ -81,9 +82,9 @@ func ReqEnter(c *gin.Context) {
 			InifinityExtra08:        0,
 			InifinityExtra09:        0,
 			RemainingTries:          5,
-			RestoreTriesAt:          0, // TODO
+			RestoreTriesAt:          0,
 			Credits:                 0, // TODO
-			FriendsBonusCreditsTime: 0, // TODO
+			FriendsBonusCreditsTime: time.Now().Unix(),
 			// TODO ProgressStandart:        [][]int8 // json
 		}
 		success := storage.Gorm.NewRecord(&user)

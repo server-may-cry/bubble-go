@@ -9,7 +9,10 @@ import (
 )
 
 // Config struct for market offers and packs
-type Config map[string]struct {
+type Config map[string]Pack
+
+// Pack is market element
+type Pack struct {
 	Price struct {
 		Vk int `json:"vk"`
 		Ok int `json:"ok"`
@@ -43,6 +46,17 @@ func Buy(user *models.User, packName string) {
 		r := reflect.ValueOf(user)
 		reflect.Indirect(r).FieldByName(Parameter).SetInt(amount)
 	}
+}
+
+// GetPack return pack description
+func GetPack(packName string) Pack {
+	pack, exist := marketConfig[packName]
+	if !exist {
+		panic(fmt.Sprintf("try buy not existed pack %s", packName))
+	}
+	// TODO add CDN prefix
+
+	return pack
 }
 
 // Initialize load market config from market.json

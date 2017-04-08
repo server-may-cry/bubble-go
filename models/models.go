@@ -27,3 +27,12 @@ type User struct {
 	FriendsBonusCreditsTime int64
 	// ProgressStandart        [][]int8 // json // gorm conflict
 }
+
+// Transaction log payment requests
+type Transaction struct {
+	ID          uint64
+	OrderID     int64
+	CreatedAt   int64
+	UserID      uint64
+	ConfirmedAt int64
+}

@@ -31,6 +31,7 @@ func init() {
 		log.Fatalf("failed to connect database: %s", err)
 	}
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Transaction{})
 	storage.Gorm = db
 
 	marketConfigFile := "./config/market.json"
