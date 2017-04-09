@@ -15,6 +15,7 @@ import (
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/middleware"
 	"github.com/server-may-cry/bubble-go/models"
+	"github.com/server-may-cry/bubble-go/notification"
 	"github.com/server-may-cry/bubble-go/storage"
 	"gopkg.in/gin-gonic/gin.v1"
 )
@@ -43,6 +44,8 @@ func init() {
 	var marketConfig market.Config
 	json.Unmarshal(file, &marketConfig)
 	market.Initialize(marketConfig)
+
+	go notification.VkWorkerInit()
 }
 
 func main() {
