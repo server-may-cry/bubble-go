@@ -45,7 +45,8 @@ func init() {
 	json.Unmarshal(file, &marketConfig)
 	market.Initialize(marketConfig)
 
-	go notification.VkWorkerInit()
+	notification.VkEventChan = make(chan notification.VkEvent)
+	go notification.VkWorkerInit(notification.VkEventChan)
 }
 
 func main() {

@@ -3,24 +3,25 @@ package notification
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 )
 
-var client *http.Client
-
 type authorizationResponse struct {
 	AccessToken string `json:"access_token"`
 }
 
 var authResponse authorizationResponse
+var client *http.Client
 
 const requestInterval = time.Millisecond * 300
+const batchLevelsGroupCount = 200
 
 // VkWorkerInit run vk app2user notification
-func VkWorkerInit(ch chan VkEvent) {
+func VkWorkerInit(ch <-chan VkEvent) {
 	client = &http.Client{}
 
 	req, err := http.NewRequest("GET", "https://oauth.vk.com/access_token", nil)
@@ -66,12 +67,25 @@ func VkWorkerInit(ch chan VkEvent) {
 				// sendRequest("secure.setUserLevel", parameters)
 				continue
 			}
-		case event := <-ch:
-			switch event.Type {
-			case 1:
-				batchLevels = append(batchLevels, event)
-			case 2:
-				listEvents = append(listEvents, event)
+		case event, ok := <-ch:
+			if ok {
+				switch event.Type {
+				case 1:
+					batchLevels = append(batchLevels, event)
+				case 2:
+					listEvents = append(listEvents, event)
+				}
+			} else {
+				ch = nil
+			}
+		}
+		if ch == nil { // closed channel on shutdown. TODO make shutdown
+			log.Printf(
+				"Prepare shutdown. VK worker must make:%d requests",
+				len(listEvents)+len(batchLevels)/batchLevelsGroupCount,
+			)
+			if (len(listEvents) + len(batchLevels)/batchLevelsGroupCount) == 0 {
+				break
 			}
 		}
 	}
