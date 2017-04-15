@@ -1,13 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
-
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 type buyProductRequest struct {
@@ -21,18 +20,22 @@ type buyProductResponse struct {
 }
 
 // ReqBuyProduct buy product
-func ReqBuyProduct(c *gin.Context) {
+func ReqBuyProduct(w http.ResponseWriter, r *http.Request) {
 	request := buyProductRequest{}
-	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, getErrBody(err))
+	defer r.Body.Close()
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	ctx := r.Context()
+	user := ctx.Value("user").(models.User)
 	market.Buy(&user, request.ProductID)
 	response := buyProductResponse{
 		ProductID: request.ProductID,
 		Credits:   user.Credits,
 	}
 	storage.Gorm.Save(&user)
-	c.JSON(http.StatusOK, response)
+	JSON(w, response)
 }

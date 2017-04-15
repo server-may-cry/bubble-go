@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/pressly/chi"
 )
 
 const (
@@ -28,8 +28,8 @@ func init() {
 }
 
 // ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)
-func ServeStatick(c *gin.Context) {
-	filePath := c.Param("filePath")
+func ServeStatick(w http.ResponseWriter, r *http.Request) {
+	filePath := chi.URLParam(r, "filePath")
 	fullFilePath := filepath.ToSlash(tmpDirName + "/bubble" + filePath)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
 		dirToStoreFile := filepath.Dir(fullFilePath)
@@ -60,18 +60,18 @@ func ServeStatick(c *gin.Context) {
 		panic(err)
 	}
 	ext := filepath.Ext(fullFilePath)
-	c.Writer.Header().Set("Content-Type", mime.TypeByExtension(ext))
-	_, err = c.Writer.WriteString(string(dat))
+	w.Header().Set("Content-Type", mime.TypeByExtension(ext))
+	_, err = w.Write(dat)
 	if err != nil {
 		panic(err)
 	}
 }
 
 // ClearStatickCache remove statick files
-func ClearStatickCache(c *gin.Context) {
+func ClearStatickCache(w http.ResponseWriter, r *http.Request) {
 	err := os.RemoveAll(tmpDirName)
 	if err != nil {
 		panic(err)
 	}
-	c.String(http.StatusOK, "done")
+	JSON(w, "done")
 }

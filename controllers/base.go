@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-
-	"gopkg.in/gin-gonic/gin.v1"
 )
+
+type h map[string]interface{}
 
 // AuthRequestPart can be used to validate request
 type AuthRequestPart struct {
@@ -20,8 +20,8 @@ type baseRequest struct {
 	MsgID uint64 `json:"msgId,string"` // not required. just for back capability
 }
 
-func getErrBody(err error) gin.H {
-	return gin.H{"bad request": err}
+func getErrBody(err error) string {
+	return err.Error()
 }
 
 // JSON is helper to serve json http response

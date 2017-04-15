@@ -1,12 +1,11 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
-
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 type reduceCreditsRequest struct {
@@ -21,20 +20,24 @@ type reduceCreditsResponse struct {
 }
 
 // ReqReduceCredits reduce user credits. Get amount from request
-func ReqReduceCredits(c *gin.Context) {
+func ReqReduceCredits(w http.ResponseWriter, r *http.Request) {
 	request := reduceCreditsRequest{}
-	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, getErrBody(err))
+	defer r.Body.Close()
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
 	if request.Amount < 0 {
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	ctx := r.Context()
+	user := ctx.Value("user").(models.User)
 	user.Credits -= request.Amount
 	storage.Gorm.Save(&user)
 	response := reduceCreditsResponse{
 		Credits: user.Credits,
 	}
-	c.JSON(http.StatusOK, response)
+	JSON(w, response)
 }

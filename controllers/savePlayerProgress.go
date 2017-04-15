@@ -1,13 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
-
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 /*
@@ -34,13 +33,17 @@ type savePlayerProgressRequest struct {
 }
 
 // ReqSavePlayerProgress save player progress
-func ReqSavePlayerProgress(c *gin.Context) {
+func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 	request := savePlayerProgressRequest{}
-	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, getErrBody(err))
+	defer r.Body.Close()
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	ctx := r.Context()
+	user := ctx.Value("user").(models.User)
 	needUpdate := false
 	switch request.LevelMode {
 	case "standart":
@@ -62,5 +65,5 @@ func ReqSavePlayerProgress(c *gin.Context) {
 	}
 	// social logic
 	response := "ok"
-	c.JSON(http.StatusOK, response)
+	JSON(w, response)
 }

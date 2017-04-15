@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,8 +10,6 @@ import (
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
 	"github.com/server-may-cry/bubble-go/storage"
-
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 type enterRequest struct {
@@ -52,13 +51,18 @@ type enterResponse struct {
 }
 
 // ReqEnter first request from client. Return user info and user progress
-func ReqEnter(c *gin.Context) {
+func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	request := enterRequest{}
-	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, getErrBody(err))
+	defer r.Body.Close()
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
 	value, exists := c.Get("user")
+	// ctx := r.Context()
+	// user := ctx.Value("user").(models.User)
 	var user models.User
 	if exists {
 		user = value.(models.User)
@@ -98,5 +102,5 @@ func ReqEnter(c *gin.Context) {
 	response := enterResponse{
 		ReqMsgID: request.MsgID,
 	}
-	c.JSON(http.StatusOK, response)
+	JSON(w, response)
 }

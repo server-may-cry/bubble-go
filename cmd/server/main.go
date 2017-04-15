@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pressly/chi"
@@ -22,6 +21,8 @@ import (
 	"github.com/server-may-cry/bubble-go/notification"
 	"github.com/server-may-cry/bubble-go/storage"
 )
+
+type h map[string]interface{}
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
@@ -63,10 +64,11 @@ func main() {
 	// processing should be stopped.
 	router.Use(middleware.Timeout(60 * time.Second))
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		controllers.JSON(w, h{
 			"foo": "bar",
 		})
+		w.Write([]byte(fmt.Sprintf("loaderio-%s", loaderio)))
 	})
 
 	router.Mount("/", func() http.Handler {
