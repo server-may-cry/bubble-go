@@ -46,7 +46,7 @@ func VkWorkerInit(ch <-chan VkEvent) {
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(authResponse)
 	if err != nil {
-		log.Panicln(err.Error())
+		log.Println(err.Error())
 		return
 	}
 
