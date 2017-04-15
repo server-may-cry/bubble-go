@@ -63,6 +63,18 @@
 			"revisionTime": "2017-03-24T00:12:00Z"
 		},
 		{
+			"checksumSHA1": "ZmdW8B6ENm70gvbKNuMHPf2GQiY=",
+			"path": "github.com/pressly/chi",
+			"revision": "a57b1fbe2989382bdef31d3793d4a50a0e4a1d7c",
+			"revisionTime": "2017-04-14T20:35:15Z"
+		},
+		{
+			"checksumSHA1": "9HdWzw76EiC7Hwn+Y2QgNST1Lqc=",
+			"path": "github.com/pressly/chi/middleware",
+			"revision": "a57b1fbe2989382bdef31d3793d4a50a0e4a1d7c",
+			"revisionTime": "2017-04-14T20:35:15Z"
+		},
+		{
 			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",
 			"path": "golang.org/x/net/context",
 			"revision": "ffcf1bedda3b04ebb15a168a59800a73d6dc0f4d",

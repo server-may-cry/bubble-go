@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -19,4 +22,16 @@ type baseRequest struct {
 
 func getErrBody(err error) gin.H {
 	return gin.H{"bad request": err}
+}
+
+// JSON is helper to serve json http response
+func JSON(w http.ResponseWriter, obj interface{}) {
+	js, err := json.Marshal(obj)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
