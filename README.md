@@ -7,6 +7,7 @@ govendor sync
 
 ###### Packages
 * github.com/pressly/chi
+* github.com/pressly/chi/middleware
 * github.com/jinzhu/gorm
 * github.com/jinzhu/gorm/dialects/sqlite
 
