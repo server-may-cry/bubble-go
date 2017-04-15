@@ -26,7 +26,8 @@ func VkWorkerInit(ch <-chan VkEvent) {
 
 	req, err := http.NewRequest("GET", "https://oauth.vk.com/access_token", nil)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 
 	q := req.URL.Query()
@@ -38,13 +39,15 @@ func VkWorkerInit(ch <-chan VkEvent) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(authResponse)
 	if err != nil {
-		panic(err)
+		log.Panicln(err.Error())
+		return
 	}
 
 	ticker := time.NewTicker(requestInterval)
@@ -94,7 +97,8 @@ func VkWorkerInit(ch <-chan VkEvent) {
 func sendRequest(method string, parameters map[string]string) {
 	req, err := http.NewRequest("GET", fmt.Sprint("https://api.vk.com/method/", method), nil)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 
 	q := req.URL.Query()
@@ -107,7 +111,8 @@ func sendRequest(method string, parameters map[string]string) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer resp.Body.Close()
 
@@ -115,10 +120,12 @@ func sendRequest(method string, parameters map[string]string) {
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(rawResponse)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	val, exist := rawResponse["error"]
 	if exist {
-		panic(val)
+		log.Println(val)
+		return
 	}
 }
