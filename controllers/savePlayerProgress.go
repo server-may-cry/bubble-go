@@ -43,7 +43,7 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value("user").(models.User)
+	user := ctx.Value(User).(models.User)
 	needUpdate := false
 	switch request.LevelMode {
 	case "standart":

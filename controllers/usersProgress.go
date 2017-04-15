@@ -36,7 +36,7 @@ func ReqUsersProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value("user").(models.User)
+	user := ctx.Value(User).(models.User)
 	usersLen := len(request.SocIDs)
 	users := make([]models.User, usersLen)
 	storage.Gorm.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)

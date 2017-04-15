@@ -2,6 +2,7 @@ package mymiddleware
 
 import (
 	"bytes"
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -70,8 +71,8 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 		db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
 		if user.ID != 0 { // check user exists
 			log.Print("user found")
-			//ctx := r.Context() TODO
-			//c.Set("user", user)
+			ctx := context.WithValue(r.Context(), controllers.User, user)
+			r = r.WithContext(ctx)
 		}
 		next.ServeHTTP(w, r)
 	})

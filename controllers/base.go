@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+const (
+	// User id for http context
+	User = iota
+)
+
 type h map[string]interface{}
 
 // AuthRequestPart can be used to validate request

@@ -61,7 +61,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	value := ctx.Value("user")
+	value := ctx.Value(User)
 	var user models.User
 	switch value.(type) {
 	case models.User:

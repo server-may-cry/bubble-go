@@ -23,7 +23,7 @@ func ReqReduceTries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value("user").(models.User)
+	user := ctx.Value(User).(models.User)
 	user.RemainingTries--
 	storage.Gorm.Save(&user)
 	response := make([]int8, 1)
