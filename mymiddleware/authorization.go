@@ -20,13 +20,13 @@ import (
 func AuthorizationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO try decoder := json.NewDecoder(c.Request.Body)
-		buf, _ := ioutil.ReadAll(c.Request.Body)
+		buf, _ := ioutil.ReadAll(r.Body)
 		requestBodyCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
-		c.Request.Body = requestBodyCopy
+		r.Body = requestBodyCopy
 
 		request := controllers.AuthRequestPart{}
 		if err := json.Unmarshal(buf, &request); err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -48,7 +48,8 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 				os.Getenv("OK_SECRET"),
 			)
 		default:
-			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Unknown platform %s", request.SysID))
+			http.Error(w, fmt.Sprintf("Unknown platform %s", request.SysID), http.StatusBadRequest)
+			return
 		}
 		data := []byte(stringToHash)
 		expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
@@ -59,7 +60,7 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 				expectedAuthKey,
 				request.AuthKey,
 			)
-			http.Error(w, fmt.Errorf("Bad auth key %s", request.AuthKey), 403)
+			http.Error(w, fmt.Sprintf("Bad auth key %s", request.AuthKey), 403)
 			return
 		}
 

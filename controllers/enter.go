@@ -60,14 +60,14 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
-	value, exists := c.Get("user")
-	// ctx := r.Context()
-	// user := ctx.Value("user").(models.User)
+	ctx := r.Context()
+	value := ctx.Value("user")
 	var user models.User
-	if exists {
+	switch value.(type) {
+	case models.User:
 		user = value.(models.User)
 		// time rewards logic
-	} else {
+	case nil:
 		platformID := platforms.GetByName(request.SysID)
 		user = models.User{
 			SysID:                   platformID,

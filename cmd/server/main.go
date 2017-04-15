@@ -68,37 +68,36 @@ func main() {
 		controllers.JSON(w, h{
 			"foo": "bar",
 		})
-		w.Write([]byte(fmt.Sprintf("loaderio-%s", loaderio)))
 	})
 
 	router.Mount("/", func() http.Handler {
 		r := chi.NewRouter()
 		r.Use(mymiddleware.AuthorizationMiddleware)
-		r.POST("/ReqEnter", controllers.ReqEnter)
-		r.POST("/ReqBuyProduct", controllers.ReqBuyProduct)
-		r.POST("/ReqReduceTries", controllers.ReqReduceTries)
-		r.POST("/ReqReduceCredits", controllers.ReqReduceCredits)
-		r.POST("/ReqSavePlayerProgress", controllers.ReqSavePlayerProgress)
-		r.POST("/ReqUsersProgress", controllers.ReqUsersProgress)
+		r.Post("/ReqEnter", controllers.ReqEnter)
+		r.Post("/ReqBuyProduct", controllers.ReqBuyProduct)
+		r.Post("/ReqReduceTries", controllers.ReqReduceTries)
+		r.Post("/ReqReduceCredits", controllers.ReqReduceCredits)
+		r.Post("/ReqSavePlayerProgress", controllers.ReqSavePlayerProgress)
+		r.Post("/ReqUsersProgress", controllers.ReqUsersProgress)
 		return r
-	})
-	router.POST("/VkPay", controllers.VkPay)
+	}())
+	router.Post("/VkPay", controllers.VkPay)
 
-	router.GET("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
 	})
 	// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
 	// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
-	router.GET("/bubble/*filePath", controllers.ServeStatick)
-	router.GET("/cache-clear", controllers.ClearStatickCache)
+	router.Get("/bubble/*filePath", controllers.ServeStatick)
+	router.Get("/cache-clear", controllers.ClearStatickCache)
 
-	router.GET("/exception", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/exception", func(w http.ResponseWriter, r *http.Request) {
 		panic("test log.Fatal")
 	})
 
 	loaderio := os.Getenv("LOADERIO")
 	loaderioRoute := fmt.Sprintf("/loaderio-%s", loaderio)
-	router.GET(loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
+	router.Get(loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("loaderio-%s", loaderio)))
 	})
 
