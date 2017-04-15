@@ -6,7 +6,7 @@ govendor sync
 ```
 
 ###### Packages
-* gopkg.in/gin-gonic/gin.v1
+* github.com/pressly/chi
 * github.com/jinzhu/gorm
 * github.com/jinzhu/gorm/dialects/sqlite
 
