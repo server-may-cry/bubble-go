@@ -44,7 +44,7 @@ func VkWorkerInit(ch <-chan VkEvent) {
 	}
 	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(authResponse)
+	err = decoder.Decode(&authResponse)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -118,7 +118,7 @@ func sendRequest(method string, parameters map[string]string) {
 
 	var rawResponse map[string]interface{}
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(rawResponse)
+	err = decoder.Decode(&rawResponse)
 	if err != nil {
 		log.Println(err.Error())
 		return
