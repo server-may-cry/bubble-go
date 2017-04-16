@@ -33,8 +33,8 @@ func init() {
 	if err != nil {
 		log.Fatalf("failed to connect database: %s", err)
 	}
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Transaction{})
+	db.AutoMigrate(&application.User{})
+	db.AutoMigrate(&application.Transaction{})
 	storage.Gorm = db
 
 	marketConfigFile := "./config/market.json"
@@ -67,31 +67,31 @@ func main() {
 	router.Use(middleware.Timeout(60 * time.Second))
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		controllers.JSON(w, h{
+		application.JSON(w, h{
 			"foo": "bar",
 		})
 	})
 
 	router.Mount("/", func() http.Handler {
 		r := chi.NewRouter()
-		r.Use(controllers.AuthorizationMiddleware)
-		r.Post("/ReqEnter", controllers.ReqEnter)
-		r.Post("/ReqBuyProduct", controllers.ReqBuyProduct)
-		r.Post("/ReqReduceTries", controllers.ReqReduceTries)
-		r.Post("/ReqReduceCredits", controllers.ReqReduceCredits)
-		r.Post("/ReqSavePlayerProgress", controllers.ReqSavePlayerProgress)
-		r.Post("/ReqUsersProgress", controllers.ReqUsersProgress)
+		r.Use(application.AuthorizationMiddleware)
+		r.Post("/ReqEnter", application.ReqEnter)
+		r.Post("/ReqBuyProduct", application.ReqBuyProduct)
+		r.Post("/ReqReduceTries", application.ReqReduceTries)
+		r.Post("/ReqReduceCredits", application.ReqReduceCredits)
+		r.Post("/ReqSavePlayerProgress", application.ReqSavePlayerProgress)
+		r.Post("/ReqUsersProgress", application.ReqUsersProgress)
 		return r
 	}())
-	router.Post("/VkPay", controllers.VkPay)
+	router.Post("/VkPay", application.VkPay)
 
 	router.Get("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
 	})
 	// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
 	// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
-	router.Get("/bubble/*filePath", controllers.ServeStatick)
-	router.Get("/cache-clear", controllers.ClearStatickCache)
+	router.Get("/bubble/*filePath", application.ServeStatick)
+	router.Get("/cache-clear", application.ClearStatickCache)
 
 	router.Get("/exception", func(w http.ResponseWriter, r *http.Request) {
 		panic("test log.Fatal")
