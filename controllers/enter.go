@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -93,10 +92,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			FriendsBonusCreditsTime: time.Now().Unix(),
 			// TODO ProgressStandart:        [][]int8 // json
 		}
-		success := storage.Gorm.NewRecord(&user)
-		if !success {
-			panic(fmt.Sprintf("can`t create user %v", user))
-		}
+		storage.Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
 	}
 	log.Println(user)
 	// TODO logic

@@ -39,15 +39,6 @@ func init() {
 	db.AutoMigrate(&models.Transaction{})
 	storage.Gorm = db
 
-	// Debug
-	user := models.User{}
-	db.NewRecord(&user)
-	log.Printf("create first user id:%d\n", user.ID)
-	var users []models.User
-	db.Find(&users)
-	log.Printf("all users %v\n", users)
-	// Debug
-
 	marketConfigFile := "./config/market.json"
 	file, err := ioutil.ReadFile(filepath.ToSlash(marketConfigFile))
 	if err != nil {
