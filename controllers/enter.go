@@ -22,12 +22,12 @@ type enterRequest struct {
 
 type enterResponse struct {
 	ReqMsgID               uint64     `json:"reqMsgId"`
-	UserID                 uint32     `json:"userId"`
+	UserID                 uint64     `json:"userId"`
 	ReachedStage01         int8       `json:"reachedStage01,uint8"`
 	ReachedStage02         int8       `json:"reachedStage02,uint8"`
 	ReachedSubStage01      int8       `json:"reachedSubStage01,uint8"`
 	ReachedSubStage02      int8       `json:"reachedSubStage02,uint8"`
-	IgnoreSavePointBlock   bool       `json:"ignoreSavePointBlock"`
+	IgnoreSavePointBlock   int8       `json:"ignoreSavePointBlock,bool"`
 	RemainingTries         int8       `json:"remainingTries,uint8"`
 	Credits                int16      `json:"credits,uint16"`
 	InfinityExtra00        int8       `json:"inifinityExtra00,uint8"`
@@ -42,7 +42,7 @@ type enterResponse struct {
 	InfinityExtra09        int8       `json:"inifinityExtra09,uint8"`
 	BonusCredits           int16      `json:"bonusCredits,uint16"`
 	AppFriendsBonusCredits int16      `json:"appFriendsBonusCredits,uint16"`
-	OfferAvailable         bool       `json:"offerAvailable"`
+	OfferAvailable         bool       `json:"offerAvailable,uint8"`
 	FirstGame              bool       `json:"firstGame"`
 	StagesProgressStat01   [8]uint32  `json:"stagesProgressStat01"`
 	StagesProgressStat02   [8]uint32  `json:"stagesProgressStat02"`
@@ -60,6 +60,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
+	var firstGame bool
 	ctx := r.Context()
 	value := ctx.Value(User)
 	var user models.User
@@ -68,6 +69,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		user = value.(models.User)
 		// time rewards logic
 	case nil:
+		firstGame = true
 		platformID := platforms.GetByName(request.SysID)
 		user = models.User{
 			SysID:                   platformID,
@@ -97,10 +99,36 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	log.Println(user)
-	// logic
-	// add users progress
+	// TODO logic
+	// TODO add users progress
 	response := enterResponse{
-		ReqMsgID: request.MsgID,
+		ReqMsgID:             request.MsgID,
+		UserID:               user.ID,
+		ReachedStage01:       user.ReachedStage01,
+		ReachedStage02:       user.ReachedStage02,
+		ReachedSubStage01:    user.ReachedSubStage01,
+		ReachedSubStage02:    user.ReachedSubStage02,
+		IgnoreSavePointBlock: user.IgnoreSavePointBlock,
+		RemainingTries:       user.RemainingTries,
+		Credits:              user.Credits,
+		InfinityExtra00:      user.InifinityExtra00,
+		InfinityExtra01:      user.InifinityExtra01,
+		InfinityExtra02:      user.InifinityExtra02,
+		InfinityExtra03:      user.InifinityExtra03,
+		InfinityExtra04:      user.InifinityExtra04,
+		InfinityExtra05:      user.InifinityExtra05,
+		InfinityExtra06:      user.InifinityExtra06,
+		InfinityExtra07:      user.InifinityExtra07,
+		InfinityExtra08:      user.InifinityExtra08,
+		InfinityExtra09:      user.InifinityExtra09,
+		OfferAvailable:       false,
+		FirstGame:            firstGame,
+		// BonusCredits   TODO
+		// AppFriendsBonusCredits TODO
+		// StagesProgressStat01 TODO
+		// StagesProgressStat02   TODO
+		// SubStagesRecordStats01 TODO
+		// SubStagesRecordStats02 TODO
 	}
 	JSON(w, response)
 }
