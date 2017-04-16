@@ -1,4 +1,4 @@
-package mymiddleware
+package controllers
 
 import (
 	"bytes"
@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
 	"github.com/server-may-cry/bubble-go/storage"
@@ -25,7 +24,7 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 		requestBodyCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
 		r.Body = requestBodyCopy
 
-		request := controllers.AuthRequestPart{}
+		request := AuthRequestPart{}
 		if err := json.Unmarshal(buf, &request); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -65,13 +64,11 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		log.Print("authorization success")
 		db := storage.Gorm
 		var user models.User
 		db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
 		if user.ID != 0 { // check user exists
-			log.Print("user found")
-			ctx := context.WithValue(r.Context(), controllers.User, user)
+			ctx := context.WithValue(r.Context(), User, user)
 			r = r.WithContext(ctx)
 		}
 		next.ServeHTTP(w, r)

@@ -17,7 +17,6 @@ import (
 	"github.com/server-may-cry/bubble-go/controllers"
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/models"
-	"github.com/server-may-cry/bubble-go/mymiddleware"
 	"github.com/server-may-cry/bubble-go/notification"
 	"github.com/server-may-cry/bubble-go/storage"
 )
@@ -40,13 +39,15 @@ func init() {
 	storage.Gorm = db
 
 	marketConfigFile := "./config/market.json"
-	file, err := ioutil.ReadFile(filepath.ToSlash(marketConfigFile))
+	file, err := os.Open(filepath.ToSlash(marketConfigFile))
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	var marketConfig market.Config
-	json.Unmarshal(file, &marketConfig)
+	err = json.NewDecoder(file).Decode(&marketConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
 	market.Initialize(marketConfig)
 
 	notification.VkEventChan = make(chan notification.VkEvent)
@@ -72,7 +73,7 @@ func main() {
 
 	router.Mount("/", func() http.Handler {
 		r := chi.NewRouter()
-		r.Use(mymiddleware.AuthorizationMiddleware)
+		r.Use(controllers.AuthorizationMiddleware)
 		r.Post("/ReqEnter", controllers.ReqEnter)
 		r.Post("/ReqBuyProduct", controllers.ReqBuyProduct)
 		r.Post("/ReqReduceTries", controllers.ReqReduceTries)
