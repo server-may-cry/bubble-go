@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+// TODO refactore package API
+
 type authorizationResponse struct {
 	AccessToken string `json:"access_token"`
 }

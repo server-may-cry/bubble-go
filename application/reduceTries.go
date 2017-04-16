@@ -1,10 +1,9 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 )
 
@@ -23,7 +22,7 @@ func ReqReduceTries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(User).(models.User)
+	user := ctx.Value(UserCtxID).(User)
 	user.RemainingTries--
 	storage.Gorm.Save(&user)
 	response := make([]int8, 1)

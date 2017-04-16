@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/server-may-cry/bubble-go/market"
-	"github.com/server-may-cry/bubble-go/models"
 )
 
 var exampleMarketJson = `
@@ -27,6 +26,10 @@ var exampleMarketJson = `
 }
 `
 
+type testUser struct {
+	Credits int
+}
+
 func init() {
 	var config market.Config
 	json.Unmarshal([]byte(exampleMarketJson), &config)
@@ -34,7 +37,7 @@ func init() {
 }
 
 func TestMarketIncrease(t *testing.T) {
-	user := models.User{
+	user := testUser{
 		Credits: 100,
 	}
 
@@ -45,7 +48,7 @@ func TestMarketIncrease(t *testing.T) {
 }
 
 func TestMarketSet(t *testing.T) {
-	user := models.User{
+	user := testUser{
 		Credits: 100,
 	}
 
@@ -56,7 +59,7 @@ func TestMarketSet(t *testing.T) {
 }
 
 func TestMarketPanic(t *testing.T) {
-	user := models.User{
+	user := testUser{
 		Credits: 100,
 	}
 

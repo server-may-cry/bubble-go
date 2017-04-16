@@ -1,4 +1,4 @@
-package controllers
+package application
 
 import (
 	"bytes"
@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/server-may-cry/bubble-go/market"
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
 	"github.com/server-may-cry/bubble-go/storage"
 )
@@ -114,7 +113,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		db := storage.Gorm
-		var user models.User
+		var user User
 		db.Where("sys_id = ? AND ext_id = ?", platforms.GetByName("VK"), rawRequest["user_id"]).First(&user)
 		if user.ID != 0 { // check user exists
 			panic("user not foud. try to buy")
@@ -125,7 +124,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", rawRequest["order_id"]))
 		}
 
-		transaction := models.Transaction{
+		transaction := Transaction{
 			OrderID:     orderID,
 			CreatedAt:   time.Now().Unix(),
 			UserID:      user.ID,

@@ -1,11 +1,10 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 )
 
@@ -43,7 +42,7 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(User).(models.User)
+	user := ctx.Value(UserCtxID).(User)
 	needUpdate := false
 	switch request.LevelMode {
 	case "standart":

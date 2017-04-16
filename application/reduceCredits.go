@@ -1,10 +1,9 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 )
 
@@ -33,7 +32,7 @@ func ReqReduceCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(User).(models.User)
+	user := ctx.Value(UserCtxID).(User)
 	user.Credits -= request.Amount
 	storage.Gorm.Save(&user)
 	response := reduceCreditsResponse{

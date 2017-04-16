@@ -1,10 +1,9 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 )
 
@@ -36,9 +35,9 @@ func ReqUsersProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(User).(models.User)
+	user := ctx.Value(UserCtxID).(User)
 	usersLen := len(request.SocIDs)
-	users := make([]models.User, usersLen)
+	users := make([]User, usersLen)
 	storage.Gorm.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
 	response := usersProgressResponse{
 		UsersProgress: make([]userProgres, usersLen),

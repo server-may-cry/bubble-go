@@ -1,4 +1,4 @@
-package controllers
+package application
 
 import (
 	"bytes"
@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
 	"github.com/server-may-cry/bubble-go/storage"
 )
@@ -65,10 +64,10 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 		}
 
 		db := storage.Gorm
-		var user models.User
+		var user User
 		db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
 		if user.ID != 0 { // check user exists
-			ctx := context.WithValue(r.Context(), User, user)
+			ctx := context.WithValue(r.Context(), UserCtxID, user)
 			r = r.WithContext(ctx)
 		}
 		next.ServeHTTP(w, r)

@@ -1,11 +1,10 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/platforms"
 	"github.com/server-may-cry/bubble-go/storage"
 )
@@ -66,14 +65,14 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	var triesRestore int64
 	var userFriendsBonusCredits int16
 	ctx := r.Context()
-	value := ctx.Value(User)
-	var user models.User
+	value := ctx.Value(UserCtxID)
+	var user User
 	now := time.Now()
 	switch value.(type) {
 	case nil:
 		firstGame = 1
 		platformID := platforms.GetByName(request.SysID)
-		user = models.User{
+		user = User{
 			SysID:                   platformID,
 			ExtID:                   request.ExtID,
 			ReachedStage01:          0,
@@ -96,8 +95,8 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			// TODO ProgressStandart:        [][]int8 // json
 		}
 		storage.Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
-	case models.User:
-		user = value.(models.User)
+	case User:
+		user = value.(User)
 		if user.FriendsBonusCreditsTime > now.Unix() {
 			needUpdate = true
 			to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())

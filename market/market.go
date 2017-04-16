@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/server-may-cry/bubble-go/models"
 )
 
 // Config struct for market offers and packs
@@ -30,7 +28,7 @@ type Pack struct {
 var marketConfig Config
 
 // Buy get user and item name (from market config). Change user
-func Buy(user *models.User, packName string) {
+func Buy(user interface{}, packName string) {
 	pack, exist := marketConfig[packName]
 	if !exist {
 		panic(fmt.Sprintf("try buy not existed pack %s", packName))
@@ -62,9 +60,10 @@ func GetPack(packName string) Pack {
 // Initialize load market config from market.json
 func Initialize(config Config) {
 	marketConfig = config
+}
 
-	// check all packs valid
-	user := models.User{}
+// Validate check current market configuration for that type of user
+func Validate(user interface{}) {
 	for packName := range marketConfig {
 		Buy(&user, packName)
 	}

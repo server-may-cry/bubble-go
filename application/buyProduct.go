@@ -1,11 +1,10 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/market"
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/storage"
 )
 
@@ -30,7 +29,7 @@ func ReqBuyProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(User).(models.User)
+	user := ctx.Value(UserCtxID).(User)
 	market.Buy(&user, request.ProductID)
 	response := buyProductResponse{
 		ProductID: request.ProductID,

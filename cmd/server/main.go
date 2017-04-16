@@ -14,9 +14,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/middleware"
-	"github.com/server-may-cry/bubble-go/controllers"
+	"github.com/server-may-cry/bubble-go/application"
 	"github.com/server-may-cry/bubble-go/market"
-	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/notification"
 	"github.com/server-may-cry/bubble-go/storage"
 )
@@ -49,6 +48,8 @@ func init() {
 		log.Fatal(err)
 	}
 	market.Initialize(marketConfig)
+	user := application.User{}
+	market.Validate(user)
 
 	notification.VkEventChan = make(chan notification.VkEvent)
 	go notification.VkWorkerInit(notification.VkEventChan)

@@ -1,4 +1,4 @@
-package models
+package application
 
 // User struct in storage
 type User struct {

@@ -1,4 +1,4 @@
-package controllers
+package application
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	// User id for http context
-	User = iota
+	// UserCtxID id for http context
+	UserCtxID = iota
 )
 
 type h map[string]interface{}
