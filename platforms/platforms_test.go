@@ -1,9 +1,7 @@
-package platforms_test
+package platforms
 
 import (
 	"testing"
-
-	"github.com/server-may-cry/bubble-go/platforms"
 )
 
 var platformsTests = []struct {
@@ -16,7 +14,7 @@ var platformsTests = []struct {
 
 func TestPlatformGetByName(t *testing.T) {
 	for _, tt := range platformsTests {
-		actual := platforms.GetByName(tt.platform)
+		actual := GetByName(tt.platform)
 		if actual != tt.expected {
 			t.Errorf("platforms.GetByName(%s): expected %d, actual %d", tt.platform, tt.expected, actual)
 		}
@@ -29,5 +27,5 @@ func TestPlatformNotExist(t *testing.T) {
 			t.Errorf("panic expected on platform %s", "FB")
 		}
 	}()
-	platforms.GetByName("FB")
+	GetByName("FB")
 }

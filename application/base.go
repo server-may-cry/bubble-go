@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	// UserCtxID id for http context
+	// UserCtxID id for http context (prevent collisions)
 	UserCtxID = iota
 )
 

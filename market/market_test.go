@@ -1,10 +1,8 @@
-package market_test
+package market
 
 import (
 	"encoding/json"
 	"testing"
-
-	"github.com/server-may-cry/bubble-go/market"
 )
 
 var exampleMarketJson = `
@@ -31,9 +29,9 @@ type testUser struct {
 }
 
 func init() {
-	var config market.Config
+	var config Config
 	json.Unmarshal([]byte(exampleMarketJson), &config)
-	market.Initialize(config)
+	Initialize(config)
 }
 
 func TestMarketIncrease(t *testing.T) {
@@ -41,9 +39,9 @@ func TestMarketIncrease(t *testing.T) {
 		Credits: 100,
 	}
 
-	market.Buy(&user, "increase_pack")
+	Buy(&user, "increase_pack")
 	if user.Credits != 150 {
-		t.Errorf("market.Buy(user, \"increase_pack\"): expected %d, actual %d", 150, user.Credits)
+		t.Errorf("Buy(user, \"increase_pack\"): expected %d, actual %d", 150, user.Credits)
 	}
 }
 
@@ -52,9 +50,9 @@ func TestMarketSet(t *testing.T) {
 		Credits: 100,
 	}
 
-	market.Buy(&user, "set_pack")
+	Buy(&user, "set_pack")
 	if user.Credits != 800 {
-		t.Errorf("market.Buy(user, \"set_pack\"): expected %d, actual %d", 800, user.Credits)
+		t.Errorf("Buy(user, \"set_pack\"): expected %d, actual %d", 800, user.Credits)
 	}
 }
 
@@ -68,5 +66,5 @@ func TestMarketPanic(t *testing.T) {
 			t.Errorf("panic expected on pack %s", "pack_not_exist")
 		}
 	}()
-	market.Buy(&user, "pack_not_exist")
+	Buy(&user, "pack_not_exist")
 }
