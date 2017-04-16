@@ -22,7 +22,7 @@ type enterRequest struct {
 
 type enterResponse struct {
 	ReqMsgID               uint64     `json:"reqMsgId"`
-	UserID                 uint64     `json:"userId"`
+	UserID                 uint       `json:"userId"`
 	ReachedStage01         int8       `json:"reachedStage01,uint8"`
 	ReachedStage02         int8       `json:"reachedStage02,uint8"`
 	ReachedSubStage01      int8       `json:"reachedSubStage01,uint8"`
@@ -42,8 +42,8 @@ type enterResponse struct {
 	InfinityExtra09        int8       `json:"inifinityExtra09,uint8"`
 	BonusCredits           int16      `json:"bonusCredits,uint16"`
 	AppFriendsBonusCredits int16      `json:"appFriendsBonusCredits,uint16"`
-	OfferAvailable         bool       `json:"offerAvailable,uint8"`
-	FirstGame              bool       `json:"firstGame"`
+	OfferAvailable         uint8      `json:"offerAvailable"` // bool
+	FirstGame              uint8      `json:"firstGame"`      // bool
 	StagesProgressStat01   [8]uint32  `json:"stagesProgressStat01"`
 	StagesProgressStat02   [8]uint32  `json:"stagesProgressStat02"`
 	SubStagesRecordStats01 [8][]uint8 `json:"subStagesRecordStats01"`
@@ -60,7 +60,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, getErrBody(err), http.StatusBadRequest)
 		return
 	}
-	var firstGame bool
+	var firstGame uint8 // bool
 	ctx := r.Context()
 	value := ctx.Value(User)
 	var user models.User
@@ -69,7 +69,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		user = value.(models.User)
 		// time rewards logic
 	case nil:
-		firstGame = true
+		firstGame = 1
 		platformID := platforms.GetByName(request.SysID)
 		user = models.User{
 			SysID:                   platformID,
@@ -121,7 +121,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		InfinityExtra07:      user.InifinityExtra07,
 		InfinityExtra08:      user.InifinityExtra08,
 		InfinityExtra09:      user.InifinityExtra09,
-		OfferAvailable:       false,
+		OfferAvailable:       0,
 		FirstGame:            firstGame,
 		// BonusCredits   TODO
 		// AppFriendsBonusCredits TODO

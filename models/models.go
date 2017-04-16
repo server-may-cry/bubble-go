@@ -2,8 +2,7 @@ package models
 
 // User struct in storage
 type User struct {
-	tableName               struct{} `sql:"users"`
-	ID                      uint64   `gorm:"primary_key"`
+	ID                      uint `gorm:"primary_key"`
 	SysID                   uint8
 	ExtID                   string
 	ReachedStage01          int8
@@ -30,9 +29,9 @@ type User struct {
 
 // Transaction log payment requests
 type Transaction struct {
-	ID          uint64
+	ID          uint `gorm:"primary_key"`
 	OrderID     int64
 	CreatedAt   int64
-	UserID      uint64
+	UserID      uint
 	ConfirmedAt int64
 }
