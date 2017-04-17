@@ -5,25 +5,36 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 )
-
-// TODO refactore package API
 
 type authorizationResponse struct {
 	AccessToken string `json:"access_token"`
 }
 
+// VkConfig config for vk worker
+type VkConfig struct {
+	AppID           string
+	Secret          string
+	RequestInterval time.Duration
+}
+
+var vkConfig VkConfig
 var authResponse authorizationResponse
 var client *http.Client
 
-const requestInterval = time.Millisecond * 300
 const batchLevelsGroupCount = 200
 
 // VkWorkerInit run vk app2user notification
-func VkWorkerInit(ch <-chan VkEvent) {
+func VkWorkerInit(config VkConfig) chan<- VkEvent {
+	vkConfig = config
+	ch := make(chan VkEvent)
+	go vkWorker(ch)
+	return ch
+}
+
+func vkWorker(ch <-chan VkEvent) {
 	client = &http.Client{}
 
 	req, err := http.NewRequest("GET", "https://oauth.vk.com/access_token", nil)
@@ -33,8 +44,8 @@ func VkWorkerInit(ch <-chan VkEvent) {
 	}
 
 	q := req.URL.Query()
-	q.Add("client_id", os.Getenv("VK_APP_ID"))
-	q.Add("client_secret", os.Getenv("VK_SECRET"))
+	q.Add("client_id", vkConfig.AppID)
+	q.Add("client_secret", vkConfig.Secret)
 	q.Add("v", "5.37")
 	q.Add("grant_type", "client_credentials")
 	req.URL.RawQuery = q.Encode()
@@ -52,7 +63,7 @@ func VkWorkerInit(ch <-chan VkEvent) {
 		return
 	}
 
-	ticker := time.NewTicker(requestInterval)
+	ticker := time.NewTicker(vkConfig.RequestInterval)
 	batchLevels := make([]VkEvent, 0)
 	listEvents := make([]VkEvent, 0)
 	for {
@@ -108,7 +119,7 @@ func sendRequest(method string, parameters map[string]string) {
 		q.Add(k, v)
 	}
 	q.Add("access_token", authResponse.AccessToken)
-	q.Add("client_secret", os.Getenv("VK_SECRET"))
+	q.Add("client_secret", vkConfig.Secret)
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := client.Do(req)

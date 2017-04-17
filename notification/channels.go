@@ -6,6 +6,3 @@ type VkEvent struct {
 	Type  int
 	Value int
 }
-
-// VkEventChan channel for sending app2user notification in VK platform
-var VkEventChan chan (VkEvent)
