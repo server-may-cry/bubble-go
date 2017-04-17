@@ -26,6 +26,7 @@ type Pack struct {
 }
 
 var marketConfig Config
+var cdnPrefix string
 
 // Buy get user and item name (from market config). Change user
 func Buy(user interface{}, packName string) {
@@ -52,14 +53,15 @@ func GetPack(packName string) Pack {
 	if !exist {
 		panic(fmt.Sprintf("try buy not existed pack %s", packName))
 	}
-	// TODO add CDN prefix
+	pack.Photo = fmt.Sprint(cdnPrefix, pack.Photo)
 
 	return pack
 }
 
 // Initialize load market config from market.json
-func Initialize(config Config) {
+func Initialize(config Config, cdn string) {
 	marketConfig = config
+	cdnPrefix = cdn
 }
 
 // Validate check current market configuration for that type of user

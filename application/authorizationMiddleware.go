@@ -67,7 +67,7 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 		var user User
 		db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
 		if user.ID != 0 { // check user exists
-			ctx := context.WithValue(r.Context(), UserCtxID, user)
+			ctx := context.WithValue(r.Context(), userCtxID, user)
 			r = r.WithContext(ctx)
 		}
 		next.ServeHTTP(w, r)

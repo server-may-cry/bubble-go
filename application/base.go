@@ -6,8 +6,7 @@ import (
 )
 
 const (
-	// UserCtxID id for http context (prevent collisions)
-	UserCtxID = iota
+	userCtxID = iota
 )
 
 type h map[string]interface{}

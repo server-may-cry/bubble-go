@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var exampleMarketJson = `
+var exampleMarketJSON = `
 {
 	"increase_pack": {
 		"reward": {
@@ -30,8 +30,8 @@ type testUser struct {
 
 func init() {
 	var config Config
-	json.Unmarshal([]byte(exampleMarketJson), &config)
-	Initialize(config)
+	json.Unmarshal([]byte(exampleMarketJSON), &config)
+	Initialize(config, "cdn://cdn.cdn/")
 }
 
 func TestMarketIncrease(t *testing.T) {
@@ -67,4 +67,17 @@ func TestMarketPanic(t *testing.T) {
 		}
 	}()
 	Buy(&user, "pack_not_exist")
+}
+
+func TestMarketGetPack(t *testing.T) {
+	GetPack("increase_pack")
+}
+
+func TestMarketGetNotExistPack(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("panic expected on GetPack %s", "pack_not_exist")
+		}
+	}()
+	GetPack("pack_not_exist")
 }

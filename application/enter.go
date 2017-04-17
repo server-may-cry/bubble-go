@@ -65,7 +65,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	var triesRestore int64
 	var userFriendsBonusCredits int16
 	ctx := r.Context()
-	value := ctx.Value(UserCtxID)
+	value := ctx.Value(userCtxID)
 	var user User
 	now := time.Now()
 	switch value.(type) {

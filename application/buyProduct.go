@@ -29,7 +29,7 @@ func ReqBuyProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(UserCtxID).(User)
+	user := ctx.Value(userCtxID).(User)
 	market.Buy(&user, request.ProductID)
 	response := buyProductResponse{
 		ProductID: request.ProductID,

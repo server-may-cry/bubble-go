@@ -2,4 +2,5 @@ package application
 
 import "github.com/server-may-cry/bubble-go/notification"
 
-var vkEventChan chan<- (notification.VkEvent)
+// VkEventChan channel for send vk events
+var VkEventChan chan<- (notification.VkEvent)

@@ -32,7 +32,7 @@ func ReqReduceCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	user := ctx.Value(UserCtxID).(User)
+	user := ctx.Value(userCtxID).(User)
 	user.Credits -= request.Amount
 	storage.Gorm.Save(&user)
 	response := reduceCreditsResponse{

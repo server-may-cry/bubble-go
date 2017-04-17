@@ -47,11 +47,11 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	market.Initialize(marketConfig)
+	market.Initialize(marketConfig, os.Getenv("CDN_PREFIX"))
 	user := application.User{}
 	market.Validate(user)
 
-	vkEventChan = notification.VkWorkerInit(notification.VkConfig{
+	application.VkEventChan = notification.VkWorkerInit(notification.VkConfig{
 		AppID:           os.Getenv("VK_APP_ID"),
 		Secret:          os.Getenv("VK_SECRET"),
 		RequestInterval: time.Millisecond * 300,
