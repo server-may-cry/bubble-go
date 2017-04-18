@@ -11,11 +11,11 @@ import (
 // Gorm orm
 var Gorm *gorm.DB
 
-// VkEventChan channel for send vk events
-var VkEventChan chan<- (notification.VkEvent)
+// VkWorker channel for send vk events
+var VkWorker *notification.VkWorker
 
 const (
-	userCtxID = iota
+	userCtxID Key = iota
 )
 
 type h map[string]interface{}

@@ -50,7 +50,7 @@ func init() {
 	user := application.User{}
 	market.Validate(user)
 
-	application.VkEventChan = notification.VkWorkerInit(notification.VkConfig{
+	application.VkWorker = notification.NewVkWorker(notification.VkConfig{
 		AppID:           os.Getenv("VK_APP_ID"),
 		Secret:          os.Getenv("VK_SECRET"),
 		RequestInterval: time.Millisecond * 300,
