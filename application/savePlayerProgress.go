@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 /*
@@ -60,7 +58,7 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 	// TODO
 	// logic progress
 	if needUpdate {
-		storage.Gorm.Save(&user)
+		Gorm.Save(&user)
 	}
 	// social logic
 	response := "ok"

@@ -17,7 +17,6 @@ import (
 	"github.com/server-may-cry/bubble-go/application"
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/notification"
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 type h map[string]interface{}
@@ -35,7 +34,7 @@ func init() {
 	}
 	db.AutoMigrate(&application.User{})
 	db.AutoMigrate(&application.Transaction{})
-	storage.Gorm = db
+	application.Gorm = db
 
 	marketConfigFile := "./config/market.json"
 	file, err := os.Open(filepath.ToSlash(marketConfigFile))

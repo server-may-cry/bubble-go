@@ -3,8 +3,6 @@ package application
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 type reduceTriesRequest struct {
@@ -24,7 +22,7 @@ func ReqReduceTries(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	user := ctx.Value(userCtxID).(User)
 	user.RemainingTries--
-	storage.Gorm.Save(&user)
+	Gorm.Save(&user)
 	response := make([]int8, 1)
 	response[0] = user.RemainingTries
 	JSON(w, response)

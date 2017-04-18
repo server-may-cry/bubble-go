@@ -3,8 +3,6 @@ package application
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 type usersProgressRequest struct {
@@ -38,7 +36,7 @@ func ReqUsersProgress(w http.ResponseWriter, r *http.Request) {
 	user := ctx.Value(userCtxID).(User)
 	usersLen := len(request.SocIDs)
 	users := make([]User, usersLen)
-	storage.Gorm.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
+	Gorm.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
 	response := usersProgressResponse{
 		UsersProgress: make([]userProgres, usersLen),
 	}

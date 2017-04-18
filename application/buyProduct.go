@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/server-may-cry/bubble-go/market"
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 type buyProductRequest struct {
@@ -35,6 +34,6 @@ func ReqBuyProduct(w http.ResponseWriter, r *http.Request) {
 		ProductID: request.ProductID,
 		Credits:   user.Credits,
 	}
-	storage.Gorm.Save(&user)
+	Gorm.Save(&user)
 	JSON(w, response)
 }

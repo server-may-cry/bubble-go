@@ -12,7 +12,6 @@ import (
 	"os"
 
 	"github.com/server-may-cry/bubble-go/platforms"
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 // AuthorizationMiddleware check signature and load user
@@ -63,7 +62,7 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		db := storage.Gorm
+		db := Gorm
 		var user User
 		db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
 		if user.ID != 0 { // check user exists

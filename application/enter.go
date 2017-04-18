@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/server-may-cry/bubble-go/platforms"
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 type enterRequest struct {
@@ -94,7 +93,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			FriendsBonusCreditsTime: now.Unix(),
 			// TODO ProgressStandart:        [][]int8 // json
 		}
-		storage.Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
+		Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
 	case User:
 		user = value.(User)
 		if user.FriendsBonusCreditsTime > now.Unix() {
@@ -114,7 +113,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if needUpdate {
-		storage.Gorm.Save(&user)
+		Gorm.Save(&user)
 	}
 	// TODO add users progress
 	response := enterResponse{

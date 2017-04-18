@@ -3,7 +3,16 @@ package application
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/jinzhu/gorm"
+	"github.com/server-may-cry/bubble-go/notification"
 )
+
+// Gorm orm
+var Gorm *gorm.DB
+
+// VkEventChan channel for send vk events
+var VkEventChan chan<- (notification.VkEvent)
 
 const (
 	userCtxID = iota

@@ -13,7 +13,6 @@ import (
 
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/platforms"
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 /*
@@ -112,7 +111,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
-		db := storage.Gorm
+		db := Gorm
 		var user User
 		db.Where("sys_id = ? AND ext_id = ?", platforms.GetByName("VK"), rawRequest["user_id"]).First(&user)
 		if user.ID != 0 { // check user exists
@@ -130,7 +129,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			UserID:      user.ID,
 			ConfirmedAt: 1,
 		}
-		success := storage.Gorm.NewRecord(&transaction)
+		success := Gorm.NewRecord(&transaction)
 		if !success {
 			panic(fmt.Sprintf("can`t create transaction %v", transaction))
 		}

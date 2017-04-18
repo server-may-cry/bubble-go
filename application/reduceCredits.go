@@ -3,8 +3,6 @@ package application
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/server-may-cry/bubble-go/storage"
 )
 
 type reduceCreditsRequest struct {
@@ -34,7 +32,7 @@ func ReqReduceCredits(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	user := ctx.Value(userCtxID).(User)
 	user.Credits -= request.Amount
-	storage.Gorm.Save(&user)
+	Gorm.Save(&user)
 	response := reduceCreditsResponse{
 		Credits: user.Credits,
 	}
