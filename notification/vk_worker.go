@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -26,6 +27,8 @@ type VkWorker struct {
 	config VkConfig
 	token  string
 	client *http.Client
+	Levels int
+	Events int
 }
 
 // VkEvent struct for app2user event notification in Vk
@@ -93,12 +96,34 @@ func (w *VkWorker) work() {
 				parameters["user_id"] = event.ExtID
 				parameters["activity_id"] = strconv.Itoa(event.Type)
 				parameters["value"] = strconv.Itoa(event.Value)
-				w.sendRequest("secure.sendNotification", parameters)
+				err := w.sendRequest("secure.sendNotification", parameters)
+				if err != nil {
+					log.Println(err.Error())
+					listEvents = append(listEvents[1:], listEvents[0]) // add to end of slice
+				} else {
+					listEvents = listEvents[1:]
+				}
+				w.Events = len(listEvents)
 				continue
 			}
 			if len(batchLevels) > 0 {
-				// TODO make batch request
-				// sendRequest("secure.setUserLevel", parameters)
+				todoCount := len(batchLevels)
+				if todoCount > batchLevelsGroupCount {
+					todoCount = batchLevelsGroupCount
+				}
+				batchPart := batchLevels[:todoCount]
+				var userLevels []string
+				for _, e := range batchPart {
+					userLevels = append(userLevels, fmt.Sprintf("%s:%d", e.ExtID, e.Value))
+				}
+				parameters["levels"] = strings.Join(userLevels, ",")
+				err := w.sendRequest("secure.setUserLevel", parameters)
+				if err != nil {
+					log.Println(err.Error())
+				} else {
+					batchLevels = batchLevels[todoCount:]
+				}
+				w.Levels = len(batchLevels)
 				continue
 			}
 		case event, ok := <-w.ch:
@@ -106,8 +131,10 @@ func (w *VkWorker) work() {
 				switch event.Type {
 				case 1:
 					batchLevels = append(batchLevels, event)
+					w.Levels = len(batchLevels)
 				case 2:
 					listEvents = append(listEvents, event)
+					w.Events = len(listEvents)
 				}
 			} else {
 				w.ch = nil
@@ -125,11 +152,10 @@ func (w *VkWorker) work() {
 	}
 }
 
-func (w *VkWorker) sendRequest(method string, parameters map[string]string) {
+func (w *VkWorker) sendRequest(method string, parameters map[string]string) error {
 	req, err := http.NewRequest("GET", fmt.Sprint("https://api.vk.com/method/", method), nil)
 	if err != nil {
-		log.Println(err.Error())
-		return
+		return err
 	}
 
 	q := req.URL.Query()
@@ -142,8 +168,7 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) {
 
 	resp, err := w.client.Do(req)
 	if err != nil {
-		log.Println(err.Error())
-		return
+		return err
 	}
 	defer resp.Body.Close()
 
@@ -151,12 +176,11 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) {
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&rawResponse)
 	if err != nil {
-		log.Println(err.Error())
-		return
+		return err
 	}
 	val, exist := rawResponse["error"]
 	if exist {
-		log.Println(val)
-		return
+		return fmt.Errorf("error %v", val)
 	}
+	return nil
 }

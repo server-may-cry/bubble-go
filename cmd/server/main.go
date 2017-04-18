@@ -99,6 +99,13 @@ func main() {
 		panic("test log.Fatal")
 	})
 
+	router.Get("/debug-vk", func(w http.ResponseWriter, r *http.Request) {
+		application.JSON(w, h{
+			"levels": application.VkWorker.Levels,
+			"events": application.VkWorker.Events,
+		})
+	})
+
 	loaderio := os.Getenv("LOADERIO")
 	loaderioRoute := fmt.Sprintf("/loaderio-%s", loaderio)
 	router.Get(loaderioRoute, func(w http.ResponseWriter, r *http.Request) {

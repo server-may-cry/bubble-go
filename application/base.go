@@ -15,7 +15,7 @@ var Gorm *gorm.DB
 var VkWorker *notification.VkWorker
 
 const (
-	userCtxID Key = iota
+	userCtxID = iota
 )
 
 type h map[string]interface{}
