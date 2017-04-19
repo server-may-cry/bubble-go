@@ -1,9 +1,9 @@
 {
-  "DEFAULT_REMAINING_TRIES": 5,
-  "DEFAULT_CREDITS": {
+  "default_remaining_tries": 5,
+  "default_credits": {
     "vk": 1000,
     "ok": 3000,
   },
-  "INTERVAL_TRIES_RESTORATION": 30,
-  "FRIENDS_BONUS_CREDITS_MULTIPLIER": 40
+  "interval_tries_restoration": 1800,
+  "friends_bonus_credits_multiplier": 40
 }

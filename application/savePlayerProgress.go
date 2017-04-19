@@ -41,7 +41,7 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 	user := ctx.Value(userCtxID).(User)
-	needUpdate := false
+	var needUpdate bool
 	switch request.LevelMode {
 	case "standart":
 		if request.ReachedStage > user.ReachedStage01 {

@@ -25,7 +25,7 @@ type enterResponse struct {
 	ReachedSubStage02         int8       `json:"reachedSubStage02,uint8"`
 	IgnoreSavePointBlock      int8       `json:"ignoreSavePointBlock,bool"`
 	RemainingTries            int8       `json:"remainingTries,uint8"`
-	TriesMin                  int        `json:"triesMin"`
+	TriesMin                  int8       `json:"triesMin"`
 	TriesRegenSecondsInterval int        `json:"triesRegenSecondsInterval"`
 	SecondsUntilTriesRegen    int64      `json:"secondsUntilTriesRegen"`
 	Credits                   int16      `json:"credits,uint16"`
@@ -87,9 +87,9 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			InifinityExtra07:        0,
 			InifinityExtra08:        0,
 			InifinityExtra09:        0,
-			RemainingTries:          5,
+			RemainingTries:          defaultConfig.DefaultRemainingTries,
 			RestoreTriesAt:          0,
-			Credits:                 0, // TODO
+			Credits:                 defaultConfig.DefaultCredits.Vk, // TODO dehardcode `Vk`
 			FriendsBonusCreditsTime: now.Unix(),
 			// TODO ProgressStandart:        [][]int8 // json
 		}
@@ -100,12 +100,12 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			needUpdate = true
 			to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
 			user.FriendsBonusCreditsTime = to.Unix()
-			userFriendsBonusCredits = int16(request.AppFriends) * 1 // TODO read from config
+			userFriendsBonusCredits = int16(request.AppFriends) * defaultConfig.FriendsBonusCreditsMultiplier
 		}
 		if user.RestoreTriesAt != 0 && now.Unix() >= user.RestoreTriesAt {
 			needUpdate = true
-			if user.RemainingTries < 0 {
-				user.RemainingTries = 0 // TODO replace `0` by config value
+			if user.RemainingTries < defaultConfig.DefaultRemainingTries {
+				user.RemainingTries = defaultConfig.DefaultRemainingTries
 			}
 			user.RestoreTriesAt = 0
 		} else if user.RestoreTriesAt != 0 {
@@ -125,8 +125,8 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		ReachedSubStage02:         user.ReachedSubStage02,
 		IgnoreSavePointBlock:      user.IgnoreSavePointBlock,
 		RemainingTries:            user.RemainingTries,
-		TriesMin:                  0, // TODO get from config
-		TriesRegenSecondsInterval: 0, // TODO get from config
+		TriesMin:                  defaultConfig.DefaultRemainingTries,
+		TriesRegenSecondsInterval: defaultConfig.IntervalTriesRestoration,
 		SecondsUntilTriesRegen:    triesRestore,
 		Credits:                   user.Credits,
 		InfinityExtra00:           user.InifinityExtra00,
