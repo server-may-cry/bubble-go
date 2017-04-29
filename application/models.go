@@ -1,5 +1,9 @@
 package application
 
+import (
+	"encoding/json"
+)
+
 // User struct in storage
 type User struct {
 	ID                      uint `gorm:"primary_key"`
@@ -24,7 +28,26 @@ type User struct {
 	RestoreTriesAt          int64
 	Credits                 int16
 	FriendsBonusCreditsTime int64
-	// ProgressStandart        [][]int8 // json // gorm conflict
+	ProgressStandart        string // [][]int8 json
+}
+
+// GetProgresStandart return user progress as array
+func (u *User) GetProgresStandart() [][]uint8 {
+	var progress [][]uint8
+	err := json.Unmarshal([]byte(u.ProgressStandart), &progress)
+	if err != nil {
+		panic(err)
+	}
+	return progress
+}
+
+// SetProgresStandart set user progress
+func (u *User) SetProgresStandart(progress [][]uint8) {
+	r, err := json.Marshal(progress)
+	if err != nil {
+		panic(err)
+	}
+	u.ProgressStandart = string(r[:])
 }
 
 // Transaction log payment requests

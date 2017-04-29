@@ -19,9 +19,9 @@ type enterRequest struct {
 type enterResponse struct {
 	ReqMsgID                  uint64     `json:"reqMsgId"`
 	UserID                    uint       `json:"userId"`
-	ReachedStage01            int8       `json:"reachedStage01,uint8"`
+	ReachedStage01            int8       `json:"reachedStage01,uint8"` // max user island
 	ReachedStage02            int8       `json:"reachedStage02,uint8"`
-	ReachedSubStage01         int8       `json:"reachedSubStage01,uint8"`
+	ReachedSubStage01         int8       `json:"reachedSubStage01,uint8"` // max user level on max island
 	ReachedSubStage02         int8       `json:"reachedSubStage02,uint8"`
 	IgnoreSavePointBlock      int8       `json:"ignoreSavePointBlock,bool"`
 	RemainingTries            int8       `json:"remainingTries,uint8"`
@@ -43,10 +43,10 @@ type enterResponse struct {
 	AppFriendsBonusCredits    int16      `json:"appFriendsBonusCredits,uint16"`
 	OfferAvailable            uint8      `json:"offerAvailable"` // bool
 	FirstGame                 uint8      `json:"firstGame"`      // bool
-	StagesProgressStat01      [8]uint32  `json:"stagesProgressStat01"`
+	StagesProgressStat01      [8]uint32  `json:"stagesProgressStat01"` // count users reach that island
 	StagesProgressStat02      [8]uint32  `json:"stagesProgressStat02"`
-	SubStagesRecordStats01    [8][]uint8 `json:"subStagesRecordStats01"`
-	SubStagesRecordStats02    [8][]uint8 `json:"subStagesRecordStats02"`
+	SubStagesRecordStats01    [8][]uint8 `json:"subStagesRecordStats01"` // user progress in start mode
+	SubStagesRecordStats02    [8][]uint8 `json:"subStagesRecordStats02"` // casual mode (not more used)
 }
 
 // ReqEnter first request from client. Return user info and user progress
@@ -147,6 +147,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		// StagesProgressStat02   TODO
 		// SubStagesRecordStats01 TODO
 		// SubStagesRecordStats02 TODO
+		// user.GetProgresStandart(),
 	}
 	JSON(w, response)
 }
