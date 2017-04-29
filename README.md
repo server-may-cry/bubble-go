@@ -9,7 +9,7 @@ govendor sync
 * github.com/pressly/chi
 * github.com/pressly/chi/middleware
 * github.com/jinzhu/gorm
-* github.com/jinzhu/gorm/dialects/sqlite
+* github.com/jinzhu/gorm/dialects/postgres
 
 ###### TODO
 * req enter

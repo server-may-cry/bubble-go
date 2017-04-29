@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/middleware"
 	"github.com/server-may-cry/bubble-go/application"
@@ -23,12 +24,22 @@ type h map[string]interface{}
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
-
-	sqliteFile, err := ioutil.TempFile("", "bubble.sqlite3")
+	dbURL := os.Getenv("DB_URL")
+	u, err := url.Parse(dbURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("can`t parse DB_URL (%s)", dbURL)
 	}
-	db, err := gorm.Open("sqlite3", sqliteFile.Name())
+
+	hostPort := strings.Split(u.Host, ":")
+	password, _ := u.User.Password()
+	db, err := gorm.Open("postgres", fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		hostPort[0],
+		hostPort[1],
+		u.User.Username(),
+		password,
+		strings.Trim(u.Path, "/"),
+	))
 	if err != nil {
 		log.Fatalf("failed to connect database: %s", err)
 	}
