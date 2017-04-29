@@ -14,8 +14,10 @@ var Gorm *gorm.DB
 // VkWorker channel for send vk events
 var VkWorker *notification.VkWorker
 
+type ctxID uint
+
 const (
-	userCtxID = iota
+	userCtxID ctxID = iota
 )
 
 type h map[string]interface{}

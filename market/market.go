@@ -34,16 +34,15 @@ func Buy(user interface{}, packName string) {
 	if !exist {
 		panic(fmt.Sprintf("try buy not existed pack %s", packName))
 	}
+	indirect := reflect.Indirect(reflect.ValueOf(user))
 	for parameter, amount := range pack.Reward.Increase {
 		Parameter := strings.Title(parameter)
-		r := reflect.ValueOf(user)
-		was := reflect.Indirect(r).FieldByName(Parameter).Int()
-		reflect.Indirect(r).FieldByName(Parameter).SetInt(was + amount)
+		was := indirect.FieldByName(Parameter).Int()
+		indirect.FieldByName(Parameter).SetInt(was + amount)
 	}
 	for parameter, amount := range pack.Reward.Set {
 		Parameter := strings.Title(parameter)
-		r := reflect.ValueOf(user)
-		reflect.Indirect(r).FieldByName(Parameter).SetInt(amount)
+		indirect.FieldByName(Parameter).SetInt(amount)
 	}
 }
 
@@ -67,6 +66,6 @@ func Initialize(config Config, cdn string) {
 // Validate check current market configuration for that type of user
 func Validate(user interface{}) {
 	for packName := range marketConfig {
-		Buy(&user, packName)
+		Buy(user, packName)
 	}
 }

@@ -59,7 +59,7 @@ func init() {
 	}
 	market.Initialize(marketConfig, os.Getenv("CDN_PREFIX"))
 	user := application.User{}
-	market.Validate(user)
+	market.Validate(&user)
 
 	application.VkWorker = notification.NewVkWorker(notification.VkConfig{
 		AppID:           os.Getenv("VK_APP_ID"),
