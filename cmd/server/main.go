@@ -50,12 +50,12 @@ func init() {
 	marketConfigFile := "./config/market.json"
 	file, err := os.Open(filepath.ToSlash(marketConfigFile))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("can`t open market.json error: %s", err)
 	}
 	var marketConfig market.Config
 	err = json.NewDecoder(file).Decode(&marketConfig)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("can`t decode market.json error: %s", err)
 	}
 	market.Initialize(marketConfig, os.Getenv("CDN_PREFIX"))
 	user := application.User{}

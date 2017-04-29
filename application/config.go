@@ -21,10 +21,10 @@ func init() {
 	configFile := "./config/user.json"
 	file, err := os.Open(filepath.ToSlash(configFile))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("can`t open user.json error: %s", err)
 	}
 	err = json.NewDecoder(file).Decode(&defaultConfig)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("cant decode user.json error: %s", err)
 	}
 }

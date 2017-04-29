@@ -3,5 +3,19 @@ services:
   go:
     build: .
     working_dir: /go/src/github.com/server-may-cry/bubble-go
+    environment:
+     - DB_URL=postgres://docker:docker@TODO_IP:5432/docker
     volumes:
      - .:/go/src/github.com/server-may-cry/bubble-go
+    links:
+     - postgres
+  postgres:
+    image: postgres:9.6-alpine
+    environment:
+     - POSTGRES_USER=docker
+     - POSTGRES_PASSWORD=docker
+     - POSTGRES_DB=docker
+    volumes:
+     - db:/var/lib/postgresql
+volumes:
+  db: {}
