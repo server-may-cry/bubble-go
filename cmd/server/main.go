@@ -33,7 +33,7 @@ func init() {
 	hostPort := strings.Split(u.Host, ":")
 	password, _ := u.User.Password()
 	db, err := gorm.Open("postgres", fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		"host=%s port=%s user=%s password=%s dbname=%s",
 		hostPort[0],
 		hostPort[1],
 		u.User.Username(),
