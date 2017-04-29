@@ -4,18 +4,21 @@ services:
     build: .
     working_dir: /go/src/github.com/server-may-cry/bubble-go
     environment:
-     - DB_URL=postgres://docker:docker@TODO_IP:5432/docker
+      - DB_URL=postgres://docker:docker@db.local:5432/docker
     volumes:
-     - .:/go/src/github.com/server-may-cry/bubble-go
+      - .:/go/src/github.com/server-may-cry/bubble-go
     links:
-     - postgres
+      - postgres:db.local
+    command: make all
   postgres:
     image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
     environment:
-     - POSTGRES_USER=docker
-     - POSTGRES_PASSWORD=docker
-     - POSTGRES_DB=docker
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=docker
     volumes:
-     - db:/var/lib/postgresql
+      - db:/var/lib/postgresql
 volumes:
   db: {}
