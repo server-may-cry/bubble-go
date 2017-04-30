@@ -41,8 +41,8 @@ type enterResponse struct {
 	InfinityExtra09           int8       `json:"inifinityExtra09,uint8"`
 	BonusCredits              int16      `json:"bonusCredits,uint16"`
 	AppFriendsBonusCredits    int16      `json:"appFriendsBonusCredits,uint16"`
-	OfferAvailable            uint8      `json:"offerAvailable"` // bool
-	FirstGame                 uint8      `json:"firstGame"`      // bool
+	OfferAvailable            uint8      `json:"offerAvailable"`       // bool
+	FirstGame                 uint8      `json:"firstGame"`            // bool
 	StagesProgressStat01      [8]uint32  `json:"stagesProgressStat01"` // count users reach that island
 	StagesProgressStat02      [8]uint32  `json:"stagesProgressStat02"`
 	SubStagesRecordStats01    [8][]uint8 `json:"subStagesRecordStats01"` // user progress in start mode
@@ -145,9 +145,8 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		AppFriendsBonusCredits:    userFriendsBonusCredits,
 		// StagesProgressStat01 TODO
 		// StagesProgressStat02   TODO
-		// SubStagesRecordStats01 TODO
+		SubStagesRecordStats01: user.GetProgresStandart(),
 		// SubStagesRecordStats02 TODO
-		// user.GetProgresStandart(),
 	}
 	JSON(w, response)
 }
