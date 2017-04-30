@@ -7,7 +7,7 @@ import (
 
 type usersProgressRequest struct {
 	baseRequest
-	SocIDs []uint64 `json:"socIds,[]uint64" binding:"required"`
+	SocIDs []uint64 `json:"socIds,[]uint64"`
 }
 
 type userProgres struct {

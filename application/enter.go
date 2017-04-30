@@ -11,9 +11,9 @@ import (
 type enterRequest struct {
 	baseRequest
 	AuthRequestPart
-	AppFriends uint8  `json:"appFriends,string" binding:"required"`
-	Referer    string `json:"referer" binding:"required"`
-	SrcExtID   string `json:"srcExtId" binding:"required"`
+	AppFriends uint8  `json:"appFriends,string"`
+	Referer    string `json:"referer"`
+	SrcExtID   string `json:"srcExtId"`
 }
 
 type enterResponse struct {

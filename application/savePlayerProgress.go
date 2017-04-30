@@ -21,12 +21,12 @@ import (
 */
 type savePlayerProgressRequest struct {
 	baseRequest
-	ReachedSubStage            int8   `json:"reachedSubStage,string" binding:"required"`
-	CurrentStage               int8   `json:"currentStage,string" binding:"required"`
-	ReachedStage               int8   `json:"reachedStage,string" binding:"required"`
-	CompleteSubStage           int8   `json:"completeSubStage,string" binding:"required"`
-	CompleteSubStageRecordStat int8   `json:"completeSubStageRecordStat,string" binding:"required"`
-	LevelMode                  string `json:"levelMode,string" binding:"required"`
+	ReachedSubStage            int8   `json:"reachedSubStage,string"`
+	CurrentStage               int8   `json:"currentStage,string"`
+	ReachedStage               int8   `json:"reachedStage,string"`
+	CompleteSubStage           int8   `json:"completeSubStage,string"`
+	CompleteSubStageRecordStat int8   `json:"completeSubStageRecordStat,string"`
+	LevelMode                  string `json:"levelMode,string"`
 }
 
 // ReqSavePlayerProgress save player progress

@@ -9,7 +9,7 @@ import (
 
 type buyProductRequest struct {
 	baseRequest
-	ProductID string `json:"productId" binding:"required"`
+	ProductID string `json:"productId"`
 }
 
 type buyProductResponse struct {

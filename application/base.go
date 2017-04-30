@@ -24,9 +24,9 @@ type h map[string]interface{}
 
 // AuthRequestPart can be used to validate request
 type AuthRequestPart struct {
-	AuthKey    string `json:"authKey" binding:"required"` // some hash
-	ExtID      string `json:"extId" binding:"required"`   // "123312693841263"
-	SysID      string `json:"sysId" binding:"required"`   // "VK"
+	AuthKey    string `json:"authKey"` // some hash
+	ExtID      string `json:"extId"`   // "123312693841263"
+	SysID      string `json:"sysId"`   // "VK"
 	SessionKey string `json:"sessionKey"`                 // OK only
 }
 

@@ -7,7 +7,7 @@ import (
 
 type reduceCreditsRequest struct {
 	baseRequest
-	Amount int16 `json:"amount,string" binding:"required"`
+	Amount int16 `json:"amount,string"`
 }
 
 type reduceCreditsResponse struct {
