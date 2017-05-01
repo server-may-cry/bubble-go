@@ -4,7 +4,25 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/server-may-cry/bubble-go/notification"
 )
+
+var islandEventMap []int
+
+func init() {
+	islandEventMap = append(
+		islandEventMap,
+		0, // not exist island number (0)
+		0, // key = 1
+		4,
+		5,
+		6,
+		7,
+		8,
+		9,
+	)
+}
 
 /*
 {
@@ -22,11 +40,11 @@ import (
 type savePlayerProgressRequest struct {
 	baseRequest
 	ReachedSubStage            int8   `json:"reachedSubStage,string"`
-	CurrentStage               int8   `json:"currentStage,string"`
+	CurrentStage               int8   `json:"currentStage,string"` // island number
 	ReachedStage               int8   `json:"reachedStage,string"`
-	CompleteSubStage           int8   `json:"completeSubStage,string"`
-	CompleteSubStageRecordStat int8   `json:"completeSubStageRecordStat,string"`
-	LevelMode                  string `json:"levelMode,string"`
+	CompleteSubStage           int8   `json:"completeSubStage,string"`           // level number on island
+	CompleteSubStageRecordStat uint8  `json:"completeSubStageRecordStat,string"` // starCount
+	LevelMode                  string `json:"levelMode,string"`                  // standart
 }
 
 // ReqSavePlayerProgress save player progress
@@ -52,15 +70,57 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 			needUpdate = true
 			user.ReachedSubStage01 = request.ReachedSubStage
 		}
+		progress := user.GetProgresStandart()
+		lenProgress := len(progress)
+		if int(request.CurrentStage) > lenProgress {
+			log.Panicf("can`t save progress %+v", request)
+		}
+		if request.CompleteSubStageRecordStat > progress[request.CurrentStage][request.CompleteSubStage] {
+			needUpdate = true
+			progress[request.CurrentStage][request.CompleteSubStage] = request.CompleteSubStageRecordStat
+			user.SetProgresStandart(progress)
+		}
 	default:
 		log.Panicf("not implemented level mode %s", request.LevelMode)
 	}
-	// TODO
-	// logic progress
 	if needUpdate {
 		Gorm.Save(&user)
 	}
 	// social logic
+	if request.CompleteSubStageRecordStat > 0 {
+		// not failed level
+		levelOrder := 0
+		if request.CurrentStage > 0 {
+			levelOrder = int(request.CurrentStage)*14 - 6
+		}
+		levelOrder += int(request.CompleteSubStage) + 1
+		prevReachedLevelOrder := 0
+		if user.ReachedStage01 > 0 {
+			prevReachedLevelOrder = int(user.ReachedStage01)*14 - 6
+		}
+		prevReachedLevelOrder += int(request.ReachedSubStage) + 1
+		if levelOrder > prevReachedLevelOrder || true { // copy from php ?? TODO ?? WTF!?
+			VkWorker.SendEvent(notification.VkEvent{
+				ExtID: user.ExtID,
+				Type:  1,
+				Value: levelOrder,
+			})
+		}
+	}
+	if request.CompleteSubStage == 14 || (request.CompleteSubStage == 8 && request.CurrentStage == 0) {
+		// open new island event
+		islandOrder := request.CurrentStage + 2 // start from 0 and unlock next island ?? TODO ??
+		eventID := islandEventMap[islandOrder]
+		if eventID != 0 {
+			if request.CurrentStage > user.ReachedStage01 || true { // copy from php ?? TODO ??
+				VkWorker.SendEvent(notification.VkEvent{
+					ExtID: user.ExtID,
+					Type:  2,
+					Value: eventID,
+				})
+			}
+		}
+	}
 	response := "ok"
 	JSON(w, response)
 }

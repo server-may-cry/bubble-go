@@ -50,7 +50,8 @@ func NewVkWorker(config VkConfig) *VkWorker {
 	return worker
 }
 
-func (w *VkWorker) sendEvent(e VkEvent) {
+// SendEvent send event to worker
+func (w *VkWorker) SendEvent(e VkEvent) {
 	w.ch <- e
 }
 

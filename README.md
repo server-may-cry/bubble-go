@@ -13,5 +13,5 @@ govendor sync
 
 ###### TODO
 * req enter
-* req save progress
 * tests
+* refactor all TODO
