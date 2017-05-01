@@ -51,12 +51,12 @@ type enterResponse struct {
 	FirstGame                 uint8  `json:"firstGame"`      // bool
 
 	// all players progress
-	StagesProgressStat01 [8]uint32 `json:"stagesProgressStat01"` // count users reach that island
-	StagesProgressStat02 [8]uint32 `json:"stagesProgressStat02"`
+	StagesProgressStat01 [7]uint32 `json:"stagesProgressStat01"` // count users reach that island
+	StagesProgressStat02 [7]uint32 `json:"stagesProgressStat02"`
 
 	// current player progress
-	SubStagesRecordStats01 [8][]int8 `json:"subStagesRecordStats01"` // user progress in start mode
-	SubStagesRecordStats02 [8][]int8 `json:"subStagesRecordStats02"` // casual mode (not more used)
+	SubStagesRecordStats01 [7][]int8 `json:"subStagesRecordStats01"` // user progress in start mode
+	SubStagesRecordStats02 [7][]int8 `json:"subStagesRecordStats02"` // casual mode (not more used)
 }
 
 // ReqEnter first request from client. Return user info and user progress
@@ -125,7 +125,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	if needUpdate {
 		Gorm.Save(&user)
 	}
-	var usersProgress [8]uint32
+	var usersProgress [7]uint32
 	rows, err := Gorm.Table(
 		"users",
 	).Select(

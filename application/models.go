@@ -32,7 +32,7 @@ type User struct {
 }
 
 // GetProgresStandart return user progress as array
-func (u *User) GetProgresStandart() (progress [8][]int8) {
+func (u *User) GetProgresStandart() (progress [7][]int8) {
 	err := json.Unmarshal([]byte(u.ProgressStandart), &progress)
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func (u *User) GetProgresStandart() (progress [8][]int8) {
 }
 
 // SetProgresStandart set user progress
-func (u *User) SetProgresStandart(progress [8][]int8) {
+func (u *User) SetProgresStandart(progress [7][]int8) {
 	r, err := json.Marshal(progress)
 	if err != nil {
 		panic(err)
