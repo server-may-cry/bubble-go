@@ -12,6 +12,5 @@ govendor sync
 * github.com/jinzhu/gorm/dialects/postgres
 
 ###### TODO
-* req enter
 * tests
 * refactor all TODO
