@@ -15,6 +15,7 @@ var defaultConfig struct {
 		Vk int16 `json:"vk"`
 		Ok int16 `json:"ok"`
 	} `json:"default_credits"`
+	InitProgress [8][]int8 `json:"init_progress"`
 }
 
 func init() {

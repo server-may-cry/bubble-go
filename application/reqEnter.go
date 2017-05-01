@@ -17,36 +17,40 @@ type enterRequest struct {
 }
 
 type enterResponse struct {
-	ReqMsgID                  uint64     `json:"reqMsgId"`
-	UserID                    uint       `json:"userId"`
-	ReachedStage01            int8       `json:"reachedStage01,uint8"` // max user island
-	ReachedStage02            int8       `json:"reachedStage02,uint8"`
-	ReachedSubStage01         int8       `json:"reachedSubStage01,uint8"` // max user level on max island
-	ReachedSubStage02         int8       `json:"reachedSubStage02,uint8"`
-	IgnoreSavePointBlock      int8       `json:"ignoreSavePointBlock,bool"`
-	RemainingTries            int8       `json:"remainingTries,uint8"`
-	TriesMin                  int8       `json:"triesMin"`
-	TriesRegenSecondsInterval int        `json:"triesRegenSecondsInterval"`
-	SecondsUntilTriesRegen    int64      `json:"secondsUntilTriesRegen"`
-	Credits                   int16      `json:"credits,uint16"`
-	InfinityExtra00           int8       `json:"inifinityExtra00,uint8"`
-	InfinityExtra01           int8       `json:"inifinityExtra01,uint8"`
-	InfinityExtra02           int8       `json:"inifinityExtra02,uint8"`
-	InfinityExtra03           int8       `json:"inifinityExtra03,uint8"`
-	InfinityExtra04           int8       `json:"inifinityExtra04,uint8"`
-	InfinityExtra05           int8       `json:"inifinityExtra05,uint8"`
-	InfinityExtra06           int8       `json:"inifinityExtra06,uint8"`
-	InfinityExtra07           int8       `json:"inifinityExtra07,uint8"`
-	InfinityExtra08           int8       `json:"inifinityExtra08,uint8"`
-	InfinityExtra09           int8       `json:"inifinityExtra09,uint8"`
-	BonusCredits              int16      `json:"bonusCredits,uint16"`
-	AppFriendsBonusCredits    int16      `json:"appFriendsBonusCredits,uint16"`
-	OfferAvailable            uint8      `json:"offerAvailable"`       // bool
-	FirstGame                 uint8      `json:"firstGame"`            // bool
-	StagesProgressStat01      [8]uint32  `json:"stagesProgressStat01"` // count users reach that island
-	StagesProgressStat02      [8]uint32  `json:"stagesProgressStat02"`
-	SubStagesRecordStats01    [8][]uint8 `json:"subStagesRecordStats01"` // user progress in start mode
-	SubStagesRecordStats02    [8][]uint8 `json:"subStagesRecordStats02"` // casual mode (not more used)
+	ReqMsgID                  uint64 `json:"reqMsgId"`
+	UserID                    uint   `json:"userId"`
+	ReachedStage01            int8   `json:"reachedStage01,uint8"` // max user island
+	ReachedStage02            int8   `json:"reachedStage02,uint8"`
+	ReachedSubStage01         int8   `json:"reachedSubStage01,uint8"` // max user level on max island
+	ReachedSubStage02         int8   `json:"reachedSubStage02,uint8"`
+	IgnoreSavePointBlock      int8   `json:"ignoreSavePointBlock,bool"`
+	RemainingTries            int8   `json:"remainingTries,uint8"`
+	TriesMin                  int8   `json:"triesMin"`
+	TriesRegenSecondsInterval int    `json:"triesRegenSecondsInterval"`
+	SecondsUntilTriesRegen    int64  `json:"secondsUntilTriesRegen"`
+	Credits                   int16  `json:"credits,uint16"`
+	InfinityExtra00           int8   `json:"inifinityExtra00,uint8"`
+	InfinityExtra01           int8   `json:"inifinityExtra01,uint8"`
+	InfinityExtra02           int8   `json:"inifinityExtra02,uint8"`
+	InfinityExtra03           int8   `json:"inifinityExtra03,uint8"`
+	InfinityExtra04           int8   `json:"inifinityExtra04,uint8"`
+	InfinityExtra05           int8   `json:"inifinityExtra05,uint8"`
+	InfinityExtra06           int8   `json:"inifinityExtra06,uint8"`
+	InfinityExtra07           int8   `json:"inifinityExtra07,uint8"`
+	InfinityExtra08           int8   `json:"inifinityExtra08,uint8"`
+	InfinityExtra09           int8   `json:"inifinityExtra09,uint8"`
+	BonusCredits              int16  `json:"bonusCredits,uint16"`
+	AppFriendsBonusCredits    int16  `json:"appFriendsBonusCredits,uint16"`
+	OfferAvailable            uint8  `json:"offerAvailable"` // bool
+	FirstGame                 uint8  `json:"firstGame"`      // bool
+
+	// all players progress
+	StagesProgressStat01 [8]uint32 `json:"stagesProgressStat01"` // count users reach that island
+	StagesProgressStat02 [8]uint32 `json:"stagesProgressStat02"`
+
+	// current player progress
+	SubStagesRecordStats01 [8][]int8 `json:"subStagesRecordStats01"` // user progress in start mode
+	SubStagesRecordStats02 [8][]int8 `json:"subStagesRecordStats02"` // casual mode (not more used)
 }
 
 // ReqEnter first request from client. Return user info and user progress
@@ -91,8 +95,8 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			RestoreTriesAt:          0,
 			Credits:                 defaultConfig.DefaultCredits.Vk, // TODO dehardcode `Vk`
 			FriendsBonusCreditsTime: now.Unix(),
-			// TODO ProgressStandart:        [][]int8 // json
 		}
+		user.SetProgresStandart(defaultConfig.InitProgress)
 		Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
 	case User:
 		user = value.(User)

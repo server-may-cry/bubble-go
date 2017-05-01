@@ -43,7 +43,7 @@ type savePlayerProgressRequest struct {
 	CurrentStage               int8   `json:"currentStage,string"` // island number
 	ReachedStage               int8   `json:"reachedStage,string"`
 	CompleteSubStage           int8   `json:"completeSubStage,string"`           // level number on island
-	CompleteSubStageRecordStat uint8  `json:"completeSubStageRecordStat,string"` // starCount
+	CompleteSubStageRecordStat int8   `json:"completeSubStageRecordStat,string"` // starCount
 	LevelMode                  string `json:"levelMode,string"`                  // standart
 }
 
