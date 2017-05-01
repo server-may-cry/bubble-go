@@ -12,5 +12,6 @@ govendor sync
 * github.com/jinzhu/gorm/dialects/postgres
 
 ###### TODO
+* fix game logic errors
 * tests
 * refactor all TODO
