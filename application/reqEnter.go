@@ -2,11 +2,17 @@ package application
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/server-may-cry/bubble-go/platforms"
 )
+
+type usersProgressRow struct {
+	Cnt            uint32
+	ReachedStage01 uint8
+}
 
 type enterRequest struct {
 	baseRequest
@@ -119,7 +125,37 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	if needUpdate {
 		Gorm.Save(&user)
 	}
-	// TODO add users progress
+	var usersProgress [8]uint32
+	rows, err := Gorm.Table(
+		"users",
+	).Select(
+		"count(*) as cnt, reached_stage01",
+	).Where(
+		"reached_stage01 > 0",
+	).Group(
+		"reached_stage01",
+	).Order(
+		"reached_stage01 desc",
+	).Rows()
+	if err != nil {
+		log.Print(err)
+	} else {
+		var rowObject usersProgressRow
+		i := -1
+		for rows.Next() {
+			err = rows.Scan(rowObject)
+			if err != nil {
+				log.Print(err)
+				break
+			}
+			i++
+			if rowObject.ReachedStage01 > uint8(i) {
+				usersProgress[i] += rowObject.Cnt
+			} else {
+				break
+			}
+		}
+	}
 	response := enterResponse{
 		ReqMsgID:                  request.MsgID,
 		UserID:                    user.ID,
@@ -147,7 +183,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		FirstGame:                 firstGame,
 		BonusCredits:              0, // not used (every 12 hours user get reward. deleted now)
 		AppFriendsBonusCredits:    userFriendsBonusCredits,
-		// StagesProgressStat01 TODO
+		StagesProgressStat01:      usersProgress,
 		// StagesProgressStat02   TODO
 		SubStagesRecordStats01: user.GetProgresStandart(),
 		// SubStagesRecordStats02 TODO
