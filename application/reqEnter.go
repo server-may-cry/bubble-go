@@ -188,9 +188,9 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		BonusCredits:              0, // not used (every 12 hours user get reward. deleted now)
 		AppFriendsBonusCredits:    userFriendsBonusCredits,
 		StagesProgressStat01:      usersProgress,
-		// StagesProgressStat02   TODO
+		// StagesProgressStat02   not used
 		SubStagesRecordStats01: user.GetProgresStandart(),
-		// SubStagesRecordStats02 TODO
+		// SubStagesRecordStats02 not used
 	}
 	JSON(w, response)
 }

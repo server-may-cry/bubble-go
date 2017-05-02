@@ -8,20 +8,17 @@ import (
 	"github.com/server-may-cry/bubble-go/notification"
 )
 
-var islandEventMap []int
+var completeLastLevelOnIslandEventMap []int
 
 func init() {
-	islandEventMap = append(
-		islandEventMap,
-		0, // not exist island number (0)
-		0, // key = 1
+	completeLastLevelOnIslandEventMap = []int{
 		4,
 		5,
 		6,
 		7,
 		8,
 		9,
-	)
+	}
 }
 
 /*
@@ -99,7 +96,7 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 			prevReachedLevelOrder = int(user.ReachedStage01)*14 - 6
 		}
 		prevReachedLevelOrder += int(request.ReachedSubStage) + 1
-		if levelOrder > prevReachedLevelOrder || true { // copy from php ?? TODO ?? WTF!?
+		if levelOrder > prevReachedLevelOrder { // fix for old users not save progress
 			VkWorker.SendEvent(notification.VkEvent{
 				ExtID: user.ExtID,
 				Type:  1,
@@ -109,10 +106,10 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 	}
 	if request.CompleteSubStage == 14 || (request.CompleteSubStage == 8 && request.CurrentStage == 0) {
 		// open new island event
-		islandOrder := request.CurrentStage + 2 // start from 0 and unlock next island ?? TODO ??
-		eventID := islandEventMap[islandOrder]
+		islandOrder := request.CurrentStage // complete last mission on island
+		eventID := completeLastLevelOnIslandEventMap[islandOrder]
 		if eventID != 0 {
-			if request.CurrentStage > user.ReachedStage01 || true { // copy from php ?? TODO ??
+			if request.CurrentStage > user.ReachedStage01 {
 				VkWorker.SendEvent(notification.VkEvent{
 					ExtID: user.ExtID,
 					Type:  2,

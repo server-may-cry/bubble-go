@@ -91,7 +91,7 @@ func (w *VkWorker) work() {
 	for {
 		select {
 		case <-ticker.C:
-			var parameters map[string]string
+			parameters := make(map[string]string)
 			if len(listEvents) > 0 {
 				event := listEvents[0]
 				parameters["user_id"] = event.ExtID

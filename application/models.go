@@ -11,8 +11,8 @@ type User struct {
 	ExtID                   string
 	ReachedStage01          int8
 	ReachedSubStage01       int8
-	ReachedStage02          int8 // not used. need in market. TODO remove
-	ReachedSubStage02       int8 // not used. need in market. TODO remove
+	ReachedStage02          int8 // not used. need in market
+	ReachedSubStage02       int8 // not used. need in market
 	IgnoreSavePointBlock    int8
 	InifinityExtra00        int8
 	InifinityExtra01        int8
