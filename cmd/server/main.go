@@ -45,7 +45,6 @@ func init() {
 	}
 	db.AutoMigrate(&application.User{})
 	db.AutoMigrate(&application.Transaction{})
-	db.LogMode(true) // TODO remove me
 	application.Gorm = db
 
 	marketConfigFile := "./config/market.json"
