@@ -99,8 +99,12 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			InifinityExtra09:        0,
 			RemainingTries:          defaultConfig.DefaultRemainingTries,
 			RestoreTriesAt:          0,
-			Credits:                 defaultConfig.DefaultCredits.Vk, // TODO dehardcode `Vk`
 			FriendsBonusCreditsTime: now.Unix(),
+		}
+		if request.SysID == "VK" {
+			user.Credits = defaultConfig.DefaultCredits.Vk
+		} else {
+			user.Credits = defaultConfig.DefaultCredits.Ok
 		}
 		user.SetProgresStandart(defaultConfig.InitProgress)
 		Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
