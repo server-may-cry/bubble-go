@@ -33,7 +33,7 @@ type VkWorker struct {
 
 // VkEvent struct for app2user event notification in Vk
 type VkEvent struct {
-	ExtID string
+	ExtID int64
 	Type  int
 	Value int
 }
@@ -94,7 +94,7 @@ func (w *VkWorker) work() {
 			parameters := make(map[string]string)
 			if len(listEvents) > 0 {
 				event := listEvents[0]
-				parameters["user_id"] = event.ExtID
+				parameters["user_id"] = strconv.FormatInt(event.ExtID, 10)
 				parameters["activity_id"] = strconv.Itoa(event.Type)
 				parameters["value"] = strconv.Itoa(event.Value)
 				err := w.sendRequest("secure.sendNotification", parameters)
@@ -115,7 +115,7 @@ func (w *VkWorker) work() {
 				batchPart := batchLevels[:todoCount]
 				var userLevels []string
 				for _, e := range batchPart {
-					userLevels = append(userLevels, fmt.Sprintf("%s:%d", e.ExtID, e.Value))
+					userLevels = append(userLevels, fmt.Sprintf("%d:%d", e.ExtID, e.Value))
 				}
 				parameters["levels"] = strings.Join(userLevels, ",")
 				err := w.sendRequest("secure.setUserLevel", parameters)

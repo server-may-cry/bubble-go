@@ -45,6 +45,8 @@ func init() {
 	}
 	db.AutoMigrate(&application.User{})
 	db.AutoMigrate(&application.Transaction{})
+	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxOpenConns(17) // 20 actual limit
 	application.Gorm = db
 
 	marketConfigFile := "./config/market.json"

@@ -6,9 +6,9 @@ import (
 
 // User struct in storage
 type User struct {
-	ID                      uint `gorm:"primary_key"`
-	SysID                   uint8
-	ExtID                   string
+	ID                      uint64 `gorm:"primary_key"`
+	SysID                   uint8  `gorm:"unique_index:user_search_index"`
+	ExtID                   int64  `gorm:"unique_index:user_search_index"`
 	ReachedStage01          int8
 	ReachedSubStage01       int8
 	ReachedStage02          int8 // not used. need in market
@@ -25,7 +25,7 @@ type User struct {
 	InifinityExtra08        int8
 	InifinityExtra09        int8
 	RemainingTries          int8
-	RestoreTriesAt          int64
+	RestoreTriesAt          int64 `sql:"not null"`
 	Credits                 int16
 	FriendsBonusCreditsTime int64
 	ProgressStandart        string // [][]int8 json
@@ -51,9 +51,9 @@ func (u *User) SetProgresStandart(progress [7][]int8) {
 
 // Transaction log payment requests
 type Transaction struct {
-	ID          uint `gorm:"primary_key"`
-	OrderID     int64
-	CreatedAt   int64
-	UserID      uint
+	ID          uint64 `gorm:"primary_key"`
+	OrderID     int64  `sql:"not null"`
+	CreatedAt   int64  `sql:"not null"`
+	UserID      uint64 `sql:"not null"`
 	ConfirmedAt int64
 }

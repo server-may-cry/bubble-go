@@ -11,8 +11,8 @@ type usersProgressRequest struct {
 }
 
 type userProgres struct {
-	UserID            uint   `json:"userId"`
-	SocID             string `json:"socId"`
+	UserID            uint64 `json:"userId"`
+	SocID             int64  `json:"socId,string"`
 	ReachedStage01    int8   `json:"reachedStage01"`
 	ReachedStage02    int8   `json:"reachedStage02"`
 	ReachedSubStage01 int8   `json:"reachedSubStage01"`

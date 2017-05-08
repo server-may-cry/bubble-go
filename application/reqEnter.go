@@ -19,12 +19,12 @@ type enterRequest struct {
 	AuthRequestPart
 	AppFriends uint8  `json:"appFriends,string"`
 	Referer    string `json:"referer"`
-	SrcExtID   string `json:"srcExtId"`
+	SrcExtID   int64  `json:"srcExtId,string"`
 }
 
 type enterResponse struct {
 	ReqMsgID                  uint64 `json:"reqMsgId"`
-	UserID                    uint   `json:"userId"`
+	UserID                    uint64 `json:"userId"`
 	ReachedStage01            int8   `json:"reachedStage01,uint8"` // max user island
 	ReachedStage02            int8   `json:"reachedStage02,uint8"`
 	ReachedSubStage01         int8   `json:"reachedSubStage01,uint8"` // max user level on max island

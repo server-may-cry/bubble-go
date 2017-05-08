@@ -33,14 +33,14 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 		switch request.SysID {
 		case "VK":
 			stringToHash = fmt.Sprintf(
-				"%s_%s_%s",
+				"%s_%d_%s",
 				os.Getenv("VK_APP_ID"),
 				request.ExtID,
 				os.Getenv("VK_SECRET"),
 			)
 		case "OK":
 			stringToHash = fmt.Sprintf(
-				"%s%s%s",
+				"%d%s%s",
 				request.ExtID,
 				request.SessionKey,
 				os.Getenv("OK_SECRET"),

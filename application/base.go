@@ -24,10 +24,10 @@ type h map[string]interface{}
 
 // AuthRequestPart can be used to validate request
 type AuthRequestPart struct {
-	AuthKey    string `json:"authKey"` // some hash
-	ExtID      string `json:"extId"`   // "123312693841263"
-	SysID      string `json:"sysId"`   // "VK"
-	SessionKey string `json:"sessionKey"`                 // OK only
+	AuthKey    string `json:"authKey"`      // some hash
+	ExtID      int64  `json:"extId,string"` // "123312693841263"
+	SysID      string `json:"sysId"`        // "VK"
+	SessionKey string `json:"sessionKey"`   // OK only
 }
 
 type baseRequest struct {
