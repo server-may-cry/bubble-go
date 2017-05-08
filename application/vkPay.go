@@ -127,7 +127,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		transaction := Transaction{
 			OrderID:     orderID,
 			CreatedAt:   ts,
-			UserID:      user.ID,
+			UserID:      user,
 			ConfirmedAt: ts,
 		}
 		success := Gorm.NewRecord(&transaction)
