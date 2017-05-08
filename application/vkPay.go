@@ -123,11 +123,12 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", rawRequest["order_id"]))
 		}
 
+		ts := time.Now().Unix()
 		transaction := Transaction{
 			OrderID:     orderID,
-			CreatedAt:   time.Now().Unix(),
+			CreatedAt:   ts,
 			UserID:      user.ID,
-			ConfirmedAt: 1,
+			ConfirmedAt: ts,
 		}
 		success := Gorm.NewRecord(&transaction)
 		if !success {
