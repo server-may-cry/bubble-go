@@ -7,12 +7,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/pressly/chi"
 )
 
 const (
-	cdnroot = "http://119226.selcdn.ru/bubble"
+	cdnroot = "http://119226.selcdn.ru"
 )
 
 var tmpDirName string
@@ -29,8 +27,7 @@ func init() {
 
 // ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)
 func ServeStatick(w http.ResponseWriter, r *http.Request) {
-	filePath := chi.URLParam(r, "filePath")
-	fullFilePath := filepath.ToSlash(tmpDirName + "/bubble" + filePath)
+	fullFilePath := filepath.ToSlash(tmpDirName + r.RequestURI)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
 		dirToStoreFile := filepath.Dir(fullFilePath)
 		if _, err = os.Stat(dirToStoreFile); os.IsNotExist(err) {
@@ -44,7 +41,7 @@ func ServeStatick(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer out.Close()
-		resp, err := http.Get(cdnroot + filePath)
+		resp, err := http.Get(cdnroot + r.RequestURI)
 		if err != nil {
 			panic(err)
 		}

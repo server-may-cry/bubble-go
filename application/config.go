@@ -18,9 +18,9 @@ var defaultConfig struct {
 	InitProgress [7][]int8 `json:"init_progress"`
 }
 
-func init() {
-	configFile := "./config/user.json"
-	file, err := os.Open(filepath.ToSlash(configFile))
+// ConfigInit pass config file
+func ConfigInit(configFilePath string) {
+	file, err := os.Open(filepath.ToSlash(configFilePath))
 	if err != nil {
 		log.Fatalf("can`t open user.json error: %s", err)
 	}

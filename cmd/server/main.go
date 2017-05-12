@@ -63,6 +63,8 @@ func init() {
 	user := application.User{}
 	market.Validate(&user)
 
+	application.ConfigInit("./config/user.json")
+
 	application.VkWorker = notification.NewVkWorker(notification.VkConfig{
 		AppID:           os.Getenv("VK_APP_ID"),
 		Secret:          os.Getenv("VK_SECRET"),
