@@ -15,12 +15,12 @@ func (h *statickHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ServeStatick(w, r)
 }
 
-func TestMyHandler(t *testing.T) {
+func TestStaticHandler(t *testing.T) {
 	handler := &statickHandler{}
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
-	resp, err := http.Get(fmt.Sprint(server.URL, "/bubble/ShootTheBubbleDevVK.html?some=query"))
+	resp, err := http.Get(fmt.Sprint(server.URL, "/bubble/ShootTheBubbleDevVK.html?some=query/"))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -27,7 +27,8 @@ func init() {
 
 // ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)
 func ServeStatick(w http.ResponseWriter, r *http.Request) {
-	fullFilePath := filepath.ToSlash(tmpDirName + r.RequestURI)
+	filePath := r.URL.Path
+	fullFilePath := filepath.ToSlash(tmpDirName + filePath)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
 		dirToStoreFile := filepath.Dir(fullFilePath)
 		if _, err = os.Stat(dirToStoreFile); os.IsNotExist(err) {
@@ -41,7 +42,7 @@ func ServeStatick(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer out.Close()
-		resp, err := http.Get(cdnroot + r.RequestURI)
+		resp, err := http.Get(cdnroot + filePath)
 		if err != nil {
 			panic(err)
 		}
