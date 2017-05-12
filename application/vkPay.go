@@ -130,10 +130,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			UserID:      user,
 			ConfirmedAt: ts,
 		}
-		success := Gorm.NewRecord(&transaction)
-		if !success {
-			panic(fmt.Sprintf("can`t create transaction %v", transaction))
-		}
+		Gorm.Create(&transaction)
 		JSON(w, h{
 			"response": h{
 				"order_id":     rawRequest["order_id"],

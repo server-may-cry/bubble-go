@@ -13,7 +13,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/pressly/chi"
 	"github.com/pressly/chi/middleware"
 	"github.com/server-may-cry/bubble-go/application"
 	"github.com/server-may-cry/bubble-go/market"
@@ -73,59 +72,9 @@ func init() {
 }
 
 func main() {
-	router := chi.NewRouter()
-
+	router := application.GetRouter()
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
-
-	// Set a timeout value on the request context (ctx), that will signal
-	// through ctx.Done() that the request has timed out and further
-	// processing should be stopped.
-	router.Use(middleware.Timeout(60 * time.Second))
-
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		application.JSON(w, h{
-			"foo": "bar",
-		})
-	})
-
-	router.Mount("/", func() http.Handler {
-		r := chi.NewRouter()
-		r.Use(application.AuthorizationMiddleware)
-		r.Post("/ReqEnter", application.ReqEnter)
-		r.Post("/ReqBuyProduct", application.ReqBuyProduct)
-		r.Post("/ReqReduceTries", application.ReqReduceTries)
-		r.Post("/ReqReduceCredits", application.ReqReduceCredits)
-		r.Post("/ReqSavePlayerProgress", application.ReqSavePlayerProgress)
-		r.Post("/ReqUsersProgress", application.ReqUsersProgress)
-		return r
-	}())
-	router.Post("/VkPay", application.VkPay)
-
-	router.Get("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
-	})
-	// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
-	// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
-	router.Get("/bubble/*filePath", application.ServeStatick)
-	router.Get("/cache-clear", application.ClearStatickCache)
-
-	router.Get("/exception", func(w http.ResponseWriter, r *http.Request) {
-		panic("test log.Fatal")
-	})
-
-	router.Get("/debug-vk", func(w http.ResponseWriter, r *http.Request) {
-		application.JSON(w, h{
-			"levels": application.VkWorker.Levels,
-			"events": application.VkWorker.Events,
-		})
-	})
-
-	loaderio := os.Getenv("LOADERIO")
-	loaderioRoute := fmt.Sprintf("/loaderio-%s", loaderio)
-	router.Get(loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(fmt.Sprintf("loaderio-%s", loaderio)))
-	})
 
 	port := os.Getenv("PORT")
 	http.ListenAndServe(fmt.Sprint(":", port), router)

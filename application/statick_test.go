@@ -9,15 +9,8 @@ import (
 	"testing"
 )
 
-type statickHandler struct{}
-
-func (h *statickHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ServeStatick(w, r)
-}
-
 func TestStaticHandler(t *testing.T) {
-	handler := &statickHandler{}
-	server := httptest.NewServer(handler)
+	server := httptest.NewServer(GetRouter())
 	defer server.Close()
 
 	resp, err := http.Get(fmt.Sprint(server.URL, "/bubble/ShootTheBubbleDevVK.html?some=query/"))
