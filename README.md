@@ -10,6 +10,7 @@ govendor sync
 * github.com/pressly/chi/middleware
 * github.com/jinzhu/gorm
 * github.com/jinzhu/gorm/dialects/postgres
+* github.com/jinzhu/gorm/dialects/sqlite for tests
 
 ###### TODO
-* tests
+* more tests
