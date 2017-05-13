@@ -56,7 +56,7 @@ func TestMarketSet(t *testing.T) {
 	}
 }
 
-func TestMarketPanic(t *testing.T) {
+func TestMarketBuyNotExistPack(t *testing.T) {
 	user := testUser{
 		Credits: 100,
 	}
@@ -80,4 +80,9 @@ func TestMarketGetNotExistPack(t *testing.T) {
 		}
 	}()
 	GetPack("pack_not_exist")
+}
+
+func TestMarketValidate(t *testing.T) {
+	user := testUser{}
+	Validate(&user)
 }

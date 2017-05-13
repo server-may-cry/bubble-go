@@ -13,7 +13,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/pressly/chi/middleware"
 	"github.com/server-may-cry/bubble-go/application"
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/notification"
@@ -72,10 +71,7 @@ func init() {
 }
 
 func main() {
-	router := application.GetRouter()
-	router.Use(middleware.Logger)
-	router.Use(middleware.Recoverer)
-
+	router := application.GetRouter(false)
 	port := os.Getenv("PORT")
 	http.ListenAndServe(fmt.Sprint(":", port), router)
 }

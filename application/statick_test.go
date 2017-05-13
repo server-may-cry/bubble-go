@@ -10,7 +10,7 @@ import (
 )
 
 func TestStaticHandler(t *testing.T) {
-	server := httptest.NewServer(GetRouter())
+	server := httptest.NewServer(GetRouter(true))
 	defer server.Close()
 
 	resp, err := http.Get(fmt.Sprint(server.URL, "/bubble/ShootTheBubbleDevVK.html?some=query/"))
