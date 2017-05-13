@@ -3,12 +3,6 @@ language: go
 go:
   - "1.8"
 
-services:
-  - postgresql
-
-addons:
-  postgresql: "9.6"
-
 before_install:
   - go install -race std
   - go get golang.org/x/tools/cmd/cover
