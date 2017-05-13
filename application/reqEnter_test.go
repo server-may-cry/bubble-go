@@ -41,9 +41,11 @@ func TestRegistration(t *testing.T) {
 	}
 	decoder := json.NewDecoder(resp.Body)
 	var response enterResponse
-	err = decoder.Decode(response)
+	err = decoder.Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Fatal(response)
+	if response.FirstGame != 1 {
+		t.Fatalf("first game expected, got %+v", response)
+	}
 }
