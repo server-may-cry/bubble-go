@@ -17,7 +17,6 @@ import (
 // AuthorizationMiddleware check signature and load user
 func AuthorizationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO try decoder := json.NewDecoder(c.Request.Body)
 		buf, _ := ioutil.ReadAll(r.Body)
 		requestBodyCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
 		r.Body = requestBodyCopy

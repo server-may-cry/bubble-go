@@ -16,7 +16,7 @@ var platformsMap = map[string]uint8{
 func GetByName(name string) uint8 {
 	platformID, exist := platformsMap[name]
 	if !exist {
-		panic(fmt.Sprintf("unknowwn platform %s", name))
+		panic(fmt.Sprintf("unknown platform %s", name))
 	}
 
 	return platformID

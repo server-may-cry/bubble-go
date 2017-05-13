@@ -14,7 +14,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func TestFirstGameField(t *testing.T) {
+func TestReduceTries(t *testing.T) {
 	server := httptest.NewServer(GetRouter(true))
 	defer server.Close()
 
@@ -24,18 +24,24 @@ func TestFirstGameField(t *testing.T) {
 	}
 	db, err := gorm.Open("sqlite3", file.Name())
 	db.AutoMigrate(&User{})
+	user := User{
+		SysID:          1,
+		ExtID:          123,
+		RemainingTries: 8,
+	}
+	db.Create(&user)
 	Gorm = db
 
 	data := []byte("_123_")
 	authKey := fmt.Sprintf("%x", md5.Sum(data))
 	jsonBytes, _ := json.Marshal(AuthRequestPart{
-		AuthKey: authKey,
 		ExtID:   123,
 		SysID:   "VK",
+		AuthKey: authKey,
 	})
-	reader := bytes.NewReader(jsonBytes)
 
-	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqEnter"), "application/json", reader)
+	reader := bytes.NewReader(jsonBytes)
+	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqReduceTries"), "application/json", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,30 +49,17 @@ func TestFirstGameField(t *testing.T) {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
 	decoder := json.NewDecoder(resp.Body)
-	var response enterResponse
+	var response []int8
 	err = decoder.Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if response.FirstGame != 1 {
-		t.Fatalf("first game expected, got %+v", response)
+	if response[0] != 7 {
+		t.Fatalf("expected 7 remaining tries, got %+v", response)
 	}
 
-	reader.Reset(jsonBytes)
-	resp, err = http.Post(fmt.Sprint(server.URL, "/ReqEnter"), "application/json", reader)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
-	}
-	decoder = json.NewDecoder(resp.Body)
-	err = decoder.Decode(&response)
-	if err != nil {
-		body, _ := ioutil.ReadAll(resp.Body)
-		t.Fatalf("%s raw: %s", err, string(body))
-	}
-	if response.FirstGame != 0 {
-		t.Fatalf("not first game expected, got %+v", response)
+	db.First(&user, user.ID)
+	if user.RemainingTries != 7 {
+		t.Fatalf("expected 7 remaining tries, got %+v", user)
 	}
 }
