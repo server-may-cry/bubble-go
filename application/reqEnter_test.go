@@ -30,7 +30,7 @@ func TestRegistration(t *testing.T) {
 	authKey := fmt.Sprintf("%x", md5.Sum(data))
 	jsonBytes, _ := json.Marshal(AuthRequestPart{
 		AuthKey: authKey,
-		ExtID:   "123",
+		ExtID:   123,
 		SysID:   "VK",
 	})
 	reader := bytes.NewReader(jsonBytes)
@@ -39,5 +39,11 @@ func TestRegistration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Fatal(string(resp))
+	decoder := json.NewDecoder(resp.Body)
+	var response enterResponse
+	err = decoder.Decode(response)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Fatal(response)
 }
