@@ -13,4 +13,7 @@ govendor sync
 * github.com/jinzhu/gorm/dialects/sqlite for tests
 
 ###### TODO
-* more tests
+* test save progress
+* test life restore
+* test daily bonus
+* refactor tests
