@@ -46,7 +46,7 @@ func TestUsersProgress(t *testing.T) {
 			AuthKey: authKey,
 		},
 		usersProgressRequest{
-			SocIDs: []uint64{123},
+			SocIDs: []int64{123},
 		},
 	})
 
@@ -64,7 +64,7 @@ func TestUsersProgress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(response.UsersProgress) != 1 {
+	if len(response.UsersProgress) != 1 || response.UsersProgress[0].SocID != 123 {
 		t.Fatalf("expected users progress, got %+v", response)
 	}
 }

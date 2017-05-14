@@ -28,7 +28,7 @@ type User struct {
 	RestoreTriesAt          int64 `sql:"not null"`
 	Credits                 int16
 	FriendsBonusCreditsTime int64
-	ProgressStandart        string // [][]int8 json
+	ProgressStandart        string `sql:"json"` // [][]int8 json
 }
 
 // GetProgresStandart return user progress as array

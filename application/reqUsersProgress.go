@@ -7,7 +7,7 @@ import (
 
 type usersProgressRequest struct {
 	baseRequest
-	SocIDs []uint64 `json:"socIds,[]uint64"`
+	SocIDs []int64 `json:"socIds"`
 }
 
 type userProgres struct {
@@ -46,6 +46,8 @@ func ReqUsersProgress(w http.ResponseWriter, r *http.Request) {
 			SocID:             friend.ExtID,
 			ReachedStage01:    friend.ReachedStage01,
 			ReachedSubStage01: friend.ReachedSubStage01,
+			ReachedStage02:    friend.ReachedStage02,
+			ReachedSubStage02: friend.ReachedSubStage02,
 		}
 	}
 	JSON(w, response)
