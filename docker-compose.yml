@@ -16,7 +16,7 @@ services:
   postgres:
     image: postgres:9.6-alpine
     expose:
-      - 5432:5432
+      - 5432/TCP
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
