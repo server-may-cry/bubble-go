@@ -30,7 +30,10 @@ type testUser struct {
 
 func init() {
 	var config Config
-	json.Unmarshal([]byte(exampleMarketJSON), &config)
+	err := json.Unmarshal([]byte(exampleMarketJSON), &config)
+	if err != nil {
+		panic(err)
+	}
 	Initialize(config, "cdn://cdn.cdn/")
 }
 

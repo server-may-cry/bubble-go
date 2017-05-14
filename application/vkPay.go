@@ -44,6 +44,24 @@ requests
 }
 */
 
+type errorResponse struct {
+	ErrorCode int    `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+	Critical  bool   `json:"critical"`
+}
+
+type orderResponse struct {
+	OrderID    interface{} `json:"order_id"`
+	AppOrderID uint64      `json:"app_order_id"`
+}
+
+type itemResponse struct {
+	ItemID   int    `json:"item_id"`
+	Title    string `json:"title"`
+	PhotoURL string `json:"photo_url"`
+	Price    int    `json:"price"`
+}
+
 // VkPay acept and validate payment request from vk
 func VkPay(w http.ResponseWriter, r *http.Request) {
 	var rawRequest map[string]string
@@ -75,10 +93,10 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
 	if expectedAuthKey != rawRequest["sig"] {
 		JSON(w, h{
-			"error": h{
-				"error_code": 10,
-				"error_msg":  "Несовпадение вычисленной и переданной подписи запроса.",
-				"critical":   true,
+			"error": errorResponse{
+				ErrorCode: 10,
+				ErrorMsg:  "Несовпадение вычисленной и переданной подписи запроса.",
+				Critical:  true,
 			},
 		})
 		return
@@ -89,11 +107,11 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	case "get_item_test":
 		pack := market.GetPack(rawRequest["item"])
 		JSON(w, h{
-			"response": h{
-				"item_id":   1,
-				"title":     pack.Title.Ru,
-				"photo_url": pack.Photo,
-				"price":     pack.Price,
+			"response": itemResponse{
+				ItemID:   1,
+				Title:    pack.Title.Ru,
+				PhotoURL: pack.Photo,
+				Price:    pack.Price.Vk,
 			},
 		})
 		return
@@ -103,10 +121,10 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	case "order_status_change_test":
 		if rawRequest["status"] != "chargeable" {
 			JSON(w, h{
-				"error": h{
-					"error_code": 100,
-					"error_msg":  "Передано непонятно что вместо chargeable.",
-					"critical":   true,
+				"error": errorResponse{
+					ErrorCode: 100,
+					ErrorMsg:  "Передано непонятно что вместо chargeable.",
+					Critical:  true,
 				},
 			})
 			return
@@ -114,7 +132,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		db := Gorm
 		var user User
 		db.Where("sys_id = ? AND ext_id = ?", platforms.GetByName("VK"), rawRequest["user_id"]).First(&user)
-		if user.ID != 0 { // check user exists
+		if user.ID == 0 { // check user exists
 			panic("user not foud. try to buy")
 		}
 		market.Buy(&user, rawRequest["item"])
@@ -131,20 +149,21 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			ConfirmedAt: ts,
 		}
 		Gorm.Create(&transaction)
+		Gorm.Save(&user)
 		JSON(w, h{
-			"response": h{
-				"order_id":     rawRequest["order_id"],
-				"app_order_id": transaction.ID,
+			"response": orderResponse{
+				OrderID:    rawRequest["order_id"],
+				AppOrderID: transaction.ID,
 			},
 		})
 		return
 
 	default:
 		JSON(w, h{
-			"error": h{
-				"error_code": 100,
-				"error_msg":  "Передано непонятно что в notification_type.",
-				"critical":   true,
+			"error": errorResponse{
+				ErrorCode: 100,
+				ErrorMsg:  "Передано непонятно что в notification_type.",
+				Critical:  true,
 			},
 		})
 		return
