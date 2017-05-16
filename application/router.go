@@ -11,13 +11,14 @@ import (
 )
 
 // GetRouter return http.Handler for tests and core
-func GetRouter(debug bool) http.Handler {
+func GetRouter(test bool) http.Handler {
 	router := chi.NewRouter()
 
-	if !debug {
+	if !test {
 		router.Use(middleware.Logger)
 		router.Use(middleware.Recoverer)
 	}
+	router.Mount("/debug", middleware.Profiler())
 
 	// Set a timeout value on the request context (ctx), that will signal
 	// through ctx.Done() that the request has timed out and further
