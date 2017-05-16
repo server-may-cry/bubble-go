@@ -22,7 +22,7 @@ type usersProgressResponse struct {
 	UsersProgress []userProgres `json:"usersProgress"`
 }
 
-// ReqUsersProgress return progres of recieved users
+// ReqUsersProgress return progres of received users
 func ReqUsersProgress(w http.ResponseWriter, r *http.Request) {
 	request := usersProgressRequest{}
 	defer r.Body.Close()

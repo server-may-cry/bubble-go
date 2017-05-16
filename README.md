@@ -1,5 +1,8 @@
-### bubble-go
+bubble-go
+=========
+
 [![Build Status](https://travis-ci.org/server-may-cry/bubble-go.svg?branch=master)](https://travis-ci.org/server-may-cry/bubble-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/server-may-cry/bubble-go)](https://goreportcard.com/report/github.com/server-may-cry/bubble-go)
 
 ```
 govendor sync
