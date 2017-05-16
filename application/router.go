@@ -18,12 +18,13 @@ func GetRouter(test bool) http.Handler {
 		router.Use(middleware.Logger)
 		router.Use(middleware.Recoverer)
 	}
-	router.Mount("/debug", middleware.Profiler())
 
 	// Set a timeout value on the request context (ctx), that will signal
 	// through ctx.Done() that the request has timed out and further
 	// processing should be stopped.
 	router.Use(middleware.Timeout(60 * time.Second))
+
+	router.Mount("/debug", middleware.Profiler())
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		JSON(w, h{
