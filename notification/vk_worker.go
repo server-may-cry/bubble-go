@@ -10,34 +10,6 @@ import (
 	"time"
 )
 
-type authorizationResponse struct {
-	AccessToken string `json:"access_token"`
-}
-
-// VkConfig config for vk worker
-type VkConfig struct {
-	AppID           string
-	Secret          string
-	RequestInterval time.Duration
-}
-
-// VkWorker worker for app 2 user notifications
-type VkWorker struct {
-	ch     chan VkEvent
-	config VkConfig
-	token  string
-	client *http.Client
-	Levels int
-	Events int
-}
-
-// VkEvent struct for app2user event notification in Vk
-type VkEvent struct {
-	ExtID int64
-	Type  int
-	Value int
-}
-
 const batchLevelsGroupCount = 200
 
 // NewVkWorker create vk worker for app2user notification
@@ -50,9 +22,49 @@ func NewVkWorker(config VkConfig) *VkWorker {
 	return worker
 }
 
+type authorizationResponse struct {
+	AccessToken string `json:"access_token"`
+}
+
+// VkConfig config for vk worker
+type VkConfig struct {
+	AppID           string
+	Secret          string
+	RequestInterval time.Duration
+}
+
+// VkEvent struct for app2user event notification in Vk
+type VkEvent struct {
+	ExtID int64
+	Type  int
+	Value int
+}
+
+// VkWorker worker for app 2 user notifications
+type VkWorker struct {
+	ch     chan VkEvent
+	config VkConfig
+	token  string
+	client *http.Client
+
+	// events to processing
+	batchLevels []VkEvent
+	listEvents  []VkEvent
+}
+
 // SendEvent send event to worker
 func (w *VkWorker) SendEvent(e VkEvent) {
 	w.ch <- e
+}
+
+// LenEvents return amount of events to process
+func (w *VkWorker) LenEvents() int {
+	return len(w.listEvents)
+}
+
+// LenLevels return amount of levels to set
+func (w *VkWorker) LenLevels() int {
+	return len(w.listEvents)
 }
 
 func (w *VkWorker) work() {
@@ -91,51 +103,14 @@ func (w *VkWorker) work() {
 	for {
 		select {
 		case <-ticker.C:
-			parameters := make(map[string]string)
-			if len(listEvents) > 0 {
-				event := listEvents[0]
-				parameters["user_id"] = strconv.FormatInt(event.ExtID, 10)
-				parameters["activity_id"] = strconv.Itoa(event.Type)
-				parameters["value"] = strconv.Itoa(event.Value)
-				err := w.sendRequest("secure.sendNotification", parameters)
-				if err != nil {
-					log.Println(err.Error())
-					listEvents = append(listEvents[1:], listEvents[0]) // add to end of slice
-				} else {
-					listEvents = listEvents[1:]
-				}
-				w.Events = len(listEvents)
-				continue
-			}
-			if len(batchLevels) > 0 {
-				todoCount := len(batchLevels)
-				if todoCount > batchLevelsGroupCount {
-					todoCount = batchLevelsGroupCount
-				}
-				batchPart := batchLevels[:todoCount]
-				var userLevels []string
-				for _, e := range batchPart {
-					userLevels = append(userLevels, fmt.Sprintf("%d:%d", e.ExtID, e.Value))
-				}
-				parameters["levels"] = strings.Join(userLevels, ",")
-				err := w.sendRequest("secure.setUserLevel", parameters)
-				if err != nil {
-					log.Println(err.Error())
-				} else {
-					batchLevels = batchLevels[todoCount:]
-				}
-				w.Levels = len(batchLevels)
-				continue
-			}
+			w.processEvents()
 		case event, ok := <-w.ch:
 			if ok {
 				switch event.Type {
 				case 1:
 					batchLevels = append(batchLevels, event)
-					w.Levels = len(batchLevels)
 				case 2:
 					listEvents = append(listEvents, event)
-					w.Events = len(listEvents)
 				}
 			} else {
 				w.ch = nil
@@ -149,6 +124,42 @@ func (w *VkWorker) work() {
 			if (len(listEvents) + len(batchLevels)/batchLevelsGroupCount) == 0 {
 				break
 			}
+		}
+	}
+}
+
+func (w *VkWorker) processEvents() {
+	parameters := make(map[string]string)
+	if len(w.listEvents) > 0 {
+		event := w.listEvents[0]
+		parameters["user_id"] = strconv.FormatInt(event.ExtID, 10)
+		parameters["activity_id"] = strconv.Itoa(event.Type)
+		parameters["value"] = strconv.Itoa(event.Value)
+		err := w.sendRequest("secure.sendNotification", parameters)
+		if err != nil {
+			log.Println(err.Error())
+			w.listEvents = append(w.listEvents[1:], w.listEvents[0]) // add to end of slice
+		} else {
+			w.listEvents = w.listEvents[1:]
+		}
+		return // not more one request per function call
+	}
+	if len(w.batchLevels) > 0 {
+		todoCount := len(w.batchLevels)
+		if todoCount > batchLevelsGroupCount {
+			todoCount = batchLevelsGroupCount
+		}
+		batchPart := w.batchLevels[:todoCount]
+		var userLevels []string
+		for _, e := range batchPart {
+			userLevels = append(userLevels, fmt.Sprintf("%d:%d", e.ExtID, e.Value))
+		}
+		parameters["levels"] = strings.Join(userLevels, ",")
+		err := w.sendRequest("secure.setUserLevel", parameters)
+		if err != nil {
+			log.Println(err.Error())
+		} else {
+			w.batchLevels = w.batchLevels[todoCount:]
 		}
 	}
 }

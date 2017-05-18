@@ -84,6 +84,12 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 		Gorm.Save(&user)
 	}
 	// social logic
+	socialLogic(request, user)
+	response := "ok"
+	JSON(w, response)
+}
+
+func socialLogic(request savePlayerProgressRequest, user User) {
 	if request.CompleteSubStageRecordStat > 0 {
 		// not failed level
 		levelOrder := 0
@@ -96,7 +102,7 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 			prevReachedLevelOrder = int(user.ReachedStage01)*14 - 6
 		}
 		prevReachedLevelOrder += int(request.ReachedSubStage) + 1
-		if levelOrder > prevReachedLevelOrder { // fix for old users not save progress
+		if levelOrder > prevReachedLevelOrder {
 			VkWorker.SendEvent(notification.VkEvent{
 				ExtID: user.ExtID,
 				Type:  1,
@@ -118,6 +124,4 @@ func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	response := "ok"
-	JSON(w, response)
 }

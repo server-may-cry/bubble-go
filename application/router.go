@@ -59,8 +59,8 @@ func GetRouter(test bool) http.Handler {
 
 	router.Get("/debug-vk", func(w http.ResponseWriter, r *http.Request) {
 		JSON(w, h{
-			"levels": VkWorker.Levels,
-			"events": VkWorker.Events,
+			"levels": VkWorker.LenLevels(),
+			"events": VkWorker.LenEvents(),
 		})
 	})
 
