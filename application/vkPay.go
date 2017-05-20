@@ -3,7 +3,6 @@ package application
 import (
 	"bytes"
 	"crypto/md5"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -16,8 +15,7 @@ import (
 )
 
 /*
-requests
-{
+requests post paameters actualy
     "app_id":"4890xxx",
     "item":"creditsPacxxx",
     "lang":"ru_RU",
@@ -26,8 +24,7 @@ requests
     "receiver_id":"5523xxx",
     "user_id":"5523xxx",
     "sig":"bd59934272e8xxxx"
-}
-{
+
     "app_id":"4890948",
     "date":"1433503962",
     "item":"creditsPack01",
@@ -41,7 +38,6 @@ requests
     "status":"chargeable",
     "user_id":"5523718",
     "sig":"bd59934272e8xxxx"
-}
 */
 
 type errorResponse struct {
@@ -64,16 +60,12 @@ type itemResponse struct {
 
 // VkPay acept and validate payment request from vk
 func VkPay(w http.ResponseWriter, r *http.Request) {
-	var rawRequest map[string]string
 	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&rawRequest)
-	if err != nil {
+	if err := r.ParseForm(); err != nil {
 		http.Error(w, getErrBody(err), http.StatusBadRequest)
-		return
 	}
-	keys := make([]string, 0, len(rawRequest))
-	for k := range rawRequest {
+	keys := make([]string, 0, len(r.PostForm))
+	for k := range r.PostForm {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -82,7 +74,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		if k == "sig" {
 			continue
 		}
-		hashStr.WriteString(fmt.Sprint(k, "=", rawRequest[k]))
+		hashStr.WriteString(fmt.Sprint(k, "=", r.PostFormValue(k)))
 	}
 
 	secret := os.Getenv("VK_SECRET")
@@ -91,7 +83,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	}
 	data := []byte(fmt.Sprint(hashStr.String(), secret))
 	expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
-	if expectedAuthKey != rawRequest["sig"] {
+	if expectedAuthKey != r.PostFormValue("sig") {
 		JSON(w, h{
 			"error": errorResponse{
 				ErrorCode: 10,
@@ -101,11 +93,11 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	switch rawRequest["notification_type"] {
+	switch r.PostFormValue("notification_type") {
 	case "get_item":
 		fallthrough
 	case "get_item_test":
-		pack := market.GetPack(rawRequest["item"])
+		pack := market.GetPack(r.PostFormValue("item"))
 		JSON(w, h{
 			"response": itemResponse{
 				ItemID:   1,
@@ -119,7 +111,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	case "order_status_change":
 		fallthrough
 	case "order_status_change_test":
-		if rawRequest["status"] != "chargeable" {
+		if r.PostFormValue("status") != "chargeable" {
 			JSON(w, h{
 				"error": errorResponse{
 					ErrorCode: 100,
@@ -131,14 +123,14 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		}
 		db := Gorm
 		var user User
-		db.Where("sys_id = ? AND ext_id = ?", platforms.GetByName("VK"), rawRequest["user_id"]).First(&user)
+		db.Where("sys_id = ? AND ext_id = ?", platforms.GetByName("VK"), r.PostFormValue("user_id")).First(&user)
 		if user.ID == 0 { // check user exists
 			panic("user not foud. try to buy")
 		}
-		market.Buy(&user, rawRequest["item"])
-		orderID, err := strconv.ParseInt(rawRequest["order_id"], 10, 0)
+		market.Buy(&user, r.PostFormValue("item"))
+		orderID, err := strconv.ParseInt(r.PostFormValue("order_id"), 10, 0)
 		if err != nil {
-			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", rawRequest["order_id"]))
+			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostFormValue("order_id")))
 		}
 
 		ts := time.Now().Unix()
@@ -152,7 +144,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		Gorm.Save(&user)
 		JSON(w, h{
 			"response": orderResponse{
-				OrderID:    rawRequest["order_id"],
+				OrderID:    r.PostFormValue("order_id"),
 				AppOrderID: transaction.ID,
 			},
 		})
