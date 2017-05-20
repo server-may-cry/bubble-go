@@ -52,7 +52,7 @@ func GetPack(packName string) Pack {
 	if !exist {
 		panic(fmt.Sprintf("try buy not existed pack %s", packName))
 	}
-	pack.Photo = fmt.Sprint(cdnPrefix, pack.Photo)
+	pack.Photo = fmt.Sprint(cdnPrefix, "productIcons/", pack.Photo, ".png")
 
 	return pack
 }
