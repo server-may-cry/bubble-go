@@ -7,13 +7,13 @@ import (
 
 type reduceCreditsRequest struct {
 	baseRequest
-	Amount int16 `json:"amount,string"`
+	Amount int `json:"amount,string"`
 }
 
 type reduceCreditsResponse struct {
 	ReqMsgID string `json:"reqMsgId"`
 	UserID   string `json:"userId"`
-	Credits  int16  `json:"credits"`
+	Credits  int    `json:"credits"`
 }
 
 // ReqReduceCredits reduce user credits. Get amount from request

@@ -8,12 +8,12 @@ import (
 )
 
 var defaultConfig struct {
-	DefaultRemainingTries         int8  `json:"default_remaining_tries"`
-	IntervalTriesRestoration      int   `json:"interval_tries_restoration"`
-	FriendsBonusCreditsMultiplier int16 `json:"friends_bonus_credits_multiplier"`
+	DefaultRemainingTries         int8 `json:"default_remaining_tries"`
+	IntervalTriesRestoration      int  `json:"interval_tries_restoration"`
+	FriendsBonusCreditsMultiplier int  `json:"friends_bonus_credits_multiplier"`
 	DefaultCredits                struct {
-		Vk int16 `json:"vk"`
-		Ok int16 `json:"ok"`
+		Vk int `json:"vk"`
+		Ok int `json:"ok"`
 	} `json:"default_credits"`
 	InitProgress [7][]int8 `json:"init_progress"`
 }

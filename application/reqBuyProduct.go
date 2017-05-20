@@ -14,7 +14,7 @@ type buyProductRequest struct {
 
 type buyProductResponse struct {
 	ProductID string `json:"productId"`
-	Credits   int16  `json:"credits,uint16"`
+	Credits   int    `json:"credits,uint16"`
 }
 
 // ReqBuyProduct buy product

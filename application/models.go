@@ -26,7 +26,7 @@ type User struct {
 	InifinityExtra09        int8
 	RemainingTries          int8
 	RestoreTriesAt          int64 `sql:"not null"`
-	Credits                 int16
+	Credits                 int
 	FriendsBonusCreditsTime int64
 	ProgressStandart        string `sql:"json"` // [][]int8 json
 }

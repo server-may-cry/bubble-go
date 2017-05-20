@@ -34,7 +34,7 @@ type enterResponse struct {
 	TriesMin                  int8   `json:"triesMin"`
 	TriesRegenSecondsInterval int    `json:"triesRegenSecondsInterval"`
 	SecondsUntilTriesRegen    int64  `json:"secondsUntilTriesRegen"`
-	Credits                   int16  `json:"credits,uint16"`
+	Credits                   int    `json:"credits,uint16"`
 	InfinityExtra00           int8   `json:"inifinityExtra00,uint8"`
 	InfinityExtra01           int8   `json:"inifinityExtra01,uint8"`
 	InfinityExtra02           int8   `json:"inifinityExtra02,uint8"`
@@ -46,7 +46,7 @@ type enterResponse struct {
 	InfinityExtra08           int8   `json:"inifinityExtra08,uint8"`
 	InfinityExtra09           int8   `json:"inifinityExtra09,uint8"`
 	BonusCredits              int16  `json:"bonusCredits,uint16"`
-	AppFriendsBonusCredits    int16  `json:"appFriendsBonusCredits,uint16"`
+	AppFriendsBonusCredits    int    `json:"appFriendsBonusCredits,uint"`
 	OfferAvailable            uint8  `json:"offerAvailable"` // bool
 	FirstGame                 uint8  `json:"firstGame"`      // bool
 
@@ -72,7 +72,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	var firstGame uint8 // bool
 	var needUpdate bool
 	var triesRestore int64
-	var userFriendsBonusCredits int16
+	var userFriendsBonusCredits int
 	ctx := r.Context()
 	value := ctx.Value(userCtxID)
 	var user User
@@ -114,7 +114,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 			needUpdate = true
 			to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
 			user.FriendsBonusCreditsTime = to.Unix()
-			userFriendsBonusCredits = int16(request.AppFriends) * defaultConfig.FriendsBonusCreditsMultiplier
+			userFriendsBonusCredits = int(request.AppFriends) * defaultConfig.FriendsBonusCreditsMultiplier
 		}
 		if user.RestoreTriesAt != 0 && now.Unix() >= user.RestoreTriesAt {
 			needUpdate = true
