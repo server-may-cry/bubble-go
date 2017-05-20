@@ -1,11 +1,12 @@
 package application
 
 import (
-	"bytes"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/url"
+	"strings"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -20,11 +21,10 @@ func TestVkBadSignature(t *testing.T) {
 	server := httptest.NewServer(GetRouter(true))
 	defer server.Close()
 
-	jsonBytes, _ := json.Marshal(map[string]string{
-		"app_id": "1",
-		"sig":    "invalid_sig",
-	})
-	reader := bytes.NewReader(jsonBytes)
+	form := url.Values{}
+	form.Add("app_id", "1")
+	form.Add("sig", "invalid_sig")
+	reader := strings.NewReader(form.Encode())
 
 	os.Setenv("VK_SECRET", "secret")
 	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/json", reader)
@@ -60,17 +60,16 @@ func TestVkGetItem(t *testing.T) {
 
 	data := []byte("app_id=1item=creditsPack01lang=ru_RUnotification_type=get_itemorder_id=1receiver_id=123user_id=123secret")
 	sig := fmt.Sprintf("%x", md5.Sum(data))
-	jsonBytes, _ := json.Marshal(map[string]string{
-		"app_id":            "1",
-		"item":              "creditsPack01",
-		"lang":              "ru_RU",
-		"notification_type": "get_item",
-		"order_id":          "1",
-		"receiver_id":       "123",
-		"user_id":           "123",
-		"sig":               sig,
-	})
-	reader := bytes.NewReader(jsonBytes)
+	form := url.Values{}
+	form.Add("app_id", "1")
+	form.Add("item", "creditsPack01")
+	form.Add("lang", "ru_RU")
+	form.Add("notification_type", "get_item")
+	form.Add("order_id", "1")
+	form.Add("receiver_id", "123")
+	form.Add("user_id", "123")
+	form.Add("sig", sig)
+	reader := strings.NewReader(form.Encode())
 
 	market.Initialize(market.Config{
 		"creditsPack01": market.Pack{},
@@ -116,17 +115,16 @@ func TestVkBuyItem(t *testing.T) {
 
 	data := []byte("app_id=1item=creditsPack01notification_type=order_status_changeorder_id=1receiver_id=123status=chargeableuser_id=123secret")
 	sig := fmt.Sprintf("%x", md5.Sum(data))
-	jsonBytes, _ := json.Marshal(map[string]string{
-		"app_id":            "1",
-		"item":              "creditsPack01",
-		"notification_type": "order_status_change",
-		"order_id":          "1",
-		"receiver_id":       "123",
-		"status":            "chargeable",
-		"user_id":           "123",
-		"sig":               sig,
-	})
-	reader := bytes.NewReader(jsonBytes)
+	form := url.Values{}
+	form.Add("app_id", "1")
+	form.Add("item", "creditsPack01")
+	form.Add("notification_type", "order_status_change")
+	form.Add("order_id", "1")
+	form.Add("receiver_id", "123")
+	form.Add("status", "chargeable")
+	form.Add("user_id", "123")
+	form.Add("sig", sig)
+	reader := strings.NewReader(form.Encode())
 
 	var exampleMarketJSON = `
 	{
