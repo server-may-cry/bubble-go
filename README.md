@@ -20,5 +20,5 @@ govendor sync
 * test life restore
 * test daily bonus
 * refactor tests
-* count users on island
-* user credits reward on enter
+* refactor payment table
+* cache count users on islands
