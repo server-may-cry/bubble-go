@@ -4,15 +4,22 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
+var usersProgressCache struct {
+	sync.Mutex
+	isFresh bool
+	cache   [7]uint32
+}
+
 type enterRequest struct {
 	baseRequest
 	AuthRequestPart
-	AppFriends uint8  `json:"appFriends,string"`
+	AppFriends uint16 `json:"appFriends,string"`
 	Referer    string `json:"referer"`
 	SrcExtID   int64  `json:"srcExtId,string"`
 }
@@ -124,36 +131,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	if needUpdate {
 		Gorm.Save(&user)
 	}
-	var usersProgress [7]uint32
-	rows, err := Gorm.Table(
-		"users",
-	).Select(
-		"count(*) as cnt, reached_stage01",
-	).Group(
-		"reached_stage01",
-	).Order(
-		"reached_stage01 desc",
-	).Rows()
-	if err != nil {
-		log.Print(err)
-	} else {
-		var cnt uint32
-		var reachedStage01 uint8
-		for rows.Next() {
-			err = rows.Scan(&cnt, &reachedStage01)
-			if err != nil {
-				log.Print(err)
-				break
-			}
-			for i, _ := range usersProgress {
-				if reachedStage01 >= uint8(i) {
-					usersProgress[i] += cnt
-				} else {
-					break
-				}
-			}
-		}
-	}
+
 	response := enterResponse{
 		ReqMsgID:                  request.MsgID,
 		UserID:                    user.ID,
@@ -181,10 +159,60 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		FirstGame:                 firstGame,
 		BonusCredits:              0, // not used (every 12 hours user get reward. deleted now)
 		AppFriendsBonusCredits:    userFriendsBonusCredits,
-		StagesProgressStat01:      usersProgress,
+		StagesProgressStat01:      getUsersPerIslad(),
 		// StagesProgressStat02   not used
 		SubStagesRecordStats01: user.GetProgresStandart(),
 		// SubStagesRecordStats02 not used
 	}
 	JSON(w, response)
+}
+
+func getUsersPerIslad() [7]uint32 {
+	usersProgressCache.Lock()
+	defer usersProgressCache.Unlock()
+
+	if !usersProgressCache.isFresh {
+		var usersProgress [7]uint32
+		rows, err := Gorm.Table(
+			"users",
+		).Select(
+			"count(*) as cnt, reached_stage01",
+		).Group(
+			"reached_stage01",
+		).Order(
+			"reached_stage01 desc",
+		).Rows()
+		if err != nil {
+			log.Print(err)
+			return usersProgress
+		}
+
+		var cnt uint32
+		var reachedStage01 uint8
+		for rows.Next() {
+			err = rows.Scan(&cnt, &reachedStage01)
+			if err != nil {
+				log.Print(err)
+				return usersProgress
+			}
+			for i, _ := range usersProgress {
+				if reachedStage01 >= uint8(i) {
+					usersProgress[i] += cnt
+				} else {
+					break
+				}
+			}
+		}
+		usersProgressCache.cache = usersProgress
+		usersProgressCache.isFresh = true
+		go func() {
+			<-time.After(10 * time.Minute) // cache lifetime
+			usersProgressCache.Lock()
+			defer usersProgressCache.Unlock()
+
+			usersProgressCache.isFresh = false
+		}()
+	}
+
+	return usersProgressCache.cache
 }

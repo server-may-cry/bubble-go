@@ -16,9 +16,9 @@ govendor sync
 * github.com/jinzhu/gorm/dialects/sqlite for tests
 
 ###### TODO
+* fix test vk pay
 * test save progress
 * test life restore
 * test daily bonus
 * refactor tests
 * refactor payment table
-* cache count users on islands
