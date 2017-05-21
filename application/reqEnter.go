@@ -9,11 +9,6 @@ import (
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
-type usersProgressRow struct {
-	Cnt            uint32
-	ReachedStage01 uint8
-}
-
 type enterRequest struct {
 	baseRequest
 	AuthRequestPart
@@ -134,8 +129,6 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 		"users",
 	).Select(
 		"count(*) as cnt, reached_stage01",
-	).Where(
-		"reached_stage01 > 0",
 	).Group(
 		"reached_stage01",
 	).Order(
@@ -144,19 +137,20 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 	} else {
-		var rowObject usersProgressRow
-		i := -1
+		var cnt uint32
+		var reachedStage01 uint8
 		for rows.Next() {
-			err = rows.Scan(rowObject)
+			err = rows.Scan(&cnt, &reachedStage01)
 			if err != nil {
 				log.Print(err)
 				break
 			}
-			i++
-			if rowObject.ReachedStage01 > uint8(i) {
-				usersProgress[i] += rowObject.Cnt
-			} else {
-				break
+			for i, _ := range usersProgress {
+				if reachedStage01 >= uint8(i) {
+					usersProgress[i] += cnt
+				} else {
+					break
+				}
 			}
 		}
 	}
