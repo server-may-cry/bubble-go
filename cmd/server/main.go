@@ -21,7 +21,7 @@ import (
 
 type h map[string]interface{}
 
-func init() {
+func initialize() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 	dbURL := os.Getenv("DB_URL")
 	u, err := url.Parse(dbURL)
@@ -72,6 +72,7 @@ func init() {
 }
 
 func main() {
+	initialize()
 	router := application.GetRouter(false)
 	port := os.Getenv("PORT")
 	http.ListenAndServe(fmt.Sprint(":", port), router)

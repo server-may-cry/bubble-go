@@ -24,3 +24,4 @@ govendor sync
 * refactor tests
 * refactor payment table
 * add sentry
+* fix coverage
