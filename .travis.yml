@@ -11,3 +11,5 @@ before_install:
   - go get -t -v ./... # TODO remove when write unit tests and mock dependency
 script:
   - make test
+after_success:
+  - make coveralls
