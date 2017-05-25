@@ -15,7 +15,7 @@ deps:
 .PHONY: build
 build:
 	# same as on heroku (in vendor/vendor.json["heroku"]).
-	@go build ./cmd/server/
+	go build ./cmd/server/
 
 .PHONY: run
 run:
