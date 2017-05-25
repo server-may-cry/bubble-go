@@ -9,7 +9,6 @@ test:
 
 .PHONY: deps
 deps:
-	go get github.com/mattn/goveralls
 	govendor sync
 
 .PHONY: build

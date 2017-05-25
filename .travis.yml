@@ -9,6 +9,7 @@ before_install:
   - go install -race std
   - go get golang.org/x/tools/cmd/cover
   - go get -t -v ./... # TODO remove when write unit tests and mock dependency
+  - go get github.com/mattn/goveralls
 script:
   - make test
 after_success:
