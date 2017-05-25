@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/url"
-	"strings"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -27,7 +27,7 @@ func TestVkBadSignature(t *testing.T) {
 	reader := strings.NewReader(form.Encode())
 
 	os.Setenv("VK_SECRET", "secret")
-	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/json", reader)
+	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,7 +75,7 @@ func TestVkGetItem(t *testing.T) {
 		"creditsPack01": market.Pack{},
 	}, "")
 	os.Setenv("VK_SECRET", "secret")
-	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/json", reader)
+	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func TestVkBuyItem(t *testing.T) {
 	}
 	market.Initialize(config, "")
 	os.Setenv("VK_SECRET", "secret")
-	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/json", reader)
+	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
