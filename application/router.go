@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/newrelic/go-agent"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/middleware"
-	"github.com/newrelic/go-agent"
 )
 
 var newrelicApp newrelic.Application

@@ -15,7 +15,7 @@ import (
 )
 
 /*
-requests post paameters actualy
+requests post paameters actually
     "app_id":"4890xxx",
     "item":"creditsPacxxx",
     "lang":"ru_RU",

@@ -195,7 +195,7 @@ func getUsersPerIslad() [7]uint32 {
 				log.Print(err)
 				return usersProgress
 			}
-			for i, _ := range usersProgress {
+			for i := range usersProgress {
 				if reachedStage01 >= uint8(i) {
 					usersProgress[i] += cnt
 				} else {

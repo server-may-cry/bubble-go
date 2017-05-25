@@ -9,6 +9,7 @@ test:
 
 .PHONY: deps
 deps:
+	go get github.com/mattn/goveralls
 	govendor sync
 
 .PHONY: build
@@ -25,5 +26,4 @@ all: deps test build run
 
 .PHONY: coveralls
 coveralls:
-	go install github.com/mattn/goveralls
 	goveralls -ignore=$(COVERALLS_IGNORE) -service=travis-ci
