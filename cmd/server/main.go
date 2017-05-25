@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,12 +29,12 @@ func init() {
 		log.Fatalf("can`t parse DB_URL (%s)", dbURL)
 	}
 
-	hostPort := strings.Split(u.Host, ":")
+	host, port, _ := net.SplitHostPort(u.Host)
 	password, _ := u.User.Password()
 	db, err := gorm.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s",
-		hostPort[0],
-		hostPort[1],
+		host,
+		port,
 		u.User.Username(),
 		password,
 		strings.Trim(u.Path, "/"),
