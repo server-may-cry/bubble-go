@@ -13,4 +13,4 @@ before_install:
 script:
   - make test
 after_success:
-  - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci
+  - make coveralls

@@ -25,4 +25,4 @@ all: deps test build run
 
 .PHONY: coveralls
 coveralls:
-	goveralls -ignore=$(COVERALLS_IGNORE) -service=travis-ci
+	$HOME/gopath/bin/goveralls -ignore=$(COVERALLS_IGNORE) -service=travis-ci
