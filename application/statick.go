@@ -3,6 +3,7 @@ package application
 import (
 	"io"
 	"io/ioutil"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -56,6 +57,8 @@ func ServeStatick(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+	ext := filepath.Ext(fullFilePath)
+	-w.Header().Set("Content-Type", mime.TypeByExtension(ext))
 	_, err = w.Write(dat)
 	if err != nil {
 		panic(err)
