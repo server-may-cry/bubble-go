@@ -58,7 +58,7 @@ func ServeStatick(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	ext := filepath.Ext(fullFilePath)
-	-w.Header().Set("Content-Type", mime.TypeByExtension(ext))
+	w.Header().Set("Content-Type", mime.TypeByExtension(ext))
 	_, err = w.Write(dat)
 	if err != nil {
 		panic(err)
