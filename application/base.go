@@ -39,10 +39,6 @@ type baseRequest struct {
 	MsgID uint64 `json:"msgId,string"` // not required. just for back capability
 }
 
-func getErrBody(err error) string {
-	return err.Error()
-}
-
 // JSON is helper to serve json http response
 func JSON(w http.ResponseWriter, obj interface{}) {
 	js, err := json.Marshal(obj)

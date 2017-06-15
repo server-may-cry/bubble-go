@@ -68,7 +68,7 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&request)
 	if err != nil {
-		http.Error(w, getErrBody(err), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	var firstGame uint8 // bool

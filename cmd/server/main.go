@@ -74,6 +74,9 @@ func initialize() {
 func main() {
 	initialize()
 	router := application.GetRouter(false)
-	port := os.Getenv("PORT")
-	http.ListenAndServe(fmt.Sprint(":", port), router)
+	log.Print("ready")
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

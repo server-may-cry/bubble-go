@@ -61,7 +61,7 @@ type itemResponse struct {
 func VkPay(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, getErrBody(err), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	keys := make([]string, 0, len(r.PostForm))
 	for k := range r.PostForm {
