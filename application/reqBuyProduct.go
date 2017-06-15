@@ -3,8 +3,6 @@ package application
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/server-may-cry/bubble-go/market"
 )
 
 type buyProductRequest struct {
@@ -29,7 +27,7 @@ func ReqBuyProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 	user := ctx.Value(userCtxID).(User)
-	market.Buy(&user, request.ProductID)
+	Market.Buy(&user, request.ProductID)
 	response := buyProductResponse{
 		ProductID: request.ProductID,
 		Credits:   user.Credits,

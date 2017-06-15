@@ -67,7 +67,7 @@ func TestBuyProduct(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	market.Initialize(config, "")
+	Market = market.NewMarket(config, "")
 
 	reader := bytes.NewReader(jsonBytes)
 	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqBuyProduct"), "application/json", reader)

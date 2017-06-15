@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/gorm"
+	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/notification"
 )
 
@@ -13,6 +14,9 @@ var Gorm *gorm.DB
 
 // VkWorker channel for send vk events
 var VkWorker *notification.VkWorker
+
+// Market market struct
+var Market *market.Market
 
 type ctxID uint
 

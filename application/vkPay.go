@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
@@ -97,7 +96,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	case "get_item":
 		fallthrough
 	case "get_item_test":
-		pack := market.GetPack(r.PostFormValue("item"))
+		pack := Market.GetPack(r.PostFormValue("item"))
 		JSON(w, h{
 			"response": itemResponse{
 				ItemID:   1,
@@ -127,7 +126,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		if user.ID == 0 { // check user exists
 			panic("user not foud. try to buy")
 		}
-		market.Buy(&user, r.PostFormValue("item"))
+		Market.Buy(&user, r.PostFormValue("item"))
 		orderID, err := strconv.ParseInt(r.PostFormValue("order_id"), 10, 0)
 		if err != nil {
 			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostFormValue("order_id")))

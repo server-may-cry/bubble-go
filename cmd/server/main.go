@@ -58,9 +58,9 @@ func initialize() {
 	if err != nil {
 		log.Fatalf("can`t decode market.json error: %s", err)
 	}
-	market.Initialize(marketConfig, os.Getenv("CDN_PREFIX"))
+	application.Market = market.NewMarket(marketConfig, os.Getenv("CDN_PREFIX"))
 	user := application.User{}
-	market.Validate(&user)
+	application.Market.Validate(&user)
 
 	application.ConfigInit("./config/user.json")
 

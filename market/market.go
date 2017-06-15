@@ -25,12 +25,15 @@ type Pack struct {
 	Photo string `json:"photo"`
 }
 
-var marketConfig Config
-var cdnPrefix string
+// Market main market struct
+type Market struct {
+	packs     Config
+	cdnPrefix string
+}
 
 // Buy get user and item name (from market config). Change user
-func Buy(user interface{}, packName string) {
-	pack, exist := marketConfig[packName]
+func (m *Market) Buy(user interface{}, packName string) {
+	pack, exist := m.packs[packName]
 	if !exist {
 		panic(fmt.Sprintf("try buy not existed pack %s", packName))
 	}
@@ -47,25 +50,27 @@ func Buy(user interface{}, packName string) {
 }
 
 // GetPack return pack description
-func GetPack(packName string) Pack {
-	pack, exist := marketConfig[packName]
+func (m *Market) GetPack(packName string) Pack {
+	pack, exist := m.packs[packName]
 	if !exist {
 		panic(fmt.Sprintf("try buy not existed pack %s", packName))
 	}
-	pack.Photo = fmt.Sprint(cdnPrefix, "productIcons/", pack.Photo, ".png")
+	pack.Photo = fmt.Sprint(m.cdnPrefix, "productIcons/", pack.Photo, ".png")
 
 	return pack
 }
 
-// Initialize load market config from market.json
-func Initialize(config Config, cdn string) {
-	marketConfig = config
-	cdnPrefix = cdn
+// NewMarket create new market instance
+func NewMarket(config Config, cdn string) *Market {
+	return &Market{
+		packs:     config,
+		cdnPrefix: cdn,
+	}
 }
 
 // Validate check current market configuration for that type of user
-func Validate(user interface{}) {
-	for packName := range marketConfig {
-		Buy(user, packName)
+func (m *Market) Validate(user interface{}) {
+	for packName := range m.packs {
+		m.Buy(user, packName)
 	}
 }
