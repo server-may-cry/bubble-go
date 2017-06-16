@@ -1,13 +1,14 @@
 package market
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 )
 
 // Config struct for market offers and packs
-type Config map[string]Pack
+type Config map[string]*Pack
 
 // Pack is market element
 type Pack struct {
@@ -32,10 +33,10 @@ type Market struct {
 }
 
 // Buy get user and item name (from market config). Change user
-func (m *Market) Buy(user interface{}, packName string) {
+func (m *Market) Buy(user interface{}, packName string) error {
 	pack, exist := m.packs[packName]
 	if !exist {
-		panic(fmt.Sprintf("try buy not existed pack %s", packName))
+		return errors.New("try buy not existed pack " + packName)
 	}
 	indirect := reflect.Indirect(reflect.ValueOf(user))
 	for parameter, amount := range pack.Reward.Increase {
@@ -47,17 +48,18 @@ func (m *Market) Buy(user interface{}, packName string) {
 		Parameter := strings.Title(parameter)
 		indirect.FieldByName(Parameter).SetInt(amount)
 	}
+	return nil
 }
 
 // GetPack return pack description
-func (m *Market) GetPack(packName string) Pack {
+func (m *Market) GetPack(packName string) (*Pack, error) {
 	pack, exist := m.packs[packName]
 	if !exist {
-		panic(fmt.Sprintf("try buy not existed pack %s", packName))
+		return nil, errors.New("try buy not existed pack " + packName)
 	}
 	pack.Photo = fmt.Sprint(m.cdnPrefix, "productIcons/", pack.Photo, ".png")
 
-	return pack
+	return pack, nil
 }
 
 // NewMarket create new market instance
@@ -69,8 +71,12 @@ func NewMarket(config Config, cdn string) *Market {
 }
 
 // Validate check current market configuration for that type of user
-func (m *Market) Validate(user interface{}) {
+func (m *Market) Validate(user interface{}) error {
 	for packName := range m.packs {
-		m.Buy(user, packName)
+		err := m.Buy(user, packName)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }

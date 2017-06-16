@@ -15,7 +15,7 @@ var Gorm *gorm.DB
 // VkWorker channel for send vk events
 var VkWorker *notification.VkWorker
 
-// Market market struct
+// Market struct
 var Market *market.Market
 
 type ctxID uint

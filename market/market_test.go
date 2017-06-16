@@ -43,7 +43,10 @@ func TestMarketIncrease(t *testing.T) {
 		Credits: 100,
 	}
 
-	market.Buy(&user, "increase_pack")
+	err := market.Buy(&user, "increase_pack")
+	if err != nil {
+		t.Errorf("market.Buy error: %s", err)
+	}
 	if user.Credits != 150 {
 		t.Errorf("Buy(user, \"increase_pack\"): expected %d, actual %d", 150, user.Credits)
 	}
@@ -55,7 +58,10 @@ func TestMarketSet(t *testing.T) {
 		Credits: 100,
 	}
 
-	market.Buy(&user, "set_pack")
+	err := market.Buy(&user, "set_pack")
+	if err != nil {
+		t.Errorf("market.Buy error: %s", err)
+	}
 	if user.Credits != 800 {
 		t.Errorf("Buy(user, \"set_pack\"): expected %d, actual %d", 800, user.Credits)
 	}
@@ -67,31 +73,39 @@ func TestMarketBuyNotExistPack(t *testing.T) {
 		Credits: 100,
 	}
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("panic expected on pack %s", "pack_not_exist")
-		}
-	}()
-	market.Buy(&user, "pack_not_exist")
+	err := market.Buy(&user, "pack_not_exist")
+	if err == nil {
+		t.Errorf("error expected on pack %s", "pack_not_exist")
+	}
 }
 
 func TestMarketGetPack(t *testing.T) {
 	market := getMarket()
-	market.GetPack("increase_pack")
+	pack, err := market.GetPack("increase_pack")
+	if pack == nil {
+		t.Error("pack found expocted on increase_pack")
+	}
+	if err != nil {
+		t.Errorf("no error expected on increase_pack, got %s", err.Error())
+	}
 }
 
 func TestMarketGetNotExistPack(t *testing.T) {
 	market := getMarket()
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("panic expected on GetPack %s", "pack_not_exist")
-		}
-	}()
-	market.GetPack("pack_not_exist")
+	pack, err := market.GetPack("pack_not_exist")
+	if pack != nil {
+		t.Error("no pack expected on pack_not_exist")
+	}
+	if err == nil {
+		t.Error("error expected on pack_not_exist")
+	}
 }
 
 func TestMarketValidate(t *testing.T) {
 	market := getMarket()
 	user := testUser{}
-	market.Validate(&user)
+	err := market.Validate(&user)
+	if err != nil {
+		t.Errorf("no error expected on validation, got %s", err.Error())
+	}
 }

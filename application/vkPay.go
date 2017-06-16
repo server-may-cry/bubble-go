@@ -97,7 +97,10 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	case "get_item":
 		fallthrough
 	case "get_item_test":
-		pack := Market.GetPack(r.PostFormValue("item"))
+		pack, err := Market.GetPack(r.PostFormValue("item"))
+		if err != nil {
+			panic(err)
+		}
 		JSON(w, h{
 			"response": itemResponse{
 				ItemID:   1,
@@ -131,7 +134,10 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		if user.ID == 0 { // check user exists
 			panic("user not foud. try to buy")
 		}
-		Market.Buy(&user, r.PostFormValue("item"))
+		err := Market.Buy(&user, r.PostFormValue("item"))
+		if err != nil {
+			panic(err)
+		}
 		orderID, err := strconv.ParseInt(r.PostFormValue("order_id"), 10, 0)
 		if err != nil {
 			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostFormValue("order_id")))
