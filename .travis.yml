@@ -7,7 +7,7 @@ cache:
     - vendor
 before_install:
   - go install -race std
-  - go get github.com/kardianos/govendor
+  - go get -u github.com/kardianos/govendor
   - govendor sync
   - go get github.com/mattn/goveralls
 script:
