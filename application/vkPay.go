@@ -123,9 +123,9 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		}
 		db := Gorm
 		var user User
-		platformID, exist := platforms.GetByName(request.SysID)
+		platformID, exist := platforms.GetByName("VK")
 		if !exist {
-			log.Panicf("not exist platform %s", request.SysID)
+			log.Panic("not exist platform VK")
 		}
 		db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostFormValue("user_id")).First(&user)
 		if user.ID == 0 { // check user exists
