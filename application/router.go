@@ -2,6 +2,7 @@ package application
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -21,8 +22,7 @@ func init() {
 	config := newrelic.NewConfig("bubble-go", newrelicKey)
 	app, err := newrelic.NewApplication(config)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	newrelicApp = app
 }
