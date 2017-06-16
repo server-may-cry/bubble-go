@@ -28,7 +28,10 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 		}
 
 		var stringToHash string
-		platformID := platforms.GetByName(request.SysID)
+		platformID, exist := platforms.GetByName(request.SysID)
+		if !exist {
+			log.Panicf("not exist platform %s", request.SysID)
+		}
 		switch request.SysID {
 		case "VK":
 			stringToHash = fmt.Sprintf(

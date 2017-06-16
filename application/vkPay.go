@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -122,7 +123,11 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		}
 		db := Gorm
 		var user User
-		db.Where("sys_id = ? AND ext_id = ?", platforms.GetByName("VK"), r.PostFormValue("user_id")).First(&user)
+		platformID, exist := platforms.GetByName(request.SysID)
+		if !exist {
+			log.Panicf("not exist platform %s", request.SysID)
+		}
+		db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostFormValue("user_id")).First(&user)
 		if user.ID == 0 { // check user exists
 			panic("user not foud. try to buy")
 		}

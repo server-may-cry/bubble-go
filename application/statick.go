@@ -16,13 +16,11 @@ const (
 var tmpDirName string
 
 func init() {
-	if tmpDirName == "" {
-		dir, err := ioutil.TempDir("", "bubble_cache_")
-		if err != nil {
-			panic(err)
-		}
-		tmpDirName = dir
+	dir, err := ioutil.TempDir("", "bubble_cache_")
+	if err != nil {
+		panic(err)
 	}
+	tmpDirName = dir
 }
 
 // ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)

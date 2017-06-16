@@ -82,7 +82,10 @@ func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	switch value.(type) {
 	case nil:
 		firstGame = 1
-		platformID := platforms.GetByName(request.SysID)
+		platformID, exist := platforms.GetByName(request.SysID)
+		if !exist {
+			log.Panicf("not exist platform %s", request.SysID)
+		}
 		user = User{
 			SysID:                   platformID,
 			ExtID:                   request.ExtID,

@@ -7,25 +7,21 @@ import (
 var platformsTests = []struct {
 	platform string // input
 	expected uint8  // expected result
+	exist    bool
 }{
-	{"VK", 1},
-	{"OK", 2},
+	{"VK", 1, true},
+	{"OK", 2, true},
+	{"FB", 0, false},
 }
 
 func TestPlatformGetByName(t *testing.T) {
 	for _, tt := range platformsTests {
-		actual := GetByName(tt.platform)
+		actual, exist := GetByName(tt.platform)
 		if actual != tt.expected {
-			t.Errorf("platforms.GetByName(%s): expected %d, actual %d", tt.platform, tt.expected, actual)
+			t.Errorf("platforms.GetByName(%s): expected %d, got %d", tt.platform, tt.expected, actual)
+		}
+		if exist != tt.exist {
+			t.Errorf("platforms.GetByName(%s): exist expected %t, got %t", tt.platform, tt.exist, exist)
 		}
 	}
-}
-
-func TestPlatformNotExist(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("panic expected on platform %s", "FB")
-		}
-	}()
-	GetByName("FB")
 }
