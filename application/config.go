@@ -2,9 +2,10 @@ package application
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 )
 
 var defaultConfig struct {
@@ -19,13 +20,14 @@ var defaultConfig struct {
 }
 
 // ConfigInit pass config file
-func ConfigInit(configFilePath string) {
+func ConfigInit(configFilePath string) error {
 	file, err := os.Open(filepath.ToSlash(configFilePath))
 	if err != nil {
-		log.Fatalf("can`t open user.json error: %s", err)
+		return errors.Wrap(err, "can`t open user.json")
 	}
 	err = json.NewDecoder(file).Decode(&defaultConfig)
 	if err != nil {
-		log.Fatalf("cant decode user.json error: %s", err)
+		return errors.Wrap(err, "can`t decode user.json")
 	}
+	return nil
 }

@@ -62,7 +62,10 @@ func initialize() {
 	user := application.User{}
 	application.Market.Validate(&user)
 
-	application.ConfigInit("./config/user.json")
+	err = application.ConfigInit("./config/user.json")
+	if err != nil {
+		log.Fatalf("can`t init config. got error:%s", err.Error())
+	}
 
 	application.VkWorker = notification.NewVkWorker(notification.VkConfig{
 		AppID:           os.Getenv("VK_APP_ID"),

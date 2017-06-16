@@ -72,7 +72,7 @@ func TestVkGetItem(t *testing.T) {
 	reader := strings.NewReader(form.Encode())
 
 	Market = market.NewMarket(market.Config{
-		"creditsPack01": market.Pack{},
+		"creditsPack01": &market.Pack{},
 	}, "")
 	os.Setenv("VK_SECRET", "secret")
 	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)

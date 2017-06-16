@@ -93,6 +93,12 @@
 			"revisionTime": "2017-04-18T16:35:58Z"
 		},
 		{
+			"checksumSHA1": "rJab1YdNhQooDiBWNnt7TLWPyBU=",
+			"path": "github.com/pkg/errors",
+			"revision": "c605e284fe17294bda444b34710735b29d1a9d90",
+			"revisionTime": "2017-05-05T04:36:39Z"
+		},
+		{
 			"checksumSHA1": "ZmdW8B6ENm70gvbKNuMHPf2GQiY=",
 			"path": "github.com/pressly/chi",
 			"revision": "a57b1fbe2989382bdef31d3793d4a50a0e4a1d7c",
