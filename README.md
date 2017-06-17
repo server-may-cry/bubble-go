@@ -23,5 +23,4 @@ govendor sync
 * test daily bonus
 * refactor tests
 * refactor payment table
-* add sentry
 * improve coverage

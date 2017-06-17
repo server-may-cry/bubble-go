@@ -54,6 +54,6 @@ type Transaction struct {
 	ID          uint64 `gorm:"primary_key"`
 	OrderID     int64  `sql:"not null"`
 	CreatedAt   int64  `sql:"not null"`
-	UserID      User   `gorm:"ForeignKey:UserRefer",sql:"not null"`
+	UserID      User   `gorm:"ForeignKey:UserRefer"`
 	ConfirmedAt int64
 }
