@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -81,7 +82,8 @@ func GetRouter(test bool) http.Handler {
 	}))
 
 	loaderio := os.Getenv("LOADERIO")
-	router.Get(wrapHandlerFunc("/loaderio-"+loaderio, func(w http.ResponseWriter, r *http.Request) {
+	loaderioRoute := fmt.Sprintf("/loaderio-%s/", loaderio)
+	router.Get(wrapHandlerFunc(loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("loaderio-" + loaderio))
 	}))
 
