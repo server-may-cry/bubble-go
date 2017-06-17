@@ -17,6 +17,9 @@ import (
 // AuthorizationMiddleware check signature and load user
 func AuthorizationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			return // all request from client send by POST method
+		}
 		buf, _ := ioutil.ReadAll(r.Body)
 		requestBodyCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
 		r.Body = requestBodyCopy
