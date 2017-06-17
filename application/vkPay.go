@@ -74,7 +74,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		if k == "sig" {
 			continue
 		}
-		hashStr.WriteString(fmt.Sprint(k, "=", r.PostFormValue(k)))
+		hashStr.WriteString(fmt.Sprint(k, "=", r.PostForm.Get(k)))
 	}
 
 	secret := os.Getenv("VK_SECRET")
@@ -83,7 +83,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	}
 	data := []byte(fmt.Sprint(hashStr.String(), secret))
 	expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
-	if expectedAuthKey != r.PostFormValue("sig") {
+	if expectedAuthKey != r.PostForm.Get("sig") {
 		JSON(w, h{
 			"error": errorResponse{
 				ErrorCode: 10,
@@ -93,11 +93,11 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	switch r.PostFormValue("notification_type") {
+	switch r.PostForm.Get("notification_type") {
 	case "get_item":
 		fallthrough
 	case "get_item_test":
-		pack, err := Market.GetPack(r.PostFormValue("item"))
+		pack, err := Market.GetPack(r.PostForm.Get("item"))
 		if err != nil {
 			panic(err)
 		}
@@ -114,7 +114,7 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 	case "order_status_change":
 		fallthrough
 	case "order_status_change_test":
-		if r.PostFormValue("status") != "chargeable" {
+		if r.PostForm.Get("status") != "chargeable" {
 			JSON(w, h{
 				"error": errorResponse{
 					ErrorCode: 100,
@@ -130,17 +130,17 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 		if !exist {
 			log.Panic("not exist platform VK")
 		}
-		db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostFormValue("user_id")).First(&user)
+		db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostForm.Get("user_id")).First(&user)
 		if user.ID == 0 { // check user exists
 			panic("user not foud. try to buy")
 		}
-		err := Market.Buy(&user, r.PostFormValue("item"))
+		err := Market.Buy(&user, r.PostForm.Get("item"))
 		if err != nil {
 			panic(err)
 		}
-		orderID, err := strconv.ParseInt(r.PostFormValue("order_id"), 10, 0)
+		orderID, err := strconv.ParseInt(r.PostForm.Get("order_id"), 10, 0)
 		if err != nil {
-			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostFormValue("order_id")))
+			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostForm.Get("order_id")))
 		}
 
 		ts := time.Now().Unix()
@@ -150,11 +150,14 @@ func VkPay(w http.ResponseWriter, r *http.Request) {
 			UserID:      user,
 			ConfirmedAt: ts,
 		}
-		Gorm.Create(&transaction)
+		err = Gorm.Create(&transaction).Error
+		if err != nil {
+			panic(err)
+		}
 		Gorm.Save(&user)
 		JSON(w, h{
 			"response": orderResponse{
-				OrderID:    r.PostFormValue("order_id"),
+				OrderID:    r.PostForm.Get("order_id"),
 				AppOrderID: transaction.ID,
 			},
 		})
