@@ -12,7 +12,8 @@ services:
       - postgres:db.local
     ports:
       - "8080:8080"
-    command: make all
+    entrypoint: ["docker-entrypoint.sh"]
+    command: ["make", "run"]
   postgres:
     image: postgres:9.6-alpine
     expose:

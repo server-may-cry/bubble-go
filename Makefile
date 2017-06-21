@@ -18,7 +18,4 @@ build:
 
 .PHONY: run
 run:
-	./server
-
-.PHONY: all
-all: deps test build run
+	exec ./server
