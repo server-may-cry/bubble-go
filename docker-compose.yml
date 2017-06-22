@@ -8,12 +8,11 @@ services:
       PORT: 8080
     volumes:
       - .:/go/src/github.com/server-may-cry/bubble-go
-      - ./docker-entrypoint.sh:/usr/local/bin/:ro
     links:
       - postgres:db.local
     ports:
       - "8080:8080"
-    entrypoint: ["docker-entrypoint.sh"]
+    entrypoint: ["./docker-entrypoint.sh"]
     command: ["make", "run"]
   postgres:
     image: postgres:9.6-alpine
