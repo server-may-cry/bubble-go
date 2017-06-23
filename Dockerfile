@@ -1,3 +1,5 @@
-FROM golang:1.8-wheezy
+FROM golang:1.8-alpine
 
-RUN go get -u github.com/kardianos/govendor
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh && \
+    go get -u github.com/kardianos/govendor

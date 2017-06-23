@@ -1,0 +1,13 @@
+FROM golang:1.8-alpine AS build-env
+ADD . /go/src/github.com/server-may-cry/bubble-go
+WORKDIR /go/src/github.com/server-may-cry/bubble-go
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh make && \
+    go get -u github.com/kardianos/govendor && \
+    make deps && \
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo .
+
+FROM scratch
+ADD --from=build-env /go/src/github.com/server-may-cry/bubble-go/server .
+ADD --from=build-env /go/src/github.com/server-may-cry/bubble-go/config ./config
+CMD ["server"]
