@@ -2,7 +2,7 @@ UNIT_TEST_ONLY_PKGS=$(shell go list ./... | grep -v "/vendor/")
 
 .PHONY: test
 test:
-	go test -v $(UNIT_TEST_ONLY_PKGS)
+	go test -v $(UNIT_TEST_ONLY_PKGS) -covermode=count -coverprofile=coverage.out
 
 .PHONY: deps
 deps:

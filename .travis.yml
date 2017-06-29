@@ -6,9 +6,10 @@ before_install:
   - go install -race std
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
-  - go get -t -v ./...
+  - go get github.com/kardianos/govendor
+  - make deps
 script:
-  - go test -v -covermode=count -coverprofile=coverage.out
+  - make test
   - make build
 after_success:
   - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
