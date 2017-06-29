@@ -24,3 +24,4 @@ govendor sync
 * refactor tests
 * refactor payment table
 * improve coverage
+* go-bindata for json configuration

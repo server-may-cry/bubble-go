@@ -1,11 +1,8 @@
 UNIT_TEST_ONLY_PKGS=$(shell go list ./... | grep -v "/vendor/")
 
-COVERALLS_IGNORE := cmd/server/main.go
-
 .PHONY: test
 test:
-	@echo "run unit tests with coverage"
-	go test -v -cover $(UNIT_TEST_ONLY_PKGS)
+	go test -v $(UNIT_TEST_ONLY_PKGS)
 
 .PHONY: deps
 deps:

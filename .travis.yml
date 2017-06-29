@@ -2,15 +2,13 @@ sudo: false
 language: go
 go:
   - "1.8"
-cache:
-  directories:
-    - vendor
 before_install:
   - go install -race std
   - go get golang.org/x/tools/cmd/cover
-  - go get -t -v ./... # TODO remove when write unit tests and mock dependency
   - go get github.com/mattn/goveralls
+  - go get -t -v ./...
 script:
-  - make test
+  - go test -v -covermode=count -coverprofile=coverage.out
+  - make build
 after_success:
-  - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
