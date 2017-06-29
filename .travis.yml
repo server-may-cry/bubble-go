@@ -12,4 +12,4 @@ script:
   - make test
   - make build
 after_success:
-  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
