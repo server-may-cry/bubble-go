@@ -3,13 +3,24 @@ language: go
 go:
   - "1.8"
 before_install:
+  # go std library refresh
   - go install -race std
+
+  # go coverage to coverals by goverals
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
+
   - go get github.com/kardianos/govendor
   - make deps
+
+  # docker
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
 script:
   - make test
   - make build
 after_success:
   - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - docker build --file Dockerfile.prod .
