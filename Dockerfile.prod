@@ -5,7 +5,7 @@ RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssl make && \
     go get -u github.com/kardianos/govendor && \
     make deps && \
-    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo .
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo ./cmd/server/
 
 FROM scratch
 ADD --from=build-env /go/src/github.com/server-may-cry/bubble-go/server .
