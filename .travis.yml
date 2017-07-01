@@ -2,8 +2,9 @@ sudo: required
 language: go
 go:
   - "1.8"
-services:
-  - docker
+# until travis builtin docker version less 17.06
+#services:
+#  - docker
 before_install:
   # go std library refresh
   - go install -race std
@@ -14,6 +15,13 @@ before_install:
 
   - go get github.com/kardianos/govendor
   - make deps
+
+  # docker
+  # until travis builtin docker version less 17.06
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
 script:
   - make test
   - make build
