@@ -28,4 +28,8 @@ script:
   - make build
 after_success:
   - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
-  - docker build --file Dockerfile.prod .
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker build -t registry.heroku.com/bubble-srv-dev/web --file Dockerfile.prod .
+    docker login --username="$HEROKU_USERNAME" --password="$HEROKU_API_KEY" registry.heroku.com;
+    docker push registry.heroku.com/bubble-srv-dev/web;
+    fi
