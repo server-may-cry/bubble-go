@@ -7,7 +7,8 @@ RUN apk update && apk upgrade && \
     make deps && \
     make build
 
-FROM scratch
+FROM alpine
+RUN apk add --no-cache ca-certificates && update-ca-certificates
 COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/server /
 COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/config /config
 CMD ["/server"]
