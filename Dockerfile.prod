@@ -3,11 +3,12 @@ ADD . /go/src/github.com/server-may-cry/bubble-go
 WORKDIR /go/src/github.com/server-may-cry/bubble-go
 RUN apk update && apk upgrade && \
     apk add --no-cache git openssl make && \
-    go get -u github.com/kardianos/govendor && \
+    go get -u github.com/golang/dep/cmd/dep && \
     make deps && \
-    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo ./cmd/server/
+    make build
 
-FROM scratch
-COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/server .
-COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/config ./config
-CMD ["server"]
+FROM alpine
+RUN apk add --no-cache ca-certificates && update-ca-certificates
+COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/server /
+COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/config /config
+CMD ["/server"]
