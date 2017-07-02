@@ -6,7 +6,8 @@ bubble-go
 [![Coverage Status](https://coveralls.io/repos/github/server-may-cry/bubble-go/badge.svg?branch=master)](https://coveralls.io/github/server-may-cry/bubble-go?branch=master)
 
 ```
-govendor sync
+make deps
+make build
 ```
 
 ###### Packages

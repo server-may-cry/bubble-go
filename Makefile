@@ -6,13 +6,8 @@ test:
 
 .PHONY: deps
 deps:
-	govendor sync
+	dep ensure
 
 .PHONY: build
 build:
-	# same as on heroku (in vendor/vendor.json["heroku"]).
-	go build ./cmd/server/
-
-.PHONY: run
-run:
-	exec ./server
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo ./cmd/server/

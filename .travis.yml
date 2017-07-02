@@ -25,11 +25,11 @@ before_install:
   - sudo apt-get -y install docker-ce
 script:
   - make test
-  - make build
+  - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web --file Dockerfile.prod .
+  - docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com
+  - docker push registry.heroku.com/bubble-srv-dev/web
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker push registry.heroku.com/bubble-srv/web;
+    fi
 after_success:
   - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker build -t registry.heroku.com/bubble-srv-dev/web --file Dockerfile.prod .;
-    docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com;
-    docker push registry.heroku.com/bubble-srv-dev/web;
-    fi
