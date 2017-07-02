@@ -8,6 +8,6 @@ RUN apk update && apk upgrade && \
     make build
 
 FROM scratch
-COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/server .
-COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/config ./config
-CMD ["server"]
+COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/server /
+COPY --from=build-env /go/src/github.com/server-may-cry/bubble-go/config /config
+CMD ["/server"]
