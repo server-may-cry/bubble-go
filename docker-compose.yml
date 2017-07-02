@@ -13,7 +13,7 @@ services:
     ports:
       - "8080:8080"
     entrypoint: ["./docker-entrypoint.sh"]
-    command: ["make", "run"]
+    command: ["./server"]
   postgres:
     image: postgres:9.6-alpine
     expose:

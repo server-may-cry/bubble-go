@@ -2,5 +2,6 @@
 set -e
 
 make deps
+make build
 
 exec "$@"
