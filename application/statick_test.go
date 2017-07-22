@@ -46,8 +46,8 @@ func TestClearStaticHandler(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(actual) != `"done"` {
-		t.Errorf("Invalid response (%s\n), expected (\"done\")\n", actual)
+	if string(actual) != "\"done\"\n" {
+		t.Errorf("Invalid response (%s), expected (\"done\"\n)\n", actual)
 	}
 	files, _ := ioutil.ReadDir(tmpDirName)
 	if len(files) > 0 {
