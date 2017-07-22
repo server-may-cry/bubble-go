@@ -10,14 +10,6 @@ make deps
 make build
 ```
 
-###### Packages
-* github.com/newrelic/go-agent
-* github.com/pressly/chi
-* github.com/pressly/chi/middleware
-* github.com/jinzhu/gorm
-* github.com/jinzhu/gorm/dialects/postgres
-* github.com/jinzhu/gorm/dialects/sqlite for tests
-
 ###### TODO
 * test save progress
 * test life restore
