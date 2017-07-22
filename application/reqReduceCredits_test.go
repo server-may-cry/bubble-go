@@ -58,9 +58,8 @@ func TestReduceCredits(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
-	decoder := json.NewDecoder(resp.Body)
 	var response reduceCreditsResponse
-	err = decoder.Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}

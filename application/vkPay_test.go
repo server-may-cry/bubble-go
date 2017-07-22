@@ -34,9 +34,8 @@ func TestVkBadSignature(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
-	decoder := json.NewDecoder(resp.Body)
 	var response map[string]interface{}
-	err = decoder.Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,9 +81,8 @@ func TestVkGetItem(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
-	decoder := json.NewDecoder(resp.Body)
 	var response map[string]interface{}
-	err = decoder.Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,9 +149,8 @@ func TestVkBuyItem(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
-	decoder := json.NewDecoder(resp.Body)
 	var response map[string]interface{}
-	err = decoder.Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -65,8 +65,7 @@ type enterResponse struct {
 func ReqEnter(w http.ResponseWriter, r *http.Request) {
 	request := enterRequest{}
 	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&request)
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

@@ -41,12 +41,10 @@ type baseRequest struct {
 
 // JSON is helper to serve json http response
 func JSON(w http.ResponseWriter, obj interface{}) {
-	js, err := json.Marshal(obj)
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(obj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
 }

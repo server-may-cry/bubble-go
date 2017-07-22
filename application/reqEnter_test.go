@@ -42,9 +42,8 @@ func TestFirstGameField(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
-	decoder := json.NewDecoder(resp.Body)
 	var response enterResponse
-	err = decoder.Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,8 +59,7 @@ func TestFirstGameField(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
-	decoder = json.NewDecoder(resp.Body)
-	err = decoder.Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		body, _ := ioutil.ReadAll(resp.Body)
 		t.Fatalf("%s raw: %s", err, string(body))
