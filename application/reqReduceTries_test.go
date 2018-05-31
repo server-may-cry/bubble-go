@@ -15,14 +15,14 @@ import (
 )
 
 func TestReduceTries(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
-	defer server.Close()
-
 	file, err := ioutil.TempFile("", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	db, err := gorm.Open("sqlite3", file.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
 	db.AutoMigrate(&User{})
 	user := User{
 		SysID:          1,
@@ -30,14 +30,15 @@ func TestReduceTries(t *testing.T) {
 		RemainingTries: 8,
 	}
 	db.Create(&user)
-	Gorm = db
+
+	server := httptest.NewServer(GetRouter(true, db, nil, nil))
+	defer server.Close()
 
 	data := []byte("_123_")
-	authKey := fmt.Sprintf("%x", md5.Sum(data))
 	jsonBytes, _ := json.Marshal(AuthRequestPart{
 		ExtID:   123,
 		SysID:   "VK",
-		AuthKey: authKey,
+		AuthKey: fmt.Sprintf("%x", md5.Sum(data)),
 	})
 
 	reader := bytes.NewReader(jsonBytes)

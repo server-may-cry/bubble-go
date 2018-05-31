@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"crypto/md5"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"sort"
 	"strconv"
 	"time"
 
+	"github.com/jinzhu/gorm"
+	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
@@ -59,118 +60,116 @@ type itemResponse struct {
 }
 
 // VkPay acept and validate payment request from vk
-func VkPay(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
-	keys := make([]string, 0, len(r.PostForm))
-	for k := range r.PostForm {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	var hashStr bytes.Buffer
-	for _, k := range keys {
-		if k == "sig" {
-			continue
+func VkPay(db *gorm.DB, marketInstance *market.Market) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-		hashStr.WriteString(fmt.Sprint(k, "=", r.PostForm.Get(k)))
-	}
-
-	secret := os.Getenv("VK_SECRET")
-	if secret == "" {
-		panic("VK_SECRET not set")
-	}
-	data := []byte(fmt.Sprint(hashStr.String(), secret))
-	expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
-	if expectedAuthKey != r.PostForm.Get("sig") {
-		JSON(w, h{
-			"error": errorResponse{
-				ErrorCode: 10,
-				ErrorMsg:  "Несовпадение вычисленной и переданной подписи запроса.",
-				Critical:  true,
-			},
-		})
-		return
-	}
-	switch r.PostForm.Get("notification_type") {
-	case "get_item":
-		fallthrough
-	case "get_item_test":
-		pack, err := Market.GetPack(r.PostForm.Get("item"))
-		if err != nil {
-			panic(err)
+		keys := make([]string, 0, len(r.PostForm))
+		for k := range r.PostForm {
+			keys = append(keys, k)
 		}
-		JSON(w, h{
-			"response": itemResponse{
-				ItemID:   1,
-				Title:    pack.Title.Ru,
-				PhotoURL: pack.Photo,
-				Price:    pack.Price.Vk,
-			},
-		})
-		return
+		sort.Strings(keys)
+		var hashStr bytes.Buffer
+		for _, k := range keys {
+			if k == "sig" {
+				continue
+			}
+			hashStr.WriteString(fmt.Sprint(k, "=", r.PostForm.Get(k)))
+		}
 
-	case "order_status_change":
-		fallthrough
-	case "order_status_change_test":
-		if r.PostForm.Get("status") != "chargeable" {
-			JSON(w, h{
+		secret := os.Getenv("VK_SECRET")
+		if secret == "" {
+			panic("VK_SECRET not set")
+		}
+		data := []byte(fmt.Sprint(hashStr.String(), secret))
+		expectedAuthKey := fmt.Sprintf("%x", md5.Sum(data))
+		if expectedAuthKey != r.PostForm.Get("sig") {
+			JSON(w, jsonHelper{
 				"error": errorResponse{
-					ErrorCode: 100,
-					ErrorMsg:  "Передано непонятно что вместо chargeable.",
+					ErrorCode: 10,
+					ErrorMsg:  "Invalid signature.",
 					Critical:  true,
 				},
 			})
 			return
 		}
-		db := Gorm
-		var user User
-		platformID, exist := platforms.GetByName("VK")
-		if !exist {
-			log.Panic("not exist platform VK")
-		}
-		db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostForm.Get("user_id")).First(&user)
-		if user.ID == 0 { // check user exists
-			panic("user not foud. try to buy")
-		}
-		err := Market.Buy(&user, r.PostForm.Get("item"))
-		if err != nil {
-			panic(err)
-		}
-		orderID, err := strconv.ParseInt(r.PostForm.Get("order_id"), 10, 0)
-		if err != nil {
-			panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostForm.Get("order_id")))
-		}
+		switch r.PostForm.Get("notification_type") {
+		case "get_item":
+			fallthrough
+		case "get_item_test":
+			pack, err := marketInstance.GetPack(r.PostForm.Get("item"))
+			if err != nil {
+				panic(err)
+			}
+			JSON(w, jsonHelper{
+				"response": itemResponse{
+					ItemID:   1,
+					Title:    pack.Title.Ru,
+					PhotoURL: pack.Photo,
+					Price:    pack.Price.Vk,
+				},
+			})
+			return
 
-		ts := time.Now().Unix()
-		transaction := Transaction{
-			OrderID:     orderID,
-			CreatedAt:   ts,
-			UserID:      user,
-			ConfirmedAt: ts,
-		}
-		err = Gorm.Create(&transaction).Error
-		if err != nil {
-			panic(err)
-		}
-		Gorm.Save(&user)
-		JSON(w, h{
-			"response": orderResponse{
-				OrderID:    r.PostForm.Get("order_id"),
-				AppOrderID: transaction.ID,
-			},
-		})
-		return
+		case "order_status_change":
+			fallthrough
+		case "order_status_change_test":
+			if r.PostForm.Get("status") != "chargeable" {
+				JSON(w, jsonHelper{
+					"error": errorResponse{
+						ErrorCode: 100,
+						ErrorMsg:  "Unexpected status. Expected - chargeable.",
+						Critical:  true,
+					},
+				})
+				return
+			}
+			var user User
+			platformID := platforms.VK
+			db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostForm.Get("user_id")).First(&user)
+			if user.ID == 0 { // check user exists
+				panic("user not foud. try to buy")
+			}
+			err := marketInstance.Buy(&user, r.PostForm.Get("item"))
+			if err != nil {
+				panic(err)
+			}
+			orderID, err := strconv.ParseInt(r.PostForm.Get("order_id"), 10, 0)
+			if err != nil {
+				panic(fmt.Sprintf("cannot convert order id to int64 (%s)", r.PostForm.Get("order_id")))
+			}
 
-	default:
-		JSON(w, h{
-			"error": errorResponse{
-				ErrorCode: 100,
-				ErrorMsg:  "Передано непонятно что в notification_type.",
-				Critical:  true,
-			},
-		})
-		return
+			ts := time.Now().Unix()
+			transaction := Transaction{
+				OrderID:     orderID,
+				CreatedAt:   ts,
+				UserID:      user,
+				ConfirmedAt: ts,
+			}
+			err = db.Create(&transaction).Error
+			if err != nil {
+				panic(err)
+			}
+			db.Save(&user)
+			JSON(w, jsonHelper{
+				"response": orderResponse{
+					OrderID:    r.PostForm.Get("order_id"),
+					AppOrderID: transaction.ID,
+				},
+			})
+			return
+
+		default:
+			JSON(w, jsonHelper{
+				"error": errorResponse{
+					ErrorCode: 100,
+					ErrorMsg:  "Unexpected type in 'notification_type'.",
+					Critical:  true,
+				},
+			})
+			return
+		}
 	}
 }

@@ -1,13 +1,15 @@
 package platforms
 
 const (
-	vk = iota + 1 // 1
-	ok            // 2
+	// VK id in DB
+	VK = 1
+	// OK id in DB
+	OK = 2
 )
 
 var platformsMap = map[string]uint8{
-	"VK": vk,
-	"OK": ok,
+	"VK": VK,
+	"OK": OK,
 }
 
 // GetByName return platform id

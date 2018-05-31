@@ -7,26 +7,33 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 )
 
-const (
-	cdnroot = "http://119226.selcdn.ru"
-)
-
-var tmpDirName string
-
-func init() {
-	dir, err := ioutil.TempDir("", "bubble_cache_")
-	if err != nil {
-		panic(err)
-	}
-	tmpDirName = dir
+// StatickHandler handler to resolve work with static content from CDN
+type StatickHandler struct {
+	cdnroot    string
+	tmpDirName string
 }
 
-// ServeStatick load (if not exist) static from file server (crutch for spend less money and not store static files in repo)
-func ServeStatick(w http.ResponseWriter, r *http.Request) {
+// NewStatickHandler create static handler
+func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
+	tmpDirName, err := ioutil.TempDir("", "bubble_cache_")
+	if err != nil {
+		return nil, errors.Wrap(err, "can't create tmp dir for static")
+	}
+	return &StatickHandler{
+		cdnroot:    cdnroot,
+		tmpDirName: tmpDirName,
+	}, nil
+}
+
+// Serve resolve content from CDN
+func (sh StatickHandler) Serve(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	filePath := r.URL.Path
-	fullFilePath := filepath.ToSlash(tmpDirName + filePath)
+	fullFilePath := filepath.ToSlash(sh.tmpDirName + filePath)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
 		dirToStoreFile := filepath.Dir(fullFilePath)
 		if _, err = os.Stat(dirToStoreFile); os.IsNotExist(err) {
@@ -40,7 +47,7 @@ func ServeStatick(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer out.Close()
-		resp, err := http.Get(cdnroot + filePath)
+		resp, err := http.Get(sh.cdnroot + filePath)
 		if err != nil {
 			panic(err)
 		}
@@ -63,9 +70,10 @@ func ServeStatick(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ClearStatickCache remove statick files
-func ClearStatickCache(w http.ResponseWriter, r *http.Request) {
-	err := os.RemoveAll(tmpDirName)
+// Clear remove statick files
+func (sh StatickHandler) Clear(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	err := os.RemoveAll(sh.tmpDirName)
 	if err != nil {
 		panic(err)
 	}

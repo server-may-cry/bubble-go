@@ -17,11 +17,11 @@ var platformsTests = []struct {
 func TestPlatformGetByName(t *testing.T) {
 	for _, tt := range platformsTests {
 		actual, exist := GetByName(tt.platform)
-		if actual != tt.expected {
-			t.Errorf("platforms.GetByName(%s): expected %d, got %d", tt.platform, tt.expected, actual)
-		}
 		if exist != tt.exist {
 			t.Errorf("platforms.GetByName(%s): exist expected %t, got %t", tt.platform, tt.exist, exist)
+		}
+		if actual != tt.expected {
+			t.Errorf("platforms.GetByName(%s): expected %d, got %d", tt.platform, tt.expected, actual)
 		}
 	}
 }

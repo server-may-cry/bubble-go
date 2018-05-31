@@ -1,40 +1,30 @@
 package market
 
 import (
-	"encoding/json"
 	"testing"
 )
-
-var exampleMarketJSON = `
-{
-	"increase_pack": {
-		"reward": {
-			"increase": {
-				"credits": 50
-			}
-		}
-	},
-	"set_pack": {
-		"reward": {
-			"set": {
-				"credits": 800
-			}
-		}
-	}
-}
-`
 
 type testUser struct {
 	Credits int
 }
 
 func getMarket() *Market {
-	var config Config
-	err := json.Unmarshal([]byte(exampleMarketJSON), &config)
-	if err != nil {
-		panic(err)
-	}
-	return NewMarket(config, "cdn://cdn.cdn/")
+	return NewMarket(Config{
+		"increase_pack": &Pack{
+			Reward: RewardStruct{
+				Increase: map[string]int64{
+					"credits": 50,
+				},
+			},
+		},
+		"set_pack": &Pack{
+			Reward: RewardStruct{
+				Set: map[string]int64{
+					"credits": 800,
+				},
+			},
+		},
+	}, "cdn://cdn.cdn/")
 }
 
 func TestMarketIncrease(t *testing.T) {

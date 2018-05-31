@@ -21,14 +21,14 @@ type buyProductCompleteRequest struct {
 }
 
 func TestBuyProduct(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
-	defer server.Close()
-
 	file, err := ioutil.TempFile("", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	db, err := gorm.Open("sqlite3", file.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
 	db.AutoMigrate(&User{})
 	user := User{
 		SysID:   1,
@@ -36,38 +36,30 @@ func TestBuyProduct(t *testing.T) {
 		Credits: 900,
 	}
 	db.Create(&user)
-	Gorm = db
+
+	marketInstance := market.NewMarket(market.Config{
+		"example_pack": &market.Pack{
+			Reward: market.RewardStruct{
+				Increase: map[string]int64{
+					"credits": 15,
+				},
+			},
+		},
+	}, "")
+	server := httptest.NewServer(GetRouter(true, db, marketInstance, nil))
+	defer server.Close()
 
 	data := []byte("_123_")
-	authKey := fmt.Sprintf("%x", md5.Sum(data))
 	jsonBytes, _ := json.Marshal(buyProductCompleteRequest{
 		AuthRequestPart: AuthRequestPart{
 			ExtID:   123,
 			SysID:   "VK",
-			AuthKey: authKey,
+			AuthKey: fmt.Sprintf("%x", md5.Sum(data)),
 		},
 		buyProductRequest: buyProductRequest{
 			ProductID: "example_pack",
 		},
 	})
-
-	var exampleMarketJSON = `
-	{
-		"example_pack": {
-			"reward": {
-				"increase": {
-					"credits": 15
-				}
-			}
-		}
-	}
-	`
-	var config market.Config
-	err = json.Unmarshal([]byte(exampleMarketJSON), &config)
-	if err != nil {
-		t.Fatal(err)
-	}
-	Market = market.NewMarket(config, "")
 
 	reader := bytes.NewReader(jsonBytes)
 	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqBuyProduct"), "application/json", reader)
