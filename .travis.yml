@@ -23,6 +23,8 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install docker-ce
 script:
+  - cp -f .netrc.dist .netrc
+  - sed -i "s/your_secret/$GITHUB_TOKEN/" .netrc
   - make test
   - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web --file Dockerfile.prod.Dockerfile .
   - docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com
