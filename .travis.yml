@@ -2,7 +2,10 @@ sudo: required
 dist: trusty
 language: go
 go:
-  - "1.8"
+  - "1.10"
+cache:
+  directories:
+    - $GO_PATH/src/v
 # until travis builtin docker version less 17.06
 #services:
 #  - docker
@@ -10,12 +13,8 @@ before_install:
   # go std library refresh
   - go install -race std
 
-  # go coverage to coverals by goverals
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
-
-  - go get github.com/golang/dep/cmd/dep
-  - make deps
+  - go get github.com/mattn/goveralls # upload coverage
+  - go get golang.org/x/vgo
 
   # docker
   # until travis builtin docker version less 17.06
@@ -24,12 +23,14 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install docker-ce
 script:
+  - cp -f .netrc.dist .netrc
+  - sed -i "s/your_secret/$GITHUB_TOKEN/" .netrc
   - make test
-  - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web --file Dockerfile.prod .
+  - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web --file Dockerfile.prod.Dockerfile .
   - docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com
   - docker push registry.heroku.com/bubble-srv-dev/web
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker push registry.heroku.com/bubble-srv/web;
     fi
 after_success:
-  - $HOME/gopath/bin/goveralls -ignore=cmd/server/main.go -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - $HOME/gopath/bin/goveralls -coverprofile coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN

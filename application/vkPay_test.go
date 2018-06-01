@@ -18,7 +18,7 @@ import (
 )
 
 func TestVkBadSignature(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
+	server := httptest.NewServer(GetRouter(true, nil, nil, nil))
 	defer server.Close()
 
 	form := url.Values{}
@@ -46,19 +46,24 @@ func TestVkBadSignature(t *testing.T) {
 }
 
 func TestVkGetItem(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
-	defer server.Close()
-
 	file, err := ioutil.TempFile("", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	db, err := gorm.Open("sqlite3", file.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
 	db.AutoMigrate(&User{})
-	Gorm = db
+
+	marketInstance := market.NewMarket(market.Config{
+		"creditsPack01": &market.Pack{},
+	}, "")
+
+	server := httptest.NewServer(GetRouter(true, db, marketInstance, nil))
+	defer server.Close()
 
 	data := []byte("app_id=1item=creditsPack01lang=ru_RUnotification_type=get_itemorder_id=1receiver_id=123user_id=123secret")
-	sig := fmt.Sprintf("%x", md5.Sum(data))
 	form := url.Values{}
 	form.Add("app_id", "1")
 	form.Add("item", "creditsPack01")
@@ -67,12 +72,9 @@ func TestVkGetItem(t *testing.T) {
 	form.Add("order_id", "1")
 	form.Add("receiver_id", "123")
 	form.Add("user_id", "123")
-	form.Add("sig", sig)
+	form.Add("sig", fmt.Sprintf("%x", md5.Sum(data)))
 	reader := strings.NewReader(form.Encode())
 
-	Market = market.NewMarket(market.Config{
-		"creditsPack01": &market.Pack{},
-	}, "")
 	os.Setenv("VK_SECRET", "secret")
 	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
 	if err != nil {
@@ -93,14 +95,14 @@ func TestVkGetItem(t *testing.T) {
 }
 
 func TestVkBuyItem(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
-	defer server.Close()
-
 	file, err := ioutil.TempFile("", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	db, err := gorm.Open("sqlite3", file.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Transaction{})
 	user := User{
@@ -109,10 +111,21 @@ func TestVkBuyItem(t *testing.T) {
 		Credits: 900,
 	}
 	db.Create(&user)
-	Gorm = db
+
+	marketInstance := market.NewMarket(market.Config{
+		"creditsPack01": &market.Pack{
+			Reward: market.RewardStruct{
+				Increase: map[string]int64{
+					"credits": 140,
+				},
+			},
+		},
+	}, "")
+
+	server := httptest.NewServer(GetRouter(true, db, marketInstance, nil))
+	defer server.Close()
 
 	data := []byte("app_id=1item=creditsPack01notification_type=order_status_changeorder_id=1receiver_id=123status=chargeableuser_id=123secret")
-	sig := fmt.Sprintf("%x", md5.Sum(data))
 	form := url.Values{}
 	form.Add("app_id", "1")
 	form.Add("item", "creditsPack01")
@@ -121,26 +134,9 @@ func TestVkBuyItem(t *testing.T) {
 	form.Add("receiver_id", "123")
 	form.Add("status", "chargeable")
 	form.Add("user_id", "123")
-	form.Add("sig", sig)
+	form.Add("sig", fmt.Sprintf("%x", md5.Sum(data)))
 	reader := strings.NewReader(form.Encode())
 
-	var exampleMarketJSON = `
-	{
-		"creditsPack01": {
-			"reward": {
-				"increase": {
-					"credits": 140
-				}
-			}
-		}
-	}
-	`
-	var config market.Config
-	err = json.Unmarshal([]byte(exampleMarketJSON), &config)
-	if err != nil {
-		t.Fatal(err)
-	}
-	Market = market.NewMarket(config, "")
 	os.Setenv("VK_SECRET", "secret")
 	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
 	if err != nil {

@@ -8,22 +8,42 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
-const batchLevelsGroupCount = 200
+const (
+	batchLevelsGroupCount = 200
+	eventTypeLevel        = 1
+	eventTypeGeneral      = 2
+)
 
-// NewVkWorker create vk worker for app2user notification
-func NewVkWorker(config VkConfig) *VkWorker {
-	worker := &VkWorker{
-		ch:     make(chan VkEvent),
-		config: config,
-	}
-	go worker.work()
-	return worker
+// HTTPClient network client interface
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
 }
 
-type authorizationResponse struct {
-	AccessToken string `json:"access_token"`
+// VkWorker worker for app 2 user notifications
+type VkWorker struct {
+	ch     chan VkEvent
+	config VkConfig
+	token  string
+	client HTTPClient
+
+	// events to processing
+	batchLevels []VkEvent
+	listEvents  []VkEvent
+}
+
+// NewVkWorker create vk worker for app to user notification
+func NewVkWorker(config VkConfig, client HTTPClient) *VkWorker {
+	return &VkWorker{
+		ch:          make(chan VkEvent),
+		config:      config,
+		client:      client,
+		batchLevels: make([]VkEvent, 0),
+		listEvents:  make([]VkEvent, 0),
+	}
 }
 
 // VkConfig config for vk worker
@@ -33,23 +53,15 @@ type VkConfig struct {
 	RequestInterval time.Duration
 }
 
-// VkEvent struct for app2user event notification in Vk
+// VkEvent struct for app to user event notification in Vk
 type VkEvent struct {
 	ExtID int64
 	Type  int
 	Value int
 }
 
-// VkWorker worker for app 2 user notifications
-type VkWorker struct {
-	ch     chan VkEvent
-	config VkConfig
-	token  string
-	client *http.Client
-
-	// events to processing
-	batchLevels []VkEvent
-	listEvents  []VkEvent
+type authorizationResponse struct {
+	AccessToken string `json:"access_token"`
 }
 
 // SendEvent send event to worker
@@ -67,13 +79,11 @@ func (w *VkWorker) LenLevels() int {
 	return len(w.listEvents)
 }
 
-func (w *VkWorker) work() {
-	w.client = &http.Client{}
-
+// Initialize load access token
+func (w *VkWorker) Initialize() error {
 	req, err := http.NewRequest("GET", "https://oauth.vk.com/access_token", nil)
 	if err != nil {
-		log.Println(err.Error())
-		return
+		return errors.Wrap(err, "failed to create token request")
 	}
 
 	q := req.URL.Query()
@@ -83,91 +93,106 @@ func (w *VkWorker) work() {
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := w.client.Do(req)
-	if err != nil {
-		log.Println(err.Error())
-		return
+	if resp != nil {
+		defer resp.Body.Close()
 	}
-	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
-	var authResponse authorizationResponse
-	err = decoder.Decode(&authResponse)
 	if err != nil {
-		log.Println(err.Error())
-		return
+		return errors.Wrap(err, "failed to get token")
+	}
+	var authResponse authorizationResponse
+	if err = json.NewDecoder(resp.Body).Decode(&authResponse); err != nil {
+		return errors.Wrap(err, "failed to decode token response")
 	}
 	w.token = authResponse.AccessToken
+	return nil
+}
 
-	ticker := time.NewTicker(w.config.RequestInterval)
-	batchLevels := make([]VkEvent, 0)
-	listEvents := make([]VkEvent, 0)
+// Work main work to send events
+func (w *VkWorker) Work() {
+	tickerLevels := time.NewTicker(w.config.RequestInterval * 2)
+	tickerGeneral := time.NewTicker(w.config.RequestInterval * 2)
 	for {
 		select {
-		case <-ticker.C:
-			w.processEvents()
+		case <-tickerLevels.C:
+			err := w.processLevelEvents()
+			if err != nil {
+				log.Println("failure during processing level events", err)
+			}
+		case <-tickerGeneral.C:
+			err := w.processGeneralEvents()
+			if err != nil {
+				log.Println("failure during processing general events", err)
+			}
 		case event, ok := <-w.ch:
 			if ok {
 				switch event.Type {
-				case 1:
-					batchLevels = append(batchLevels, event)
-				case 2:
-					listEvents = append(listEvents, event)
+				case eventTypeLevel:
+					w.batchLevels = append(w.batchLevels, event)
+				case eventTypeGeneral:
+					w.listEvents = append(w.listEvents, event)
 				}
-			} else {
-				w.ch = nil
+				continue
 			}
-		}
-		if w.ch == nil { // closed channel on shutdown. TODO make shutdown
-			log.Printf(
-				"Prepare shutdown. VK worker must make:%d requests",
-				len(listEvents)+len(batchLevels)/batchLevelsGroupCount,
-			)
-			if (len(listEvents) + len(batchLevels)/batchLevelsGroupCount) == 0 {
+			<-time.NewTicker(w.config.RequestInterval * 2).C
+			if (len(w.listEvents) + len(w.batchLevels)) == 0 {
+				log.Println("vk worker graceful shutdowned")
 				break
 			}
+			log.Printf(
+				"Prepare shutdown. VK worker must make:%d requests",
+				len(w.listEvents)+len(w.batchLevels)/batchLevelsGroupCount,
+			)
 		}
 	}
 }
 
-func (w *VkWorker) processEvents() {
-	parameters := make(map[string]string)
-	if len(w.listEvents) > 0 {
-		event := w.listEvents[0]
-		parameters["user_id"] = strconv.FormatInt(event.ExtID, 10)
-		parameters["activity_id"] = strconv.Itoa(event.Type)
-		parameters["value"] = strconv.Itoa(event.Value)
-		err := w.sendRequest("secure.sendNotification", parameters)
-		if err != nil {
-			log.Println(err.Error())
-			w.listEvents = append(w.listEvents[1:], w.listEvents[0]) // add to end of slice
-		} else {
-			w.listEvents = w.listEvents[1:]
-		}
-		return // not more one request per function call
+func (w *VkWorker) processLevelEvents() error {
+	if len(w.batchLevels) == 0 {
+		return nil
 	}
-	if len(w.batchLevels) > 0 {
-		todoCount := len(w.batchLevels)
-		if todoCount > batchLevelsGroupCount {
-			todoCount = batchLevelsGroupCount
-		}
-		batchPart := w.batchLevels[:todoCount]
-		var userLevels []string
-		for _, e := range batchPart {
-			userLevels = append(userLevels, fmt.Sprintf("%d:%d", e.ExtID, e.Value))
-		}
-		parameters["levels"] = strings.Join(userLevels, ",")
-		err := w.sendRequest("secure.setUserLevel", parameters)
-		if err != nil {
-			log.Println(err.Error())
-		} else {
-			w.batchLevels = w.batchLevels[todoCount:]
-		}
+	todoCount := len(w.batchLevels)
+	if todoCount > batchLevelsGroupCount {
+		todoCount = batchLevelsGroupCount
 	}
+	batchPart := w.batchLevels[:todoCount]
+	userLevels := make([]string, todoCount)
+	for i, e := range batchPart {
+		userLevels[i] = fmt.Sprintf("%d:%d", e.ExtID, e.Value)
+	}
+	parameters := map[string]string{
+		"levels": strings.Join(userLevels, ","),
+	}
+	err := w.sendRequest("secure.setUserLevel", parameters)
+	if err != nil {
+		return err
+	}
+	w.batchLevels = w.batchLevels[todoCount:]
+	return nil
+}
+
+func (w *VkWorker) processGeneralEvents() error {
+	if len(w.listEvents) == 0 {
+		return nil
+	}
+	event := w.listEvents[0]
+	parameters := map[string]string{
+		"user_id":     strconv.FormatInt(event.ExtID, 10),
+		"activity_id": strconv.Itoa(event.Type),
+		"value":       strconv.Itoa(event.Value),
+	}
+	err := w.sendRequest("secure.sendNotification", parameters)
+	if err != nil {
+		w.listEvents = append(w.listEvents[1:], w.listEvents[0]) // move to end of slice
+		return err
+	}
+	w.listEvents = w.listEvents[1:]
+	return nil
 }
 
 func (w *VkWorker) sendRequest(method string, parameters map[string]string) error {
-	req, err := http.NewRequest("GET", fmt.Sprint("https://api.vk.com/method/", method), nil)
+	req, err := http.NewRequest("GET", "https://api.vk.com/method/"+method, nil)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to create vk request")
 	}
 
 	q := req.URL.Query()
@@ -179,20 +204,21 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) erro
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := w.client.Do(req)
-	if err != nil {
-		return err
+	if resp != nil {
+		defer resp.Body.Close()
 	}
-	defer resp.Body.Close()
+	if err != nil {
+		return errors.Wrap(err, "failed to send vk request")
+	}
 
 	var rawResponse map[string]interface{}
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&rawResponse)
+	err = json.NewDecoder(resp.Body).Decode(&rawResponse)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to decode vk response")
 	}
 	val, exist := rawResponse["error"]
 	if exist {
-		return fmt.Errorf("error %v", val)
+		return fmt.Errorf("vk error response %v", val)
 	}
 	return nil
 }

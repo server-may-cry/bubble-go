@@ -1,4 +1,10 @@
-/vendor/
+/bubble-go*
 
-*.exe
-/server
+# Network credentials
+/.netrc
+
+# Files for pprof go tool
+*.pprof
+
+# Output of the go coverage tool
+*.out

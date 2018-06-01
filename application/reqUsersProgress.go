@@ -3,6 +3,8 @@ package application
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/jinzhu/gorm"
 )
 
 type usersProgressRequest struct {
@@ -23,31 +25,32 @@ type usersProgressResponse struct {
 }
 
 // ReqUsersProgress return progres of received users
-func ReqUsersProgress(w http.ResponseWriter, r *http.Request) {
-	request := usersProgressRequest{}
-	defer r.Body.Close()
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	ctx := r.Context()
-	user := ctx.Value(userCtxID).(User)
-	usersLen := len(request.SocIDs)
-	users := make([]User, usersLen)
-	Gorm.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
-	response := usersProgressResponse{
-		UsersProgress: make([]userProgres, usersLen),
-	}
-	for i, friend := range users {
-		response.UsersProgress[i] = userProgres{
-			UserID:            friend.ID,
-			SocID:             friend.ExtID,
-			ReachedStage01:    friend.ReachedStage01,
-			ReachedSubStage01: friend.ReachedSubStage01,
-			ReachedStage02:    friend.ReachedStage02,
-			ReachedSubStage02: friend.ReachedSubStage02,
+func ReqUsersProgress(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		request := usersProgressRequest{}
+		defer r.Body.Close()
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
+		user := r.Context().Value(userCtxID).(User)
+		usersLen := len(request.SocIDs)
+		users := make([]User, usersLen)
+		db.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
+		response := usersProgressResponse{
+			UsersProgress: make([]userProgres, usersLen),
+		}
+		for i, friend := range users {
+			response.UsersProgress[i] = userProgres{
+				UserID:            friend.ID,
+				SocID:             friend.ExtID,
+				ReachedStage01:    friend.ReachedStage01,
+				ReachedSubStage01: friend.ReachedSubStage01,
+				ReachedStage02:    friend.ReachedStage02,
+				ReachedSubStage02: friend.ReachedSubStage02,
+			}
+		}
+		JSON(w, response)
 	}
-	JSON(w, response)
 }

@@ -1,13 +1,12 @@
-UNIT_TEST_ONLY_PKGS=$(shell go list ./... | grep -v "/vendor/")
-
 .PHONY: test
 test:
-	go test -v $(UNIT_TEST_ONLY_PKGS)
+	# vgo use 'clang' as C compiler by some reason (need 'gcc'). sqlite need CGO
+	CC=gcc vgo test ./... -coverprofile coverage.out
 
-.PHONY: deps
-deps:
-	dep ensure
+.PHONY: bench
+bench:
+	CC=gcc vgo test -cpuprofile=cpu.pprof -memprofile=mem.pprof -benchmem -bench=. ./notification
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo ./cmd/server/
+	CGO_ENABLED=0 vgo build

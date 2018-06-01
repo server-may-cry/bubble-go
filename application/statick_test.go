@@ -10,7 +10,7 @@ import (
 )
 
 func TestStaticHandler(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
+	server := httptest.NewServer(GetRouter(true, nil, nil, nil))
 	defer server.Close()
 
 	resp, err := http.Get(fmt.Sprint(server.URL, "/bubble/ShootTheBubbleDevVK.html?some=query/"))
@@ -31,7 +31,7 @@ func TestStaticHandler(t *testing.T) {
 }
 
 func TestClearStaticHandler(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true))
+	server := httptest.NewServer(GetRouter(true, nil, nil, nil))
 	defer server.Close()
 
 	resp, err := http.Get(fmt.Sprint(server.URL, "/cache-clear"))
@@ -49,7 +49,7 @@ func TestClearStaticHandler(t *testing.T) {
 	if string(actual) != "\"done\"\n" {
 		t.Errorf("Invalid response (%s), expected (\"done\"\n)\n", actual)
 	}
-	files, _ := ioutil.ReadDir(tmpDirName)
+	files, _ := ioutil.ReadDir(statickHandler.tmpDirName)
 	if len(files) > 0 {
 		t.Errorf("no files expected in tmp directory. found: %d", len(files))
 	}

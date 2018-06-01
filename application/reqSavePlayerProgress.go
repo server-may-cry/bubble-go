@@ -5,7 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/jinzhu/gorm"
 	"github.com/server-may-cry/bubble-go/notification"
+	"github.com/server-may-cry/bubble-go/platforms"
 )
 
 var completeLastLevelOnIslandEventMap []int
@@ -45,50 +47,53 @@ type savePlayerProgressRequest struct {
 }
 
 // ReqSavePlayerProgress save player progress
-func ReqSavePlayerProgress(w http.ResponseWriter, r *http.Request) {
-	request := savePlayerProgressRequest{}
-	defer r.Body.Close()
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	ctx := r.Context()
-	user := ctx.Value(userCtxID).(User)
-	var needUpdate bool
-	switch request.LevelMode {
-	case "standart":
-		if request.ReachedStage > user.ReachedStage01 {
-			needUpdate = true
-			user.ReachedStage01 = request.ReachedStage
-			user.ReachedSubStage01 = request.ReachedSubStage
-		} else if request.ReachedStage == user.ReachedStage01 && request.ReachedSubStage > user.ReachedSubStage01 {
-			needUpdate = true
-			user.ReachedSubStage01 = request.ReachedSubStage
+func ReqSavePlayerProgress(
+	vkWorker *notification.VkWorker,
+	db *gorm.DB,
+) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		request := savePlayerProgressRequest{}
+		defer r.Body.Close()
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
-		progress := user.GetProgresStandart()
-		lenProgress := len(progress)
-		if int(request.CurrentStage) > lenProgress {
-			log.Panicf("can`t save progress %+v", request)
+		user := r.Context().Value(userCtxID).(User)
+		var needUpdate bool
+		switch request.LevelMode {
+		case "standart":
+			if request.ReachedStage > user.ReachedStage01 {
+				needUpdate = true
+				user.ReachedStage01 = request.ReachedStage
+				user.ReachedSubStage01 = request.ReachedSubStage
+			} else if request.ReachedStage == user.ReachedStage01 && request.ReachedSubStage > user.ReachedSubStage01 {
+				needUpdate = true
+				user.ReachedSubStage01 = request.ReachedSubStage
+			}
+			progress := user.GetProgresStandart()
+			if int(request.CurrentStage) > len(progress) {
+				log.Panicf("cheating? can`t save progress %+v", request)
+			}
+			if request.CompleteSubStageRecordStat > progress[request.CurrentStage][request.CompleteSubStage] {
+				needUpdate = true
+				progress[request.CurrentStage][request.CompleteSubStage] = request.CompleteSubStageRecordStat
+				user.SetProgresStandart(progress)
+			}
+		default:
+			log.Panicf("not implemented level mode %s", request.LevelMode)
 		}
-		if request.CompleteSubStageRecordStat > progress[request.CurrentStage][request.CompleteSubStage] {
-			needUpdate = true
-			progress[request.CurrentStage][request.CompleteSubStage] = request.CompleteSubStageRecordStat
-			user.SetProgresStandart(progress)
+		if needUpdate {
+			db.Save(&user)
 		}
-	default:
-		log.Panicf("not implemented level mode %s", request.LevelMode)
+		if user.SysID == platforms.VK {
+			vkSocialLogic(vkWorker, request, user)
+		}
+		JSON(w, "ok")
 	}
-	if needUpdate {
-		Gorm.Save(&user)
-	}
-	// social logic
-	socialLogic(request, user)
-	response := "ok"
-	JSON(w, response)
 }
 
-func socialLogic(request savePlayerProgressRequest, user User) {
+func vkSocialLogic(vkWorker *notification.VkWorker, request savePlayerProgressRequest, user User) {
 	if request.CompleteSubStageRecordStat > 0 {
 		// not failed level
 		levelOrder := 0
@@ -102,7 +107,7 @@ func socialLogic(request savePlayerProgressRequest, user User) {
 		}
 		prevReachedLevelOrder += int(request.ReachedSubStage) + 1
 		if levelOrder > prevReachedLevelOrder {
-			VkWorker.SendEvent(notification.VkEvent{
+			vkWorker.SendEvent(notification.VkEvent{
 				ExtID: user.ExtID,
 				Type:  1,
 				Value: levelOrder,
@@ -115,7 +120,7 @@ func socialLogic(request savePlayerProgressRequest, user User) {
 		eventID := completeLastLevelOnIslandEventMap[islandOrder]
 		if eventID != 0 {
 			if request.CurrentStage > user.ReachedStage01 {
-				VkWorker.SendEvent(notification.VkEvent{
+				vkWorker.SendEvent(notification.VkEvent{
 					ExtID: user.ExtID,
 					Type:  2,
 					Value: eventID,

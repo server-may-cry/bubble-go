@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
@@ -62,120 +63,120 @@ type enterResponse struct {
 }
 
 // ReqEnter first request from client. Return user info and user progress
-func ReqEnter(w http.ResponseWriter, r *http.Request) {
-	request := enterRequest{}
-	defer r.Body.Close()
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	var firstGame uint8 // bool
-	var needUpdate bool
-	var triesRestore int64
-	var userFriendsBonusCredits int
-	ctx := r.Context()
-	value := ctx.Value(userCtxID)
-	var user User
-	now := time.Now()
-	switch value.(type) {
-	case nil:
-		firstGame = 1
-		platformID, exist := platforms.GetByName(request.SysID)
-		if !exist {
-			log.Panicf("not exist platform %s", request.SysID)
+func ReqEnter(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		request := enterRequest{}
+		defer r.Body.Close()
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
-		user = User{
-			SysID:                   platformID,
-			ExtID:                   request.ExtID,
-			ReachedStage01:          0,
-			ReachedSubStage01:       0,
-			IgnoreSavePointBlock:    0,
-			InifinityExtra00:        0,
-			InifinityExtra01:        0,
-			InifinityExtra02:        0,
-			InifinityExtra03:        0,
-			InifinityExtra04:        0,
-			InifinityExtra05:        0,
-			InifinityExtra06:        0,
-			InifinityExtra07:        0,
-			InifinityExtra08:        0,
-			InifinityExtra09:        0,
-			RemainingTries:          defaultConfig.DefaultRemainingTries,
-			RestoreTriesAt:          0,
-			FriendsBonusCreditsTime: now.Unix(),
-		}
-		if request.SysID == "VK" {
-			user.Credits = defaultConfig.DefaultCredits.Vk
-		} else {
-			user.Credits = defaultConfig.DefaultCredits.Ok
-		}
-		user.SetProgresStandart(defaultConfig.InitProgress)
-		Gorm.Create(&user) // Gorm.NewRecord check row exists or somehow
-	case User:
-		user = value.(User)
-		if user.FriendsBonusCreditsTime > now.Unix() {
-			needUpdate = true
-			to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
-			user.FriendsBonusCreditsTime = to.Unix()
-			userFriendsBonusCredits = int(request.AppFriends) * defaultConfig.FriendsBonusCreditsMultiplier
-		}
-		if user.RestoreTriesAt != 0 && now.Unix() >= user.RestoreTriesAt {
-			needUpdate = true
-			if user.RemainingTries < defaultConfig.DefaultRemainingTries {
-				user.RemainingTries = defaultConfig.DefaultRemainingTries
+		var firstGame uint8 // bool
+		var needUpdate bool
+		var triesRestore int64
+		var userFriendsBonusCredits int
+		value := r.Context().Value(userCtxID)
+		var user User
+		now := time.Now()
+		switch value.(type) {
+		case nil:
+			firstGame = 1
+			platformID, exist := platforms.GetByName(request.SysID)
+			if !exist {
+				log.Panicf("not exist platform %s", request.SysID)
 			}
-			user.RestoreTriesAt = 0
-		} else if user.RestoreTriesAt != 0 {
-			triesRestore = user.RestoreTriesAt - now.Unix()
+			user = User{
+				SysID:                   platformID,
+				ExtID:                   request.ExtID,
+				ReachedStage01:          0,
+				ReachedSubStage01:       0,
+				IgnoreSavePointBlock:    0,
+				InifinityExtra00:        0,
+				InifinityExtra01:        0,
+				InifinityExtra02:        0,
+				InifinityExtra03:        0,
+				InifinityExtra04:        0,
+				InifinityExtra05:        0,
+				InifinityExtra06:        0,
+				InifinityExtra07:        0,
+				InifinityExtra08:        0,
+				InifinityExtra09:        0,
+				RemainingTries:          defaultConfig.DefaultRemainingTries,
+				RestoreTriesAt:          0,
+				FriendsBonusCreditsTime: now.Unix(),
+			}
+			if request.SysID == "VK" {
+				user.Credits = defaultConfig.DefaultCredits.Vk
+			} else {
+				user.Credits = defaultConfig.DefaultCredits.Ok
+			}
+			user.SetProgresStandart(defaultConfig.InitProgress)
+			db.Create(&user) // Gorm.NewRecord check row exists or somehow
+		case User:
+			user = value.(User)
+			if user.FriendsBonusCreditsTime > now.Unix() {
+				needUpdate = true
+				to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
+				user.FriendsBonusCreditsTime = to.Unix()
+				userFriendsBonusCredits = int(request.AppFriends) * defaultConfig.FriendsBonusCreditsMultiplier
+			}
+			if user.RestoreTriesAt != 0 && now.Unix() >= user.RestoreTriesAt {
+				needUpdate = true
+				if user.RemainingTries < defaultConfig.DefaultRemainingTries {
+					user.RemainingTries = defaultConfig.DefaultRemainingTries
+				}
+				user.RestoreTriesAt = 0
+			} else if user.RestoreTriesAt != 0 {
+				triesRestore = user.RestoreTriesAt - now.Unix()
+			}
 		}
-	}
-	if needUpdate {
-		Gorm.Save(&user)
-	}
+		if needUpdate {
+			db.Save(&user)
+		}
 
-	response := enterResponse{
-		ReqMsgID:                  request.MsgID,
-		UserID:                    user.ID,
-		ReachedStage01:            user.ReachedStage01,
-		ReachedStage02:            user.ReachedStage02,
-		ReachedSubStage01:         user.ReachedSubStage01,
-		ReachedSubStage02:         user.ReachedSubStage02,
-		IgnoreSavePointBlock:      user.IgnoreSavePointBlock,
-		RemainingTries:            user.RemainingTries,
-		TriesMin:                  defaultConfig.DefaultRemainingTries,
-		TriesRegenSecondsInterval: defaultConfig.IntervalTriesRestoration,
-		SecondsUntilTriesRegen:    triesRestore,
-		Credits:                   user.Credits,
-		InfinityExtra00:           user.InifinityExtra00,
-		InfinityExtra01:           user.InifinityExtra01,
-		InfinityExtra02:           user.InifinityExtra02,
-		InfinityExtra03:           user.InifinityExtra03,
-		InfinityExtra04:           user.InifinityExtra04,
-		InfinityExtra05:           user.InifinityExtra05,
-		InfinityExtra06:           user.InifinityExtra06,
-		InfinityExtra07:           user.InifinityExtra07,
-		InfinityExtra08:           user.InifinityExtra08,
-		InfinityExtra09:           user.InifinityExtra09,
-		OfferAvailable:            0,
-		FirstGame:                 firstGame,
-		BonusCredits:              0, // not used (every 12 hours user get reward. deleted now)
-		AppFriendsBonusCredits:    userFriendsBonusCredits,
-		StagesProgressStat01:      getUsersPerIslad(),
-		// StagesProgressStat02   not used
-		SubStagesRecordStats01: user.GetProgresStandart(),
-		// SubStagesRecordStats02 not used
+		JSON(w, enterResponse{
+			ReqMsgID:                  request.MsgID,
+			UserID:                    user.ID,
+			ReachedStage01:            user.ReachedStage01,
+			ReachedStage02:            user.ReachedStage02,
+			ReachedSubStage01:         user.ReachedSubStage01,
+			ReachedSubStage02:         user.ReachedSubStage02,
+			IgnoreSavePointBlock:      user.IgnoreSavePointBlock,
+			RemainingTries:            user.RemainingTries,
+			TriesMin:                  defaultConfig.DefaultRemainingTries,
+			TriesRegenSecondsInterval: defaultConfig.IntervalTriesRestoration,
+			SecondsUntilTriesRegen:    triesRestore,
+			Credits:                   user.Credits,
+			InfinityExtra00:           user.InifinityExtra00,
+			InfinityExtra01:           user.InifinityExtra01,
+			InfinityExtra02:           user.InifinityExtra02,
+			InfinityExtra03:           user.InifinityExtra03,
+			InfinityExtra04:           user.InifinityExtra04,
+			InfinityExtra05:           user.InifinityExtra05,
+			InfinityExtra06:           user.InifinityExtra06,
+			InfinityExtra07:           user.InifinityExtra07,
+			InfinityExtra08:           user.InifinityExtra08,
+			InfinityExtra09:           user.InifinityExtra09,
+			OfferAvailable:            0,
+			FirstGame:                 firstGame,
+			BonusCredits:              0, // not used (every 12 hours user get reward. deleted now)
+			AppFriendsBonusCredits:    userFriendsBonusCredits,
+			StagesProgressStat01:      getUsersPerIslad(db),
+			// StagesProgressStat02   not used
+			SubStagesRecordStats01: user.GetProgresStandart(),
+			// SubStagesRecordStats02 not used
+		})
 	}
-	JSON(w, response)
 }
 
-func getUsersPerIslad() [7]uint32 {
+func getUsersPerIslad(db *gorm.DB) [7]uint32 {
 	usersProgressCache.Lock()
 	defer usersProgressCache.Unlock()
 
 	if !usersProgressCache.isFresh {
 		var usersProgress [7]uint32
-		rows, err := Gorm.Table(
+		rows, err := db.Table(
 			"users",
 		).Select(
 			"count(*) as cnt, reached_stage01",
@@ -185,7 +186,7 @@ func getUsersPerIslad() [7]uint32 {
 			"reached_stage01 desc",
 		).Rows()
 		if err != nil {
-			log.Print(err)
+			log.Println("Can't execute query to get usersProgress", err)
 			return usersProgress
 		}
 
@@ -194,7 +195,7 @@ func getUsersPerIslad() [7]uint32 {
 		for rows.Next() {
 			err = rows.Scan(&cnt, &reachedStage01)
 			if err != nil {
-				log.Print(err)
+				log.Println("Can't iterate over rows usersProgress", err)
 				return usersProgress
 			}
 			for i := range usersProgress {
