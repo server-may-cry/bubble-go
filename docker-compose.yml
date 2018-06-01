@@ -1,22 +1,18 @@
 version: '2'
 services:
   go:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev.Dockerfile
-    working_dir: /go/src/github.com/server-may-cry/bubble-go
+    image: scratch
     environment:
       DB_URL: postgres://docker:docker@db.local:5432/docker
       PORT: 8080
     volumes:
-      - .:/go/src/github.com/server-may-cry/bubble-go
-      - ./.netrc:/root/.netrc:ro
-      - vgo:/go/src/v
+      - ./bubble-go:/app/bubble-go:ro
+      - ./config:/app/config:ro
     links:
       - postgres:db.local
     ports:
       - "8080:8080"
-    command: ["sh"]
+    command: ["/app/bubble-go"]
   postgres:
     image: postgres:9.6-alpine
     expose:
@@ -29,4 +25,3 @@ services:
       - db:/var/lib/postgresql
 volumes:
   db: ~
-  vgo: ~

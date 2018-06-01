@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 dist: trusty
 language: go
 go:
@@ -6,27 +6,18 @@ go:
 cache:
   directories:
     - $GO_PATH/src/v
-# until travis builtin docker version less 17.06
-#services:
-#  - docker
+services:
+  - docker
 before_install:
   # go std library refresh
   - go install -race std
 
   - go get github.com/mattn/goveralls # upload coverage
   - go get golang.org/x/vgo
-
-  # docker
-  # until travis builtin docker version less 17.06
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
 script:
-  - cp -f .netrc.dist .netrc
-  - sed -i "s/your_secret/$GITHUB_TOKEN/" .netrc
   - make test
-  - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web --file Dockerfile.prod.Dockerfile .
+  - make build
+  - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web .
   - docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com
   - docker push registry.heroku.com/bubble-srv-dev/web
   - if [ "$TRAVIS_BRANCH" == "master" ]; then

@@ -1,8 +1,5 @@
 /bubble-go*
 
-# Network credentials
-/.netrc
-
 # Files for pprof go tool
 *.pprof
 
