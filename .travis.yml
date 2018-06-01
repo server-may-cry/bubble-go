@@ -16,6 +16,7 @@ before_install:
   - go get golang.org/x/vgo
 script:
   - make test
+  - make build
   - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web .
   - docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com
   - docker push registry.heroku.com/bubble-srv-dev/web
