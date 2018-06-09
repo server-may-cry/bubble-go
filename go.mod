@@ -12,6 +12,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.6.0
 	github.com/newrelic/go-agent v1.11.0
 	github.com/pkg/errors v0.8.0
+	go.uber.org/dig v1.3.0
 	golang.org/x/crypto v0.0.0-20180322175230-88942b9c40a4
 	golang.org/x/net v0.0.0-20180320002117-6078986fec03
 )

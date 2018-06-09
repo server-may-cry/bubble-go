@@ -50,8 +50,11 @@ type savePlayerProgressRequest struct {
 func ReqSavePlayerProgress(
 	vkWorker *notification.VkWorker,
 	db *gorm.DB,
-) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+) HTTPHandlerContainer {
+	handler := HTTPHandler{
+		URL: "/ReqSavePlayerProgress",
+	}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		request := savePlayerProgressRequest{}
 		defer r.Body.Close()
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -90,6 +93,10 @@ func ReqSavePlayerProgress(
 			vkSocialLogic(vkWorker, request, user)
 		}
 		JSON(w, "ok")
+	}
+
+	return HTTPHandlerContainer{
+		HTTPHandler: handler,
 	}
 }
 

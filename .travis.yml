@@ -25,3 +25,5 @@ script:
     fi
 after_success:
   - $HOME/gopath/bin/goveralls -coverprofile coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+notifications:
+  email: false

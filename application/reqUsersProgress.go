@@ -25,8 +25,11 @@ type usersProgressResponse struct {
 }
 
 // ReqUsersProgress return progres of received users
-func ReqUsersProgress(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func ReqUsersProgress(db *gorm.DB) HTTPHandlerContainer {
+	handler := HTTPHandler{
+		URL: "/ReqSavePlayerProgress",
+	}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		request := usersProgressRequest{}
 		defer r.Body.Close()
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -52,5 +55,9 @@ func ReqUsersProgress(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) 
 			}
 		}
 		JSON(w, response)
+	}
+
+	return HTTPHandlerContainer{
+		HTTPHandler: handler,
 	}
 }

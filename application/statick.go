@@ -17,6 +17,9 @@ type StatickHandler struct {
 	tmpDirName string
 }
 
+// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
+// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
+
 // NewStatickHandler create static handler
 func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
 	tmpDirName, err := ioutil.TempDir("", "bubble_cache_")

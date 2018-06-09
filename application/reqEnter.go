@@ -63,8 +63,11 @@ type enterResponse struct {
 }
 
 // ReqEnter first request from client. Return user info and user progress
-func ReqEnter(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
+	handler := HTTPHandler{
+		URL: "/ReqEnter",
+	}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		request := enterRequest{}
 		defer r.Body.Close()
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -167,6 +170,10 @@ func ReqEnter(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 			SubStagesRecordStats01: user.GetProgresStandart(),
 			// SubStagesRecordStats02 not used
 		})
+	}
+
+	return HTTPHandlerContainer{
+		HTTPHandler: handler,
 	}
 }
 

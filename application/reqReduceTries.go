@@ -13,8 +13,11 @@ type reduceTriesRequest struct {
 }
 
 // ReqReduceTries reduce user tries by one
-func ReqReduceTries(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func ReqReduceTries(db *gorm.DB) HTTPHandlerContainer {
+	handler := HTTPHandler{
+		URL: "/ReqReduceTries",
+	}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		request := reduceTriesRequest{}
 		defer r.Body.Close()
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -38,5 +41,9 @@ func ReqReduceTries(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 		db.Save(&user)
 		JSON(w, []int8{user.RemainingTries})
+	}
+
+	return HTTPHandlerContainer{
+		HTTPHandler: handler,
 	}
 }

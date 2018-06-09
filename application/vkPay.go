@@ -13,6 +13,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/server-may-cry/bubble-go/market"
 	"github.com/server-may-cry/bubble-go/platforms"
+	dig "go.uber.org/dig"
 )
 
 /*
@@ -59,9 +60,17 @@ type itemResponse struct {
 	Price    int    `json:"price"`
 }
 
+// VkPayForContainer for uber-go/dig
+type VkPayForContainer struct {
+	dig.Out
+
+	HTTPHandler http.HandlerFunc
+}
+
 // VkPay acept and validate payment request from vk
-func VkPay(db *gorm.DB, marketInstance *market.Market) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
+	handler := VkPayForContainer{}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -172,4 +181,5 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) func(w http.ResponseWrite
 			return
 		}
 	}
+	return handler
 }

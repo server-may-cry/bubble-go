@@ -15,8 +15,11 @@ import (
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
+// Middleware for http router to authorize user
+type Middleware func(next http.Handler) http.Handler
+
 // AuthorizationMiddleware check signature and load user
-func AuthorizationMiddleware(db *gorm.DB) func(next http.Handler) http.Handler {
+func AuthorizationMiddleware(db *gorm.DB) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost {
