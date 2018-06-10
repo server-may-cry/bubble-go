@@ -12,7 +12,6 @@ before_install:
   # go std library refresh
   - go install -race std
 
-  - go get github.com/mattn/goveralls # upload coverage
   - go get golang.org/x/vgo
 script:
   - make test
@@ -24,6 +23,6 @@ script:
     docker push registry.heroku.com/bubble-srv/web;
     fi
 after_success:
-  - $HOME/gopath/bin/goveralls -coverprofile coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - bash <(curl -s https://codecov.io/bash) -f coverage.out
 notifications:
   email: false
