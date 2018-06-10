@@ -18,21 +18,24 @@ import (
 )
 
 func TestVkBadSignature(t *testing.T) {
-	server := httptest.NewServer(GetRouter(true, nil, nil, nil))
-	defer server.Close()
-
 	form := url.Values{}
 	form.Add("app_id", "1")
 	form.Add("sig", "invalid_sig")
 	reader := strings.NewReader(form.Encode())
 
 	os.Setenv("VK_SECRET", "secret")
-	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
+	req, err := http.NewRequest("POST", "/VkPay", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
+
+	resp := httptest.NewRecorder()
+	vkPayContainer := VkPay(nil, nil)
+	handler := http.HandlerFunc(vkPayContainer.HTTPHandler)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != 200 {
+		t.Fatalf("Received non-200 response: %d\n", resp.Code)
 	}
 	var response map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&response)
@@ -46,22 +49,9 @@ func TestVkBadSignature(t *testing.T) {
 }
 
 func TestVkGetItem(t *testing.T) {
-	file, err := ioutil.TempFile("", "")
-	if err != nil {
-		t.Fatal(err)
-	}
-	db, err := gorm.Open("sqlite3", file.Name())
-	if err != nil {
-		t.Fatal(err)
-	}
-	db.AutoMigrate(&User{})
-
 	marketInstance := market.NewMarket(market.Config{
 		"creditsPack01": &market.Pack{},
 	}, "")
-
-	server := httptest.NewServer(GetRouter(true, db, marketInstance, nil))
-	defer server.Close()
 
 	data := []byte("app_id=1item=creditsPack01lang=ru_RUnotification_type=get_itemorder_id=1receiver_id=123user_id=123secret")
 	form := url.Values{}
@@ -76,12 +66,19 @@ func TestVkGetItem(t *testing.T) {
 	reader := strings.NewReader(form.Encode())
 
 	os.Setenv("VK_SECRET", "secret")
-	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
+	req, err := http.NewRequest("POST", "/VkPay", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp := httptest.NewRecorder()
+	vkPayContainer := VkPay(nil, marketInstance)
+	handler := http.HandlerFunc(vkPayContainer.HTTPHandler)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != 200 {
+		t.Fatalf("Received non-200 response: %d\n", resp.Code)
 	}
 	var response map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&response)
@@ -122,9 +119,6 @@ func TestVkBuyItem(t *testing.T) {
 		},
 	}, "")
 
-	server := httptest.NewServer(GetRouter(true, db, marketInstance, nil))
-	defer server.Close()
-
 	data := []byte("app_id=1item=creditsPack01notification_type=order_status_changeorder_id=1receiver_id=123status=chargeableuser_id=123secret")
 	form := url.Values{}
 	form.Add("app_id", "1")
@@ -138,12 +132,19 @@ func TestVkBuyItem(t *testing.T) {
 	reader := strings.NewReader(form.Encode())
 
 	os.Setenv("VK_SECRET", "secret")
-	resp, err := http.Post(fmt.Sprint(server.URL, "/VkPay"), "application/x-www-form-urlencoded", reader)
+	req, err := http.NewRequest("POST", "/VkPay", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp := httptest.NewRecorder()
+	vkPayContainer := VkPay(db, marketInstance)
+	handler := http.HandlerFunc(vkPayContainer.HTTPHandler)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != 200 {
+		t.Fatalf("Received non-200 response: %d\n", resp.Code)
 	}
 	var response map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&response)
