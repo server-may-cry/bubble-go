@@ -8,11 +8,7 @@ Backend for bubble shooter game
 
 ## TODO
 
-* test save progress
-* test life restore
-* test daily bonus
-* test notification
+* increase test coverage
 * split 'application' package
 * use ENV only in main.go
-* move initilize() out from main.go
-* use uber-go/dig instead of handmade DI
+* use repository for communication with DB

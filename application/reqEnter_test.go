@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -25,23 +23,18 @@ func TestFirstGameField(t *testing.T) {
 	}
 	db.AutoMigrate(&User{})
 
-	server := httptest.NewServer(GetRouter(true, db, nil, nil))
-	defer server.Close()
-
 	data := []byte("_123_")
 	jsonBytes, _ := json.Marshal(AuthRequestPart{
 		AuthKey: fmt.Sprintf("%x", md5.Sum(data)),
 		ExtID:   123,
 		SysID:   "VK",
 	})
-	reader := bytes.NewReader(jsonBytes)
 
-	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqEnter"), "application/json", reader)
+	reader := bytes.NewReader(jsonBytes)
+	handlerContainer := ReqEnter(db)
+	resp, err := testAppHandler(handlerContainer.HTTPHandler, nil, "/ReqEnter", reader)
 	if err != nil {
 		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
 	var response enterResponse
 	err = json.NewDecoder(resp.Body).Decode(&response)
@@ -52,13 +45,22 @@ func TestFirstGameField(t *testing.T) {
 		t.Fatalf("first game expected, got %+v", response)
 	}
 
-	reader.Reset(jsonBytes)
-	resp, err = http.Post(fmt.Sprint(server.URL, "/ReqEnter"), "application/json", reader)
+	jsonBytesResponse, err := json.Marshal(response.SubStagesRecordStats01)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
+	user := User{
+		SysID:            1,
+		ExtID:            123,
+		Credits:          900,
+		ProgressStandart: string(jsonBytesResponse[:]),
+	}
+	db.Create(&user)
+
+	reader.Reset(jsonBytes)
+	resp, err = testAppHandler(handlerContainer.HTTPHandler, &user, "/ReqEnter", reader)
+	if err != nil {
+		t.Fatal(err)
 	}
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {

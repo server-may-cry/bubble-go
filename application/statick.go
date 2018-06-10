@@ -17,6 +17,9 @@ type StatickHandler struct {
 	tmpDirName string
 }
 
+// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
+// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
+
 // NewStatickHandler create static handler
 func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
 	tmpDirName, err := ioutil.TempDir("", "bubble_cache_")
@@ -31,7 +34,9 @@ func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
 
 // Serve resolve content from CDN
 func (sh StatickHandler) Serve(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
+	if r.Body != nil {
+		defer r.Body.Close()
+	}
 	filePath := r.URL.Path
 	fullFilePath := filepath.ToSlash(sh.tmpDirName + filePath)
 	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
@@ -72,7 +77,9 @@ func (sh StatickHandler) Serve(w http.ResponseWriter, r *http.Request) {
 
 // Clear remove statick files
 func (sh StatickHandler) Clear(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
+	if r.Body != nil {
+		defer r.Body.Close()
+	}
 	err := os.RemoveAll(sh.tmpDirName)
 	if err != nil {
 		panic(err)

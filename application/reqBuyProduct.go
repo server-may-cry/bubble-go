@@ -19,8 +19,11 @@ type buyProductResponse struct {
 }
 
 // ReqBuyProduct buy product
-func ReqBuyProduct(db *gorm.DB, marketInstance *market.Market) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func ReqBuyProduct(db *gorm.DB, marketInstance *market.Market) HTTPHandlerContainer {
+	handler := HTTPHandler{
+		URL: "/ReqBuyProduct",
+	}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		request := buyProductRequest{}
 		defer r.Body.Close()
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -38,5 +41,9 @@ func ReqBuyProduct(db *gorm.DB, marketInstance *market.Market) func(w http.Respo
 			ProductID: request.ProductID,
 			Credits:   user.Credits,
 		})
+	}
+
+	return HTTPHandlerContainer{
+		HTTPHandler: handler,
 	}
 }

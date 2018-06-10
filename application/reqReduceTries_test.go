@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -31,9 +29,6 @@ func TestReduceTries(t *testing.T) {
 	}
 	db.Create(&user)
 
-	server := httptest.NewServer(GetRouter(true, db, nil, nil))
-	defer server.Close()
-
 	data := []byte("_123_")
 	jsonBytes, _ := json.Marshal(AuthRequestPart{
 		ExtID:   123,
@@ -42,12 +37,10 @@ func TestReduceTries(t *testing.T) {
 	})
 
 	reader := bytes.NewReader(jsonBytes)
-	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqReduceTries"), "application/json", reader)
+	handlerContainer := ReqReduceTries(db)
+	resp, err := testAppHandler(handlerContainer.HTTPHandler, &user, "/ReqReduceTries", reader)
 	if err != nil {
 		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
 	var response []int8
 	err = json.NewDecoder(resp.Body).Decode(&response)

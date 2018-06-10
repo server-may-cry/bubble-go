@@ -1,9 +1,9 @@
 version: '2'
 services:
   go:
-    image: scratch
+    build: .
     environment:
-      DB_URL: postgres://docker:docker@db.local:5432/docker
+      DB_URL: http://docker:docker@db.local:5432/docker
       PORT: 8080
     volumes:
       - ./bubble-go:/app/bubble-go:ro
@@ -12,11 +12,12 @@ services:
       - postgres:db.local
     ports:
       - "8080:8080"
-    command: ["/app/bubble-go"]
+    command: ["./bubble-go"]
+    working_dir: "/app"
   postgres:
     image: postgres:9.6-alpine
     expose:
-      - "5432/TCP"
+      - "5432"
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker

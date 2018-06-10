@@ -9,4 +9,4 @@ bench:
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 vgo build
+	GOOS=linux CGO_ENABLED=0 vgo build

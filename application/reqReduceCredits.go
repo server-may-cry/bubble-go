@@ -19,8 +19,11 @@ type reduceCreditsResponse struct {
 }
 
 // ReqReduceCredits reduce user credits. Get amount from request
-func ReqReduceCredits(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func ReqReduceCredits(db *gorm.DB) HTTPHandlerContainer {
+	handler := HTTPHandler{
+		URL: "/ReqReduceCredits",
+	}
+	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		request := reduceCreditsRequest{}
 		defer r.Body.Close()
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -38,5 +41,9 @@ func ReqReduceCredits(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) 
 		JSON(w, reduceCreditsResponse{
 			Credits: user.Credits,
 		})
+	}
+
+	return HTTPHandlerContainer{
+		HTTPHandler: handler,
 	}
 }

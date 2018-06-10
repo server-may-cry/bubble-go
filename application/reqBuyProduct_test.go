@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -46,8 +44,6 @@ func TestBuyProduct(t *testing.T) {
 			},
 		},
 	}, "")
-	server := httptest.NewServer(GetRouter(true, db, marketInstance, nil))
-	defer server.Close()
 
 	data := []byte("_123_")
 	jsonBytes, _ := json.Marshal(buyProductCompleteRequest{
@@ -62,12 +58,10 @@ func TestBuyProduct(t *testing.T) {
 	})
 
 	reader := bytes.NewReader(jsonBytes)
-	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqBuyProduct"), "application/json", reader)
+	handlerContainer := ReqBuyProduct(db, marketInstance)
+	resp, err := testAppHandler(handlerContainer.HTTPHandler, &user, "/ReqBuyProduct", reader)
 	if err != nil {
 		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
 	var response buyProductResponse
 	err = json.NewDecoder(resp.Body).Decode(&response)

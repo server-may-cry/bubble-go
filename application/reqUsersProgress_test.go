@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -36,9 +34,6 @@ func TestUsersProgress(t *testing.T) {
 	}
 	db.Create(&user)
 
-	server := httptest.NewServer(GetRouter(true, db, nil, nil))
-	defer server.Close()
-
 	data := []byte("_123_")
 	jsonBytes, _ := json.Marshal(usersProgressCompleteRequest{
 		AuthRequestPart{
@@ -52,12 +47,10 @@ func TestUsersProgress(t *testing.T) {
 	})
 
 	reader := bytes.NewReader(jsonBytes)
-	resp, err := http.Post(fmt.Sprint(server.URL, "/ReqUsersProgress"), "application/json", reader)
+	handlerContainer := ReqUsersProgress(db)
+	resp, err := testAppHandler(handlerContainer.HTTPHandler, &user, "/ReqSavePlayerProgress", reader)
 	if err != nil {
 		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
 	var response usersProgressResponse
 	err = json.NewDecoder(resp.Body).Decode(&response)

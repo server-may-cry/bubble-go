@@ -3,6 +3,8 @@ package application
 import (
 	"encoding/json"
 	"net/http"
+
+	dig "go.uber.org/dig"
 )
 
 type ctxID uint
@@ -12,6 +14,20 @@ const (
 )
 
 type jsonHelper map[string]interface{}
+
+// HTTPHandler struct to hold URL to handle and http.HandlerFunc
+// only for game handlers
+type HTTPHandler struct {
+	URL         string
+	HTTPHandler http.HandlerFunc
+}
+
+// HTTPHandlerContainer provider for container
+type HTTPHandlerContainer struct {
+	dig.Out
+
+	HTTPHandler HTTPHandler `group:"server"`
+}
 
 // AuthRequestPart can be used to validate request
 type AuthRequestPart struct {
