@@ -31,9 +31,8 @@ func testAppHandler(
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(hc.HTTPHandler)
 
-	handler.ServeHTTP(rr, req)
+	hc.HTTPHandler.ServeHTTP(rr, req)
 
 	if rr.Code != 200 {
 		return nil, fmt.Errorf("Bad status code returned '%d'", rr.Code)

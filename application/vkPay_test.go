@@ -31,9 +31,8 @@ func TestVkBadSignature(t *testing.T) {
 
 	resp := httptest.NewRecorder()
 	vkPayContainer := VkPay(nil, nil)
-	handler := http.HandlerFunc(vkPayContainer.HTTPHandler)
 
-	handler.ServeHTTP(resp, req)
+	vkPayContainer.HTTPHandler.ServeHTTP(resp, req)
 	if resp.Code != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.Code)
 	}
@@ -74,9 +73,8 @@ func TestVkGetItem(t *testing.T) {
 
 	resp := httptest.NewRecorder()
 	vkPayContainer := VkPay(nil, marketInstance)
-	handler := http.HandlerFunc(vkPayContainer.HTTPHandler)
 
-	handler.ServeHTTP(resp, req)
+	vkPayContainer.HTTPHandler.ServeHTTP(resp, req)
 	if resp.Code != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.Code)
 	}
@@ -140,9 +138,8 @@ func TestVkBuyItem(t *testing.T) {
 
 	resp := httptest.NewRecorder()
 	vkPayContainer := VkPay(db, marketInstance)
-	handler := http.HandlerFunc(vkPayContainer.HTTPHandler)
 
-	handler.ServeHTTP(resp, req)
+	vkPayContainer.HTTPHandler.ServeHTTP(resp, req)
 	if resp.Code != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.Code)
 	}
