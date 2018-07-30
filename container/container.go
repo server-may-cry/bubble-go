@@ -30,25 +30,25 @@ type Configuration struct {
 func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 	container := dig.New()
 
-	container.Provide(func() bool {
+	_ = container.Provide(func() bool {
 		return test
 	})
 
-	container.Provide(application.AuthorizationMiddleware)
-	container.Provide(application.ReqBuyProduct)
-	container.Provide(application.ReqEnter)
-	container.Provide(application.ReqReduceCredits)
-	container.Provide(application.ReqReduceTries)
-	container.Provide(application.ReqSavePlayerProgress)
-	container.Provide(application.ReqUsersProgress)
+	_ = container.Provide(application.AuthorizationMiddleware)
+	_ = container.Provide(application.ReqBuyProduct)
+	_ = container.Provide(application.ReqEnter)
+	_ = container.Provide(application.ReqReduceCredits)
+	_ = container.Provide(application.ReqReduceTries)
+	_ = container.Provide(application.ReqSavePlayerProgress)
+	_ = container.Provide(application.ReqUsersProgress)
 
-	container.Provide(func() Configuration {
+	_ = container.Provide(func() Configuration {
 		return Configuration{
 			dbURL:              dbURL,
 			pathToMarketConfig: pathToMarketConfig,
 		}
 	})
-	container.Provide(func(config Configuration) (*gorm.DB, error) {
+	_ = container.Provide(func(config Configuration) (*gorm.DB, error) {
 		u, err := url.Parse(config.dbURL)
 		if err != nil {
 			return nil, errors.Wrapf(err, "can`t parse DB_URL (%s)", dbURL)
@@ -80,7 +80,7 @@ func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 		return db, nil
 	})
 
-	container.Provide(func(config Configuration) (*market.Market, error) {
+	_ = container.Provide(func(config Configuration) (*market.Market, error) {
 		file, err := os.Open(config.pathToMarketConfig)
 		if err != nil {
 			return nil, errors.Wrap(err, "can`t open market config file")
@@ -99,7 +99,7 @@ func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 		return marketInstance, nil
 	})
 
-	container.Provide(func() (*notification.VkWorker, error) {
+	_ = container.Provide(func() (*notification.VkWorker, error) {
 		vkWorker := notification.NewVkWorker(notification.VkConfig{
 			AppID:           os.Getenv("VK_APP_ID"),
 			Secret:          os.Getenv("VK_SECRET"),
@@ -113,11 +113,11 @@ func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 		return vkWorker, nil
 	})
 
-	container.Provide(func() (*application.StatickHandler, error) {
+	_ = container.Provide(func() (*application.StatickHandler, error) {
 		return application.NewStatickHandler("http://119226.selcdn.ru")
 	})
 
-	container.Provide(func() (newrelic.Application, error) {
+	_ = container.Provide(func() (newrelic.Application, error) {
 		newrelicKey := os.Getenv("NEW_RELIC_LICENSE_KEY")
 		if newrelicKey == "" {
 			newrelicKey = "1234567890123456789012345678901234567890" // length 40
@@ -131,8 +131,8 @@ func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 		return app, err
 	})
 
-	container.Provide(application.GetRouter)
-	container.Provide(application.VkPay)
+	_ = container.Provide(application.GetRouter)
+	_ = container.Provide(application.VkPay)
 
 	return container
 }

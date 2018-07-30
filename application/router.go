@@ -59,7 +59,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 	router.Post(wrapHandlerFunc(deps.Newrelic, "/VkPay", deps.VkPayHandler))
 
 	router.Get(wrapHandlerFunc(deps.Newrelic, "/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
+		_, _ = w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
 	}))
 	router.Get(wrapHandlerFunc(deps.Newrelic, "/bubble/*filePath", deps.StatickHandler.Serve))
 	router.Get(wrapHandlerFunc(deps.Newrelic, "/cache-clear", deps.StatickHandler.Clear))
@@ -78,7 +78,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 	loaderio := os.Getenv("LOADERIO")
 	loaderioRoute := fmt.Sprintf("/loaderio-%s/", loaderio)
 	router.Get(wrapHandlerFunc(deps.Newrelic, loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("loaderio-" + loaderio))
+		_, _ = w.Write([]byte("loaderio-" + loaderio))
 	}))
 
 	return router

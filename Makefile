@@ -1,5 +1,6 @@
 .PHONY: test
 test:
+	# golangci-lint run --enable-all --disable=gas
 	# vgo use 'clang' as C compiler by some reason (need 'gcc'). sqlite need CGO
 	CC=gcc vgo test ./... -coverprofile coverage.out
 

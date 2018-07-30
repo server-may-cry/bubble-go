@@ -12,18 +12,19 @@ before_install:
   # go std library refresh
   - go install -race std
 
-  - go get github.com/mattn/goveralls # upload coverage
   - go get golang.org/x/vgo
+  # - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.5
 script:
+  # - golangci-lint run --enable-all --disable=gas
   - make test
   - make build
   - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web .
-  - docker login -u="$HEROKU_USERNAME" -p="$HEROKU_API_KEY" registry.heroku.com
+  - docker login -u="_" -p="$HEROKU_API_KEY" registry.heroku.com
   - docker push registry.heroku.com/bubble-srv-dev/web
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker push registry.heroku.com/bubble-srv/web;
     fi
 after_success:
-  - $HOME/gopath/bin/goveralls -coverprofile coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - bash <(curl -s https://codecov.io/bash) -f coverage.out
 notifications:
   email: false
