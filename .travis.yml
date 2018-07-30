@@ -13,9 +13,9 @@ before_install:
   - go install -race std
 
   - go get golang.org/x/vgo
-  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.5
+  # - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.5
 script:
-  - golangci-lint run --enable-all --disable=gas
+  # - golangci-lint run --enable-all --disable=gas
   - make test
   - make build
   - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web .
