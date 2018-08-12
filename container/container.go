@@ -3,6 +3,7 @@ package container
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -60,17 +61,25 @@ func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 		if u.Scheme == "http" {
 			ssl = "disable"
 		}
-		db, err := gorm.Open("postgres", fmt.Sprintf(
-			"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-			host,
-			port,
-			u.User.Username(),
-			password,
-			strings.Trim(u.Path, "/"),
-			ssl,
-		))
+		connect := func() (*gorm.DB, error) {
+			return gorm.Open("postgres", fmt.Sprintf(
+				"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+				host,
+				port,
+				u.User.Username(),
+				password,
+				strings.Trim(u.Path, "/"),
+				ssl,
+			))
+		}
+		db, err := connect()
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to connect database")
+			log.Println("DB connection failed. Wait 5 seconds before repeat.")
+			time.Sleep(5 * time.Second)
+			db, err = connect()
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to connect database")
+			}
 		}
 		db.AutoMigrate(&application.User{})
 		db.AutoMigrate(&application.Transaction{})

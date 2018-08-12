@@ -15,7 +15,7 @@ services:
     command: ["./bubble-go"]
     working_dir: "/app"
   postgres:
-    image: postgres:9.6-alpine
+    image: postgres:10.4-alpine
     expose:
       - "5432"
     environment:
