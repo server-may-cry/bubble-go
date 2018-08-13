@@ -61,7 +61,7 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 
 		host, port, _ := net.SplitHostPort(u.Host)
 		password, _ := u.User.Password()
-		ssl := "enable"
+		ssl := "require"
 		if u.Scheme == "http" {
 			ssl = "disable"
 		}
