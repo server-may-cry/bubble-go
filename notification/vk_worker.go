@@ -201,6 +201,7 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) erro
 	}
 	q.Add("access_token", w.token)
 	q.Add("client_secret", w.config.Secret)
+	q.Add("v", "5.37")
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := w.client.Do(req)
