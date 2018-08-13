@@ -216,7 +216,7 @@ func getUsersPerIslad(db *gorm.DB) [7]uint32 {
 		usersProgressCache.cache = usersProgress
 		usersProgressCache.isFresh = true
 		go func() {
-			<-time.After(10 * time.Minute) // cache lifetime
+			time.Sleep(10 * time.Minute) // cache lifetime
 			usersProgressCache.Lock()
 			defer usersProgressCache.Unlock()
 

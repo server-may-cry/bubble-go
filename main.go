@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -18,8 +19,12 @@ func main() {
 	pathToMarketConfig := flag.String("market_config", filepath.ToSlash("./config/market.json"), "")
 	port := flag.String("port", os.Getenv("PORT"), "port to listen for http server")
 	fastShutdown := flag.Bool("fast_shutdown", false, "test that application can be initialized")
+	version, err := ioutil.ReadFile("version")
+	if err != nil {
+		panic(err)
+	}
 	flag.Parse()
-	container := container.Get(*pathToMarketConfig, *dbURL, false)
+	container := container.Get(*pathToMarketConfig, *dbURL, false, string(version))
 	err = container.Invoke(func(worker *notification.VkWorker) {
 		go worker.Work()
 	})
