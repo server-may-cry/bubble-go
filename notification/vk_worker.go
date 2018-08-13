@@ -81,6 +81,7 @@ func (w *VkWorker) LenLevels() int {
 
 // Initialize load access token
 func (w *VkWorker) Initialize() error {
+	// https://vk.com/dev/access_token
 	req, err := http.NewRequest("GET", "https://oauth.vk.com/access_token", nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to create token request")
@@ -162,6 +163,7 @@ func (w *VkWorker) processLevelEvents() error {
 	parameters := map[string]string{
 		"levels": strings.Join(userLevels, ","),
 	}
+	// https://vk.com/dev/secure.setUserLevel deprecated
 	err := w.sendRequest("secure.setUserLevel", parameters)
 	if err != nil {
 		return err
@@ -180,6 +182,7 @@ func (w *VkWorker) processGeneralEvents() error {
 		"activity_id": strconv.Itoa(event.Type),
 		"value":       strconv.Itoa(event.Value),
 	}
+	// https://vk.com/dev/secure.sendNotification
 	err := w.sendRequest("secure.sendNotification", parameters)
 	if err != nil {
 		w.listEvents = append(w.listEvents[1:], w.listEvents[0]) // move to end of slice
@@ -201,6 +204,8 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) erro
 	}
 	q.Add("access_token", w.token)
 	q.Add("client_secret", w.config.Secret)
+	// https://vk.com/dev/versions
+	q.Add("v", "5.37")
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := w.client.Do(req)
@@ -216,6 +221,7 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) erro
 	if err != nil {
 		return errors.Wrap(err, "failed to decode vk response")
 	}
+	// https://vk.com/dev/errors
 	val, exist := rawResponse["error"]
 	if exist {
 		return fmt.Errorf("vk error response %v", val)
