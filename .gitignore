@@ -8,3 +8,6 @@
 
 # Output of the go coverage tool
 *.out
+
+# SHA-1 git commit hash for build
+/version

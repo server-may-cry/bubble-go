@@ -10,4 +10,5 @@ bench:
 
 .PHONY: build
 build:
+	git rev-parse --verify HEAD > version
 	GOOS=linux CGO_ENABLED=0 vgo build

@@ -24,6 +24,7 @@ type RouterDependencies struct {
 	VkWorker                *notification.VkWorker
 	VkPayHandler            http.HandlerFunc
 	Test                    bool
+	Version                 string
 }
 
 // GetRouter return http.Handler for tests and core
@@ -42,9 +43,16 @@ func GetRouter(deps RouterDependencies) http.Handler {
 
 	router.Mount("/debug", middleware.Profiler())
 
-	router.Get(wrapHandlerFunc(deps.Newrelic, "/", func(w http.ResponseWriter, r *http.Request) {
+	wrapHandlerFunc := func(newrelicApp newrelic.Application) func(route string, handler http.HandlerFunc) (string, http.HandlerFunc) {
+		return func(route string, handler http.HandlerFunc) (string, http.HandlerFunc) {
+			return newrelic.WrapHandleFunc(newrelicApp, route, handler)
+		}
+	}(deps.Newrelic)
+
+	router.Get(wrapHandlerFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		JSON(w, jsonHelper{
-			"foo": "bar",
+			"foo":     "bar",
+			"version": deps.Version,
 		})
 	}))
 
@@ -52,23 +60,23 @@ func GetRouter(deps RouterDependencies) http.Handler {
 		r := chi.NewRouter()
 		r.Use(deps.AuthorizationMiddleware)
 		for _, handler := range deps.HandlerSecure {
-			r.Post(wrapHandlerFunc(deps.Newrelic, handler.URL, handler.HTTPHandler))
+			r.Post(wrapHandlerFunc(handler.URL, handler.HTTPHandler))
 		}
 		return r
 	}())
-	router.Post(wrapHandlerFunc(deps.Newrelic, "/VkPay", deps.VkPayHandler))
+	router.Post(wrapHandlerFunc("/VkPay", deps.VkPayHandler))
 
-	router.Get(wrapHandlerFunc(deps.Newrelic, "/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
+	router.Get(wrapHandlerFunc("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
 	}))
-	router.Get(wrapHandlerFunc(deps.Newrelic, "/bubble/*filePath", deps.StatickHandler.Serve))
-	router.Get(wrapHandlerFunc(deps.Newrelic, "/cache-clear", deps.StatickHandler.Clear))
+	router.Get(wrapHandlerFunc("/bubble/*filePath", deps.StatickHandler.Serve))
+	router.Get(wrapHandlerFunc("/cache-clear", deps.StatickHandler.Clear))
 
-	router.Get(wrapHandlerFunc(deps.Newrelic, "/exception", func(w http.ResponseWriter, r *http.Request) {
+	router.Get(wrapHandlerFunc("/exception", func(w http.ResponseWriter, r *http.Request) {
 		panic("test log.Fatal")
 	}))
 
-	router.Get(wrapHandlerFunc(deps.Newrelic, "/debug-vk", func(w http.ResponseWriter, r *http.Request) {
+	router.Get(wrapHandlerFunc("/debug-vk", func(w http.ResponseWriter, r *http.Request) {
 		JSON(w, jsonHelper{
 			"levels": deps.VkWorker.LenLevels(),
 			"events": deps.VkWorker.LenEvents(),
@@ -77,13 +85,9 @@ func GetRouter(deps RouterDependencies) http.Handler {
 
 	loaderio := os.Getenv("LOADERIO")
 	loaderioRoute := fmt.Sprintf("/loaderio-%s/", loaderio)
-	router.Get(wrapHandlerFunc(deps.Newrelic, loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
+	router.Get(wrapHandlerFunc(loaderioRoute, func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("loaderio-" + loaderio))
 	}))
 
 	return router
-}
-
-func wrapHandlerFunc(newrelicApp newrelic.Application, route string, handler http.HandlerFunc) (string, http.HandlerFunc) {
-	return newrelic.WrapHandleFunc(newrelicApp, route, handler)
 }

@@ -28,11 +28,15 @@ type Configuration struct {
 }
 
 // Get create DI container
-func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
+func Get(pathToMarketConfig string, dbURL string, test bool, version string) *dig.Container {
 	container := dig.New()
 
 	_ = container.Provide(func() bool {
 		return test
+	})
+
+	_ = container.Provide(func() string {
+		return version
 	})
 
 	_ = container.Provide(application.AuthorizationMiddleware)
@@ -83,8 +87,8 @@ func Get(pathToMarketConfig string, dbURL string, test bool) *dig.Container {
 		}
 		db.AutoMigrate(&application.User{})
 		db.AutoMigrate(&application.Transaction{})
-		db.DB().SetMaxIdleConns(10)
-		db.DB().SetMaxOpenConns(17) // 20 actual limit
+		db.DB().SetMaxIdleConns(5)
+		db.DB().SetMaxOpenConns(18) // 20 actual limit
 
 		return db, nil
 	})
