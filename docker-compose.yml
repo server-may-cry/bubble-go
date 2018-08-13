@@ -13,8 +13,6 @@ services:
       - postgres:db.local
     ports:
       - "8080:8080"
-    command: ["./bubble-go"]
-    working_dir: "/app"
   postgres:
     image: postgres:10.4-alpine
     expose:
