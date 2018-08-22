@@ -48,7 +48,7 @@ func TestUsersProgress(t *testing.T) {
 
 	reader := bytes.NewReader(jsonBytes)
 	handlerContainer := ReqUsersProgress(db)
-	resp, err := testAppHandler(handlerContainer.HTTPHandler, &user, "/ReqSavePlayerProgress", reader)
+	resp, err := testAppHandler(handlerContainer.HTTPHandler, &user, "/ReqUsersProgress", reader)
 	if err != nil {
 		t.Fatal(err)
 	}
