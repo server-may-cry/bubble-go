@@ -3,7 +3,7 @@ services:
   go:
     build: .
     environment:
-      HEROKU_POSTGRESQL_SILVER: http://docker:docker@db.local:5432/docker
+      HEROKU_POSTGRESQL_SILVER_URL: http://docker:docker@db.local:5432/docker
       PORT: 8080
     volumes:
       - ./bubble-go:/app/bubble-go:ro
