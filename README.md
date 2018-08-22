@@ -12,3 +12,4 @@ Backend for bubble shooter game
 * split 'application' package
 * use ENV only in main.go
 * newrelic sql transactions
+* move models into separete package
