@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -15,6 +16,7 @@ import (
 type StatickHandler struct {
 	cdnroot    string
 	tmpDirName string
+	httpClien  *http.Client
 }
 
 // http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
@@ -29,6 +31,12 @@ func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
 	return &StatickHandler{
 		cdnroot:    cdnroot,
 		tmpDirName: tmpDirName,
+		httpClien: &http.Client{
+			Transport: &http.Transport{
+				MaxIdleConnsPerHost: 5,
+			},
+			Timeout: 5 * time.Second,
+		},
 	}, nil
 }
 
@@ -52,7 +60,7 @@ func (sh StatickHandler) Serve(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer out.Close()
-		resp, err := http.Get(sh.cdnroot + filePath)
+		resp, err := sh.httpClien.Get(sh.cdnroot + filePath)
 		if err != nil {
 			panic(err)
 		}
