@@ -53,10 +53,10 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 			pathToMarketConfig: pathToMarketConfig,
 		}
 	})
-	_ = container.Provide(func(config Configuration) (*gorm.DB, error) {
+	_ = container.Provide(func(config Configuration, test bool) (*gorm.DB, error) {
 		u, err := url.Parse(config.dbURL)
 		if err != nil {
-			return nil, errors.Wrapf(err, "can`t parse DB_URL (%s)", dbURL)
+			return nil, errors.Wrapf(err, "can`t parse DB url (%s)", dbURL)
 		}
 
 		host, port, _ := net.SplitHostPort(u.Host)
@@ -77,6 +77,9 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 			))
 		}
 		db, err := connect()
+		if !test {
+			db.LogMode(true)
+		}
 		if err != nil {
 			log.Println("DB connection failed. Wait 5 seconds before repeat.")
 			time.Sleep(5 * time.Second)

@@ -11,3 +11,4 @@ Backend for bubble shooter game
 * increase test coverage
 * split 'application' package
 * use ENV only in main.go
+* newrelic sql transactions
