@@ -24,6 +24,8 @@ script:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker push registry.heroku.com/bubble-srv/web;
     fi
+  # release should be done by hands https://devcenter.heroku.com/changelog-items/1426
+  # heroku container:release web worker --app bubble-srv-dev
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f coverage.out
 notifications:
