@@ -19,8 +19,8 @@ type StatickHandler struct {
 	httpClien  *http.Client
 }
 
-// http://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
-// http://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
+// https://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
+// https://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
 
 // NewStatickHandler create static handler
 func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
@@ -71,13 +71,14 @@ func (sh StatickHandler) Serve(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	dat, err := ioutil.ReadFile(fullFilePath)
+	file, err := os.Open(fullFilePath)
 	if err != nil {
 		panic(err)
 	}
+	defer file.Close()
 	ext := filepath.Ext(fullFilePath)
 	w.Header().Set("Content-Type", mime.TypeByExtension(ext))
-	_, err = w.Write(dat)
+	_, err = io.Copy(w, file)
 	if err != nil {
 		panic(err)
 	}
