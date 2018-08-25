@@ -8,7 +8,6 @@ services:
     volumes:
       - ./bubble-go:/app/bubble-go:ro
       - ./config:/app/config:ro
-      - ./version:/app/version:ro
     links:
       - postgres:db.local
     ports:

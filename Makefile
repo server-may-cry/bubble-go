@@ -9,5 +9,4 @@ bench:
 
 .PHONY: build
 build:
-	git rev-parse --verify HEAD > version
-	GOOS=linux CGO_ENABLED=0 go build
+	GOOS=linux CGO_ENABLED=0 go build -ldflags "-X main.version=`git describe --always`"
