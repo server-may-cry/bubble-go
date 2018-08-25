@@ -5,14 +5,15 @@ go:
   - "1.11"
 cache:
   directories:
-    - $GO_PATH/pkg/mod
+    # - $GO_PATH/pkg/mod
+    - /home/travis/gopath/pkg/mod
 services:
   - docker
 before_install:
   # go std library refresh
   - go install -race std
 
-  # - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.5
+  # - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.10
 script:
   # - golangci-lint run --enable-all --disable=gas
   - make test
