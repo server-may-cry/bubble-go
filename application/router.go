@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -43,7 +44,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				defer func() {
 					if rvr := recover(); rvr != nil {
-						r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(rvr.(error))
+						r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(errors.New(rvr.(string)))
 						logEntry := middleware.GetLogEntry(r)
 						if logEntry != nil {
 							logEntry.Panic(rvr, debug.Stack())
@@ -108,7 +109,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 	})
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		w.(newrelic.Transaction).SetName("404")
+		r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).SetName("404")
 		http.NotFound(w, r)
 	})
 
