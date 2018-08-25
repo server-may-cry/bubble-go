@@ -129,8 +129,8 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 		return vkWorker, nil
 	})
 
-	_ = container.Provide(func() (*application.StatickHandler, error) {
-		return application.NewStatickHandler("http://119226.selcdn.ru")
+	_ = container.Provide(func() (*application.StaticHandler, error) {
+		return application.NewStaticHandler("http://119226.selcdn.ru")
 	})
 
 	_ = container.Provide(func() (newrelic.Application, error) {

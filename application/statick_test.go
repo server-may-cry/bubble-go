@@ -9,7 +9,7 @@ import (
 )
 
 func TestStaticHandler(t *testing.T) {
-	statickHandler, err := NewStatickHandler("http://119226.selcdn.ru")
+	staticHandler, err := NewStaticHandler("http://119226.selcdn.ru")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,9 +19,7 @@ func TestStaticHandler(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(statickHandler.Serve)
-
-	handler.ServeHTTP(rr, req)
+	http.HandlerFunc(staticHandler.Serve).ServeHTTP(rr, req)
 
 	if rr.Code != 200 {
 		t.Fatalf("Received non-200 response: %d\n", rr.Code)
@@ -35,14 +33,15 @@ func TestStaticHandler(t *testing.T) {
 		t.Errorf("String don`t contain `.swf` '%s'\n", actual)
 	}
 
-	files, _ := ioutil.ReadDir(statickHandler.tmpDirName)
-	if len(files) < 1 {
-		t.Errorf("No files in cache folder found. %d", len(files))
+	files := staticHandler.storage
+	if len(files) != 1 {
+		t.Errorf("Expected one file in static handler, found: %+v", files)
 	}
 }
 
 func TestClearStaticHandler(t *testing.T) {
-	statickHandler, err := NewStatickHandler("http://119226.selcdn.ru")
+	staticHandler, err := NewStaticHandler("http://119226.selcdn.ru")
+	staticHandler.storage["test"] = fileCache{}
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,9 +51,7 @@ func TestClearStaticHandler(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(statickHandler.Clear)
-
-	handler.ServeHTTP(rr, req)
+	http.HandlerFunc(staticHandler.Clear).ServeHTTP(rr, req)
 
 	if rr.Code != 200 {
 		t.Fatalf("Received non-200 response: %d\n", rr.Code)
@@ -67,8 +64,8 @@ func TestClearStaticHandler(t *testing.T) {
 	if string(actual) != "\"done\"\n" {
 		t.Errorf("Invalid response (%s), expected (\"done\"\n)\n", actual)
 	}
-	files, _ := ioutil.ReadDir(statickHandler.tmpDirName)
-	if len(files) > 0 {
-		t.Errorf("no files expected in tmp directory. found: %d", len(files))
+	files := staticHandler.storage
+	if len(files) != 0 {
+		t.Errorf("No files expected in static handler. found: %d", len(files))
 	}
 }

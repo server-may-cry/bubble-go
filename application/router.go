@@ -20,7 +20,7 @@ type RouterDependencies struct {
 	HandlerSecure           []HTTPHandler `group:"server"`
 	Newrelic                newrelic.Application
 	AuthorizationMiddleware Middleware
-	StatickHandler          *StatickHandler
+	StaticHandler           *StaticHandler
 	VkWorker                *notification.VkWorker
 	VkPayHandler            http.HandlerFunc
 	Test                    bool
@@ -69,8 +69,8 @@ func GetRouter(deps RouterDependencies) http.Handler {
 	router.Get(wrapHandlerFunc("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
 	}))
-	router.Get(wrapHandlerFunc("/bubble/*filePath", deps.StatickHandler.Serve))
-	router.Get(wrapHandlerFunc("/cache-clear", deps.StatickHandler.Clear))
+	router.Get(wrapHandlerFunc("/bubble/*filePath", deps.StaticHandler.Serve))
+	router.Get(wrapHandlerFunc("/cache-clear", deps.StaticHandler.Clear))
 
 	router.Get(wrapHandlerFunc("/exception", func(w http.ResponseWriter, r *http.Request) {
 		panic("test log.Fatal")
