@@ -11,7 +11,9 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	newrelic "github.com/newrelic/go-agent"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/platforms"
 	dig "go.uber.org/dig"
 )
@@ -137,7 +139,16 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 			}
 			var user User
 			platformID := platforms.VK
+
+			s := newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "user",
+				Operation:  "SELECT",
+			}
 			db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostForm.Get("user_id")).First(&user)
+			s.End()
+
 			if user.ID == 0 { // check user exists
 				panic("user not foud. try to buy")
 			}
@@ -157,11 +168,28 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 				UserID:      user,
 				ConfirmedAt: ts,
 			}
+
+			s = newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "transaction",
+				Operation:  "INSERT",
+			}
 			err = db.Create(&transaction).Error
+			s.End()
 			if err != nil {
 				panic(err)
 			}
+
+			s = newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "user",
+				Operation:  "UPDATE",
+			}
 			db.Save(&user)
+			s.End()
+
 			JSON(w, jsonHelper{
 				"response": orderResponse{
 					OrderID:    r.PostForm.Get("order_id"),

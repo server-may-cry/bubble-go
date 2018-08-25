@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/gorm"
+	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
 type usersProgressRequest struct {
@@ -40,7 +42,16 @@ func ReqUsersProgress(db *gorm.DB) HTTPHandlerContainer {
 		user := r.Context().Value(userCtxID).(User)
 		usersLen := len(request.SocIDs)
 		users := make([]User, usersLen)
+
+		s := newrelic.DatastoreSegment{
+			StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+			Product:    newrelic.DatastorePostgres,
+			Collection: "user",
+			Operation:  "SELECT",
+		}
 		db.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
+		s.End()
+
 		response := usersProgressResponse{
 			UsersProgress: make([]userProgres, usersLen),
 		}
