@@ -50,7 +50,7 @@ func ReqUsersProgress(db *gorm.DB) HTTPHandlerContainer {
 			Operation:  "SELECT",
 		}
 		db.Where("sys_id = ? and ext_id in (?)", user.SysID, request.SocIDs).Find(&users)
-		s.End()
+		_ = s.End()
 
 		response := usersProgressResponse{
 			UsersProgress: make([]userProgres, usersLen),

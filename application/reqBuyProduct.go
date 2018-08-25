@@ -46,7 +46,7 @@ func ReqBuyProduct(db *gorm.DB, marketInstance *market.Market) HTTPHandlerContai
 			Operation:  "UPDATE",
 		}
 		db.Save(&user)
-		s.End()
+		_ = s.End()
 
 		JSON(w, buyProductResponse{
 			ProductID: request.ProductID,

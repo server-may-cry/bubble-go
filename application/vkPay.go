@@ -147,7 +147,7 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 				Operation:  "SELECT",
 			}
 			db.Where("sys_id = ? AND ext_id = ?", platformID, r.PostForm.Get("user_id")).First(&user)
-			s.End()
+			_ = s.End()
 
 			if user.ID == 0 { // check user exists
 				panic("user not foud. try to buy")
@@ -176,7 +176,7 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 				Operation:  "INSERT",
 			}
 			err = db.Create(&transaction).Error
-			s.End()
+			_ = s.End()
 			if err != nil {
 				panic(err)
 			}
@@ -188,7 +188,7 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 				Operation:  "UPDATE",
 			}
 			db.Save(&user)
-			s.End()
+			_ = s.End()
 
 			JSON(w, jsonHelper{
 				"response": orderResponse{

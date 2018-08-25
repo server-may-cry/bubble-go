@@ -49,7 +49,7 @@ func ReqReduceTries(db *gorm.DB) HTTPHandlerContainer {
 			Operation:  "UPDATE",
 		}
 		db.Save(&user)
-		s.End()
+		_ = s.End()
 
 		JSON(w, []int8{user.RemainingTries})
 	}

@@ -125,7 +125,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 				Operation:  "INSERT",
 			}
 			db.Create(&user) // Gorm.NewRecord check row exists or somehow
-			s.End()
+			_ = s.End()
 		case User:
 			user = value.(User)
 			if user.FriendsBonusCreditsTime > now.Unix() {
@@ -152,7 +152,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 				Operation:  "UPDATE",
 			}
 			db.Save(&user)
-			s.End()
+			_ = s.End()
 		}
 
 		JSON(w, enterResponse{
@@ -215,7 +215,7 @@ func getUsersPerIslad(db *gorm.DB, r *http.Request) [7]uint32 {
 		).Order(
 			"reached_stage01 desc",
 		).Rows()
-		s.End()
+		_ = s.End()
 		if err != nil {
 			log.Println("Can't execute query to get usersProgress", err)
 			return usersProgress

@@ -82,7 +82,7 @@ func AuthorizationMiddleware(db *gorm.DB) Middleware {
 				Operation:  "SELECT",
 			}
 			db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
-			s.End()
+			_ = s.End()
 			if user.ID != 0 { // check user exists
 				ctx := context.WithValue(r.Context(), userCtxID, user)
 				r = r.WithContext(ctx)
