@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/server-may-cry/bubble-go/application"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/notification"
 	"go.uber.org/dig"
 )
@@ -146,6 +147,8 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 
 		return app, err
 	})
+
+	_ = container.Provide(mynewrelic.NewMiddleware)
 
 	_ = container.Provide(application.GetRouter)
 	_ = container.Provide(application.VkPay)
