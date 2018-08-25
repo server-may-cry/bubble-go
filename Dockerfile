@@ -4,5 +4,4 @@ RUN apk update && apk upgrade && \
 WORKDIR /app
 COPY ./bubble-go /app/bubble-go
 COPY ./config /app/config
-COPY ./version /app/version
 CMD ["./bubble-go"]

@@ -1,3 +1,5 @@
+VERSION := $(shell git describe --always --long --dirty)
+
 .PHONY: test
 test:
 	# golangci-lint run --enable-all --disable=gas
@@ -9,5 +11,4 @@ bench:
 
 .PHONY: build
 build:
-	git rev-parse --verify HEAD > version
-	GOOS=linux CGO_ENABLED=0 go build
+	GOOS=linux CGO_ENABLED=0 go build -ldflags "-X main.version=${VERSION}"
