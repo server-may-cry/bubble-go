@@ -1,97 +1,88 @@
 package application
 
 import (
-	"io"
 	"io/ioutil"
 	"mime"
 	"net/http"
-	"os"
 	"path/filepath"
+	"sync"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
-// StatickHandler handler to resolve work with static content from CDN
-type StatickHandler struct {
-	cdnroot    string
-	tmpDirName string
-	httpClien  *http.Client
+type fileCache struct {
+	content  []byte
+	mimeType string
+}
+
+// StaticHandler handler to resolve work with static content from CDN
+type StaticHandler struct {
+	cdnroot   string
+	httpClien *http.Client
+	mutex     sync.RWMutex
+	storage   map[string]fileCache // For now total size of all static files ~65 MiB
 }
 
 // https://119226.selcdn.ru/bubble/ShootTheBubbleDevVK.html
 // https://bubble-srv-dev.herokuapp.com/bubble/ShootTheBubbleDevVK.html
 
-// NewStatickHandler create static handler
-func NewStatickHandler(cdnroot string) (*StatickHandler, error) {
-	tmpDirName, err := ioutil.TempDir("", "bubble_cache_")
-	if err != nil {
-		return nil, errors.Wrap(err, "can't create tmp dir for static")
-	}
-	return &StatickHandler{
-		cdnroot:    cdnroot,
-		tmpDirName: tmpDirName,
+// NewStaticHandler create static handler
+func NewStaticHandler(cdnroot string) (*StaticHandler, error) {
+	return &StaticHandler{
+		cdnroot: cdnroot,
 		httpClien: &http.Client{
 			Transport: &http.Transport{
-				MaxIdleConnsPerHost: 5,
+				MaxIdleConns: 5,
 			},
 			Timeout: 5 * time.Second,
 		},
+		storage: make(map[string]fileCache),
 	}, nil
 }
 
 // Serve resolve content from CDN
-func (sh StatickHandler) Serve(w http.ResponseWriter, r *http.Request) {
+func (sh *StaticHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	if r.Body != nil {
 		defer r.Body.Close()
 	}
 	filePath := r.URL.Path
-	fullFilePath := filepath.ToSlash(sh.tmpDirName + filePath)
-	if _, err := os.Stat(fullFilePath); os.IsNotExist(err) {
-		dirToStoreFile := filepath.Dir(fullFilePath)
-		if _, err = os.Stat(dirToStoreFile); os.IsNotExist(err) {
-			err = os.MkdirAll(dirToStoreFile, 0777)
-			if err != nil {
-				panic(err)
-			}
-		}
-		out, err := os.Create(fullFilePath)
-		if err != nil {
-			panic(err)
-		}
-		defer out.Close()
+	fileForResponse, ok := sh.storage[filePath]
+	if !ok {
 		resp, err := sh.httpClien.Get(sh.cdnroot + filePath)
 		if err != nil {
 			panic(err)
 		}
 		defer resp.Body.Close()
-		_, err = io.Copy(out, resp.Body)
+		if resp.StatusCode != 200 {
+			panic(filePath)
+		}
+		content, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			panic(err)
 		}
+		ext := filepath.Ext(filePath)
+		fileForResponse = fileCache{
+			content:  content,
+			mimeType: mime.TypeByExtension(ext),
+		}
+		sh.mutex.Lock()
+		defer sh.mutex.Unlock()
+		sh.storage[filePath] = fileForResponse
 	}
 
-	file, err := os.Open(fullFilePath)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	ext := filepath.Ext(fullFilePath)
-	w.Header().Set("Content-Type", mime.TypeByExtension(ext))
-	_, err = io.Copy(w, file)
+	w.Header().Set("Content-Type", fileForResponse.mimeType)
+	_, err := w.Write(fileForResponse.content)
 	if err != nil {
 		panic(err)
 	}
 }
 
 // Clear remove statick files
-func (sh StatickHandler) Clear(w http.ResponseWriter, r *http.Request) {
+func (sh *StaticHandler) Clear(w http.ResponseWriter, r *http.Request) {
 	if r.Body != nil {
 		defer r.Body.Close()
 	}
-	err := os.RemoveAll(sh.tmpDirName)
-	if err != nil {
-		panic(err)
-	}
+	sh.mutex.Lock()
+	defer sh.mutex.Unlock()
+	sh.storage = make(map[string]fileCache)
 	JSON(w, "done")
 }
