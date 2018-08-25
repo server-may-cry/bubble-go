@@ -19,7 +19,7 @@ script:
   - make test
   - make build
   - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web .
-  - docker login -u="_" -p="$HEROKU_API_KEY" registry.heroku.com
+  - echo "$HEROKU_API_KEY" | docker login -u="_" --password-stdin registry.heroku.com
   - docker push registry.heroku.com/bubble-srv-dev/web
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker push registry.heroku.com/bubble-srv/web;
