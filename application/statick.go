@@ -69,8 +69,8 @@ func (sh *StaticHandler) Serve(w http.ResponseWriter, r *http.Request) {
 			mimeType: mime.TypeByExtension(ext),
 		}
 		sh.mutex.Lock()
-		defer sh.mutex.Unlock()
 		sh.storage[filePath] = fileForResponse
+		sh.mutex.Unlock()
 	}
 
 	w.Header().Set("Content-Type", fileForResponse.mimeType)
