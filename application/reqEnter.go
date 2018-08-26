@@ -195,10 +195,13 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 }
 
 func getUsersPerIslad(db *gorm.DB, r *http.Request) [7]uint32 {
-	usersProgressCache.Lock()
-	defer usersProgressCache.Unlock()
-
 	if !usersProgressCache.isFresh {
+		usersProgressCache.Lock()
+		if usersProgressCache.isFresh { // another goroutine refresh cache
+			return usersProgressCache.cache
+		}
+		defer usersProgressCache.Unlock()
+
 		var usersProgress [7]uint32
 		s := newrelic.DatastoreSegment{
 			StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),

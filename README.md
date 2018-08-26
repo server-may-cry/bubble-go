@@ -12,6 +12,5 @@ Backend for bubble shooter game
 * split 'application' package
 * use ENV only in main.go
 * newrelic 404 route not renamed
-* newrelic static not reported
 * 404 wrong status code
 * move models into separete package
