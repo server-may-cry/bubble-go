@@ -109,7 +109,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 	})
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).SetName("404")
+		_ = r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).SetName("/404")
 		http.NotFound(w, r)
 	})
 
