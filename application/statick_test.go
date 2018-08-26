@@ -1,11 +1,15 @@
 package application
 
 import (
+	"context"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
 func TestStaticHandler(t *testing.T) {
@@ -17,6 +21,14 @@ func TestStaticHandler(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	config := newrelic.NewConfig("bubble-go", "1234567890123456789012345678901234567890")
+	app, err := newrelic.NewApplication(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.WithValue(req.Context(), mynewrelic.Ctx, app.StartTransaction("test", nil, nil))
+	req = req.WithContext(ctx)
 
 	rr := httptest.NewRecorder()
 	http.HandlerFunc(staticHandler.Serve).ServeHTTP(rr, req)

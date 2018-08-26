@@ -6,6 +6,9 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+
+	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
 func testAppHandler(
@@ -23,6 +26,14 @@ func testAppHandler(
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+
+	config := newrelic.NewConfig("bubble-go", "1234567890123456789012345678901234567890")
+	app, err := newrelic.NewApplication(config)
+	if err != nil {
+		return nil, err
+	}
+	ctx := context.WithValue(req.Context(), mynewrelic.Ctx, app.StartTransaction("test", nil, nil))
+	req = req.WithContext(ctx)
 
 	if user != nil {
 		ctx := req.Context()

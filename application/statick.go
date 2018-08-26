@@ -7,6 +7,9 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+
+	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
 type fileCache struct {
@@ -44,6 +47,7 @@ func (sh *StaticHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	if r.Body != nil {
 		defer r.Body.Close()
 	}
+	r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).SetName("/static_serve")
 	filePath := r.URL.Path
 	fileForResponse, ok := sh.storage[filePath]
 	if !ok {

@@ -11,5 +11,7 @@ Backend for bubble shooter game
 * increase test coverage
 * split 'application' package
 * use ENV only in main.go
-* newrelic sql transactions
+* newrelic 404 route not renamed
+* newrelic static not reported
+* 404 wrong status code
 * move models into separete package

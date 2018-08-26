@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
@@ -115,7 +117,15 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 				user.Credits = defaultConfig.DefaultCredits.Ok
 			}
 			user.SetProgresStandart(defaultConfig.InitProgress)
+
+			s := newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "user",
+				Operation:  "INSERT",
+			}
 			db.Create(&user) // Gorm.NewRecord check row exists or somehow
+			_ = s.End()
 		case User:
 			user = value.(User)
 			if user.FriendsBonusCreditsTime > now.Unix() {
@@ -135,7 +145,14 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 			}
 		}
 		if needUpdate {
+			s := newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "user",
+				Operation:  "UPDATE",
+			}
 			db.Save(&user)
+			_ = s.End()
 		}
 
 		JSON(w, enterResponse{
@@ -165,7 +182,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 			FirstGame:                 firstGame,
 			BonusCredits:              0, // not used (every 12 hours user get reward. deleted now)
 			AppFriendsBonusCredits:    userFriendsBonusCredits,
-			StagesProgressStat01:      getUsersPerIslad(db),
+			StagesProgressStat01:      getUsersPerIslad(db, r),
 			// StagesProgressStat02   not used
 			SubStagesRecordStats01: user.GetProgresStandart(),
 			// SubStagesRecordStats02 not used
@@ -177,12 +194,18 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 	}
 }
 
-func getUsersPerIslad(db *gorm.DB) [7]uint32 {
+func getUsersPerIslad(db *gorm.DB, r *http.Request) [7]uint32 {
 	usersProgressCache.Lock()
 	defer usersProgressCache.Unlock()
 
 	if !usersProgressCache.isFresh {
 		var usersProgress [7]uint32
+		s := newrelic.DatastoreSegment{
+			StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+			Product:    newrelic.DatastorePostgres,
+			Collection: "user",
+			Operation:  "SELECT",
+		}
 		rows, err := db.Table(
 			"users",
 		).Select(
@@ -192,6 +215,7 @@ func getUsersPerIslad(db *gorm.DB) [7]uint32 {
 		).Order(
 			"reached_stage01 desc",
 		).Rows()
+		_ = s.End()
 		if err != nil {
 			log.Println("Can't execute query to get usersProgress", err)
 			return usersProgress

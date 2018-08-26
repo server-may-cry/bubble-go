@@ -1,6 +1,7 @@
 package application
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -14,7 +15,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	newrelic "github.com/newrelic/go-agent"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
 func TestVkBadSignature(t *testing.T) {
@@ -135,6 +138,14 @@ func TestVkBuyItem(t *testing.T) {
 		t.Fatal(err)
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	config := newrelic.NewConfig("bubble-go", "1234567890123456789012345678901234567890")
+	app, err := newrelic.NewApplication(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.WithValue(req.Context(), mynewrelic.Ctx, app.StartTransaction("test", nil, nil))
+	req = req.WithContext(ctx)
 
 	resp := httptest.NewRecorder()
 	vkPayContainer := VkPay(db, marketInstance)

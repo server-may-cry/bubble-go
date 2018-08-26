@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/gorm"
+	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/notification"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
@@ -87,7 +89,14 @@ func ReqSavePlayerProgress(
 			log.Panicf("not implemented level mode %s", request.LevelMode)
 		}
 		if needUpdate {
+			s := newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "user",
+				Operation:  "UPDATE",
+			}
 			db.Save(&user)
+			_ = s.End()
 		}
 		if user.SysID == platforms.VK {
 			vkSocialLogic(vkWorker, request, user)

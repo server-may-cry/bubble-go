@@ -12,6 +12,8 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
+	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
@@ -73,7 +75,14 @@ func AuthorizationMiddleware(db *gorm.DB) Middleware {
 			}
 
 			var user User
+			s := newrelic.DatastoreSegment{
+				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
+				Product:    newrelic.DatastorePostgres,
+				Collection: "user",
+				Operation:  "SELECT",
+			}
 			db.Where("sys_id = ? AND ext_id = ?", platformID, request.ExtID).First(&user)
+			_ = s.End()
 			if user.ID != 0 { // check user exists
 				ctx := context.WithValue(r.Context(), userCtxID, user)
 				r = r.WithContext(ctx)

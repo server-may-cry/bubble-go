@@ -1,5 +1,8 @@
 /bubble-go*
 
+# Temporaly for IDE till it's not supporting go mod
+/vendor
+
 # Files for pprof go tool
 *.pprof
 
