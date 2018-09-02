@@ -9,6 +9,8 @@ cache:
     - /home/travis/gopath/pkg/mod
     # - $GOCACHE
     - /home/travis/.cache/go-build
+env:
+  - GO111MODULE=on
 services:
   - docker
 #before_install:
