@@ -14,4 +14,3 @@ Backend for bubble shooter game
 * newrelic 404 route not renamed
 * 404 wrong status code
 * move models into separete package
-
