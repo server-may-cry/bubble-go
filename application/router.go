@@ -3,6 +3,7 @@ package application
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"runtime/debug"
@@ -11,6 +12,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/errorlisteners/sentry"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/notification"
 	dig "go.uber.org/dig"
@@ -44,7 +46,17 @@ func GetRouter(deps RouterDependencies) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				defer func() {
 					if rvr := recover(); rvr != nil {
-						r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(errors.New(rvr.(string)))
+						var err error
+						switch v := rvr.(type) {
+						case error:
+							err = v
+						case *net.OpError:
+							err = errors.New(v.Error())
+						default:
+							err = errors.New(rvr.(string))
+						}
+						r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(err)
+						sentry.HandleError(err)
 						logEntry := middleware.GetLogEntry(r)
 						if logEntry != nil {
 							logEntry.Panic(rvr, debug.Stack())
