@@ -1,8 +1,11 @@
 VERSION := $(shell git describe --always --long --dirty)
 
+.PHONY: lint
+lint:
+	golangci-lint run --enable-all --disable=gas
+
 .PHONY: test
 test:
-	golangci-lint run --enable-all --disable=gas
 	go test ./... -coverprofile coverage.out
 
 .PHONY: bench
