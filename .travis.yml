@@ -16,8 +16,8 @@ services:
 before_install:
    - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.10.2
 script:
-  - ./bin/golangci-lint run --enable-all --disable=gas
   - make test
+  - ./bin/golangci-lint run --enable-all --disable=gas
   - make build
   - docker build -t registry.heroku.com/bubble-srv-dev/web -t registry.heroku.com/bubble-srv/web .
   - echo "$HEROKU_API_KEY" | docker login -u="_" --password-stdin registry.heroku.com
