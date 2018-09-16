@@ -13,7 +13,8 @@ func TestErrorOnInvalidResponse(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder(
-		"GET", "https://api.vk.com/method/mockMethod?access_token=&client_secret=secret&foo=bar&v=5.37",
+		"GET",
+		"https://api.vk.com/method/mockMethod?access_token=&client_secret=secret&foo=bar&v=5.37",
 		httpmock.NewStringResponder(200, `{"error": "mock error"}`),
 	)
 	worker := NewVkWorker(VkConfig{
@@ -32,7 +33,8 @@ func TestInitialization(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder(
-		"GET", "https://oauth.vk.com/access_token?client_id=123&client_secret=secret&grant_type=client_credentials",
+		"GET",
+		"https://oauth.vk.com/access_token?client_id=123&client_secret=secret&grant_type=client_credentials",
 		httpmock.NewStringResponder(200, `{"access_token": "mockTocken"}`),
 	)
 	worker := NewVkWorker(VkConfig{
@@ -54,7 +56,8 @@ func TestSendLevelEvent(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder(
-		"GET", "https://api.vk.com/method/secure.setUserLevel?access_token=&client_secret=secret&levels=123%3A1%2C1234%3A4&v=5.37",
+		"GET",
+		"https://api.vk.com/method/secure.setUserLevel?access_token=&client_secret=secret&levels=123%3A1%2C1234%3A4&v=5.37",
 		httpmock.NewStringResponder(200, `{}`),
 	)
 	worker := NewVkWorker(VkConfig{
@@ -90,7 +93,8 @@ func BenchmarkSendLevelEvent(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		httpmock.Activate()
 		httpmock.RegisterResponder(
-			"GET", "https://api.vk.com/method/secure.setUserLevel?access_token=&client_secret=secret&levels=123%3A1%2C1234%3A4&v=5.37",
+			"GET",
+			"https://api.vk.com/method/secure.setUserLevel?access_token=&client_secret=secret&levels=123%3A1%2C1234%3A4&v=5.37",
 			httpmock.NewStringResponder(200, `{}`),
 		)
 		worker.batchLevels = append(worker.batchLevels, VkEvent{
@@ -116,7 +120,9 @@ func TestSendGeneralEvent(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder(
-		"GET", "https://api.vk.com/method/secure.sendNotification?access_token=&activity_id=2&client_secret=secret&user_id=123&v=5.37&value=1",
+		"GET",
+		"https://api.vk.com/method/"+
+			"secure.sendNotification?access_token=&activity_id=2&client_secret=secret&user_id=123&v=5.37&value=1",
 		httpmock.NewStringResponder(200, `{}`),
 	)
 	worker := NewVkWorker(VkConfig{

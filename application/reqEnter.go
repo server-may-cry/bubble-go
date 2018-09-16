@@ -30,6 +30,11 @@ type enterRequest struct {
 type enterResponse struct {
 	ReqMsgID                  uint64 `json:"reqMsgId"`
 	UserID                    uint64 `json:"userId"`
+	SecondsUntilTriesRegen    int64  `json:"secondsUntilTriesRegen"`
+	TriesRegenSecondsInterval int    `json:"triesRegenSecondsInterval"`
+	Credits                   int    `json:"credits,uint16"`
+	AppFriendsBonusCredits    int    `json:"appFriendsBonusCredits,uint"`
+	BonusCredits              int16  `json:"bonusCredits,uint16"`
 	ReachedStage01            int8   `json:"reachedStage01,uint8"` // max user island
 	ReachedStage02            int8   `json:"reachedStage02,uint8"`
 	ReachedSubStage01         int8   `json:"reachedSubStage01,uint8"` // max user level on max island
@@ -37,9 +42,6 @@ type enterResponse struct {
 	IgnoreSavePointBlock      int8   `json:"ignoreSavePointBlock,bool"`
 	RemainingTries            int8   `json:"remainingTries,uint8"`
 	TriesMin                  int8   `json:"triesMin"`
-	TriesRegenSecondsInterval int    `json:"triesRegenSecondsInterval"`
-	SecondsUntilTriesRegen    int64  `json:"secondsUntilTriesRegen"`
-	Credits                   int    `json:"credits,uint16"`
 	InfinityExtra00           int8   `json:"inifinityExtra00,uint8"`
 	InfinityExtra01           int8   `json:"inifinityExtra01,uint8"`
 	InfinityExtra02           int8   `json:"inifinityExtra02,uint8"`
@@ -50,8 +52,6 @@ type enterResponse struct {
 	InfinityExtra07           int8   `json:"inifinityExtra07,uint8"`
 	InfinityExtra08           int8   `json:"inifinityExtra08,uint8"`
 	InfinityExtra09           int8   `json:"inifinityExtra09,uint8"`
-	BonusCredits              int16  `json:"bonusCredits,uint16"`
-	AppFriendsBonusCredits    int    `json:"appFriendsBonusCredits,uint"`
 	OfferAvailable            uint8  `json:"offerAvailable"` // bool
 	FirstGame                 uint8  `json:"firstGame"`      // bool
 

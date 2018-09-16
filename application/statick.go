@@ -47,7 +47,10 @@ func (sh *StaticHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	if r.Body != nil {
 		defer r.Body.Close()
 	}
-	r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).SetName("/static_serve")
+	err := r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).SetName("/static_serve")
+	if err != nil {
+		panic(err)
+	}
 	filePath := r.URL.Path
 	fileForResponse, ok := sh.storage[filePath]
 	if !ok {
@@ -74,7 +77,7 @@ func (sh *StaticHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", fileForResponse.mimeType)
-	_, err := w.Write(fileForResponse.content)
+	_, err = w.Write(fileForResponse.content)
 	if err != nil {
 		panic(err)
 	}

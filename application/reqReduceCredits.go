@@ -10,7 +10,6 @@ import (
 )
 
 type reduceCreditsRequest struct {
-	baseRequest
 	Amount int `json:"amount,string"`
 }
 

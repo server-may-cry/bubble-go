@@ -32,14 +32,13 @@ func init() {
     "currentStage":"0", // номер острова на котором игрок прошел точку в текущей сессии
     "reachedStage":"0", // номер острова до которого игрок дошел за все время игры
     "completeSubStage":"1", // номер точки на острове которую игрок прошел в текущей сессии
-    "completeSubStageRecordStat":"2", // количество звезд набранных на пройденной точке(перезаписывается только в случае если новое значение больше предыдущего)
+    "completeSubStageRecordStat":"2", // количество звезд набранных на пройденной точке
     "levelMode":"standart", // режим игры, может принимать значения "standart" (01) и "arcade" (02)
     Если режим игры "standart", то перезаписываются значения reachedStage01 reachedSubStage01,
     которые приходят в ReqEnter`e, если же "arcade" то reachedStage02 и reachedSubStage02
 }
 */
 type savePlayerProgressRequest struct {
-	baseRequest
 	ReachedSubStage            int8   `json:"reachedSubStage,string"`
 	CurrentStage               int8   `json:"currentStage,string"` // island number
 	ReachedStage               int8   `json:"reachedStage,string"`

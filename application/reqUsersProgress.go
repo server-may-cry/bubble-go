@@ -10,7 +10,6 @@ import (
 )
 
 type usersProgressRequest struct {
-	baseRequest
 	SocIDs []int64 `json:"socIds"`
 }
 

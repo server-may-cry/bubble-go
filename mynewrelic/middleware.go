@@ -20,7 +20,9 @@ func NewMiddleware(app newrelic.Application) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			txn := app.StartTransaction(r.Method+" "+r.URL.Path, w, r)
-			defer txn.End()
+			defer func() {
+				_ = txn.End()
+			}()
 			ctx := context.WithValue(r.Context(), Ctx, txn)
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)

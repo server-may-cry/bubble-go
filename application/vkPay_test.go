@@ -55,7 +55,9 @@ func TestVkGetItem(t *testing.T) {
 		"creditsPack01": &market.Pack{},
 	}, "")
 
-	data := []byte("app_id=1item=creditsPack01lang=ru_RUnotification_type=get_itemorder_id=1receiver_id=123user_id=123secret")
+	data := []byte(
+		"app_id=1item=creditsPack01lang=ru_RUnotification_type=get_itemorder_id=1receiver_id=123user_id=123secret",
+	)
 	form := url.Values{}
 	form.Add("app_id", "1")
 	form.Add("item", "creditsPack01")
@@ -120,7 +122,10 @@ func TestVkBuyItem(t *testing.T) {
 		},
 	}, "")
 
-	data := []byte("app_id=1item=creditsPack01notification_type=order_status_changeorder_id=1receiver_id=123status=chargeableuser_id=123secret")
+	data := []byte(
+		"app_id=1item=creditsPack01notification_type=order_status_changeorder_id=1" +
+			"receiver_id=123status=chargeableuser_id=123secret",
+	)
 	form := url.Values{}
 	form.Add("app_id", "1")
 	form.Add("item", "creditsPack01")
