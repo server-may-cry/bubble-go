@@ -11,7 +11,6 @@ import (
 )
 
 type buyProductRequest struct {
-	baseRequest
 	ProductID string `json:"productId"`
 }
 

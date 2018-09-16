@@ -55,7 +55,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 						default:
 							err = errors.New(rvr.(string))
 						}
-						r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(err)
+						_ = r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(err)
 						sentry.HandleError(err)
 						logEntry := middleware.GetLogEntry(r)
 						if logEntry != nil {
@@ -98,7 +98,9 @@ func GetRouter(deps RouterDependencies) http.Handler {
 	router.Post("/VkPay", deps.VkPayHandler)
 
 	router.Get("/crossdomain.xml", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write([]byte(`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`))
+		_, _ = w.Write([]byte(
+			`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`,
+		))
 	})
 	router.Get("/bubble/*filePath", deps.StaticHandler.Serve)
 	router.Get("/cache-clear", deps.StaticHandler.Clear)

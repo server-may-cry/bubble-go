@@ -1,7 +1,6 @@
 package application
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
 
@@ -10,23 +9,13 @@ import (
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
-type reduceTriesRequest struct {
-	baseRequest
-}
-
 // ReqReduceTries reduce user tries by one
 func ReqReduceTries(db *gorm.DB) HTTPHandlerContainer {
 	handler := HTTPHandler{
 		URL: "/ReqReduceTries",
 	}
 	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
-		request := reduceTriesRequest{}
 		defer r.Body.Close()
-		err := json.NewDecoder(r.Body).Decode(&request)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
 		user := r.Context().Value(userCtxID).(User)
 		ts := time.Now().Unix()
 		if user.RestoreTriesAt != 0 && user.RestoreTriesAt <= ts {
