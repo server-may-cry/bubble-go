@@ -10,6 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/server-may-cry/bubble-go/models"
 )
 
 func TestReduceTries(t *testing.T) {
@@ -21,8 +22,8 @@ func TestReduceTries(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	db.AutoMigrate(&User{})
-	user := User{
+	db.AutoMigrate(&models.User{})
+	user := models.User{
 		SysID:          1,
 		ExtID:          123,
 		RemainingTries: 8,

@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
@@ -32,7 +33,7 @@ func ReqBuyProduct(db *gorm.DB, marketInstance *market.Market) HTTPHandlerContai
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		user := r.Context().Value(userCtxID).(User)
+		user := r.Context().Value(userCtxID).(models.User)
 		err = marketInstance.Buy(&user, request.ProductID)
 		if err != nil {
 			panic(err)

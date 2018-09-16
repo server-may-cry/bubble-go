@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
@@ -38,9 +39,9 @@ func ReqUsersProgress(db *gorm.DB) HTTPHandlerContainer {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		user := r.Context().Value(userCtxID).(User)
+		user := r.Context().Value(userCtxID).(models.User)
 		usersLen := len(request.SocIDs)
-		users := make([]User, usersLen)
+		users := make([]models.User, usersLen)
 
 		s := newrelic.DatastoreSegment{
 			StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),

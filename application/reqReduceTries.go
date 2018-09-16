@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
@@ -16,7 +17,7 @@ func ReqReduceTries(db *gorm.DB) HTTPHandlerContainer {
 	}
 	handler.HTTPHandler = func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		user := r.Context().Value(userCtxID).(User)
+		user := r.Context().Value(userCtxID).(models.User)
 		ts := time.Now().Unix()
 		if user.RestoreTriesAt != 0 && user.RestoreTriesAt <= ts {
 			if user.RemainingTries < defaultConfig.DefaultRemainingTries {

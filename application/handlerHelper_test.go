@@ -8,12 +8,13 @@ import (
 	"net/http/httptest"
 
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
 func testAppHandler(
 	hc HTTPHandler,
-	user *User,
+	user *models.User,
 	urlExpected string,
 	body io.Reader,
 ) (*httptest.ResponseRecorder, error) {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/notification"
 	"github.com/server-may-cry/bubble-go/platforms"
@@ -63,7 +64,7 @@ func ReqSavePlayerProgress(
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		user := r.Context().Value(userCtxID).(User)
+		user := r.Context().Value(userCtxID).(models.User)
 		var needUpdate bool
 		switch request.LevelMode {
 		case "standart":
@@ -108,7 +109,7 @@ func ReqSavePlayerProgress(
 	}
 }
 
-func vkSocialLogic(vkWorker *notification.VkWorker, request savePlayerProgressRequest, user User) {
+func vkSocialLogic(vkWorker *notification.VkWorker, request savePlayerProgressRequest, user models.User) {
 	if request.CompleteSubStageRecordStat > 0 {
 		// not failed level
 		levelOrder := 0

@@ -13,6 +13,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
@@ -74,7 +75,7 @@ func AuthorizationMiddleware(db *gorm.DB) Middleware {
 				return
 			}
 
-			var user User
+			var user models.User
 			s := newrelic.DatastoreSegment{
 				StartTime:  newrelic.StartSegmentNow(r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction)),
 				Product:    newrelic.DatastorePostgres,

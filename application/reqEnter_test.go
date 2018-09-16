@@ -10,6 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/server-may-cry/bubble-go/models"
 )
 
 func TestFirstGameField(t *testing.T) {
@@ -21,7 +22,7 @@ func TestFirstGameField(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&models.User{})
 
 	data := []byte("_123_")
 	jsonBytes, _ := json.Marshal(AuthRequestPart{
@@ -49,7 +50,7 @@ func TestFirstGameField(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	user := User{
+	user := models.User{
 		SysID:            1,
 		ExtID:            123,
 		Credits:          900,
