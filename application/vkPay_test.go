@@ -17,6 +17,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
@@ -103,9 +104,9 @@ func TestVkBuyItem(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Transaction{})
-	user := User{
+	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Transaction{})
+	user := models.User{
 		SysID:   1,
 		ExtID:   123,
 		Credits: 900,

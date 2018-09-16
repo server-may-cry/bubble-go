@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/server-may-cry/bubble-go/application"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/notification"
 	"go.uber.org/dig"
@@ -89,8 +90,8 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 				return nil, errors.Wrap(err, "failed to connect database")
 			}
 		}
-		db.AutoMigrate(&application.User{})
-		db.AutoMigrate(&application.Transaction{})
+		db.AutoMigrate(&models.User{})
+		db.AutoMigrate(&models.Transaction{})
 		db.DB().SetMaxIdleConns(5)
 		db.DB().SetMaxOpenConns(18) // 20 actual limit
 
@@ -108,7 +109,7 @@ func Get(pathToMarketConfig string, dbURL string, test bool, version string) *di
 			return nil, errors.Wrap(err, "can`t decode market config")
 		}
 		marketInstance := market.NewMarket(marketConfig, os.Getenv("CDN_PREFIX"))
-		user := application.User{}
+		user := models.User{}
 		err = marketInstance.Validate(&user)
 		if err != nil {
 			return nil, errors.Wrap(err, "invalid marker configuration")

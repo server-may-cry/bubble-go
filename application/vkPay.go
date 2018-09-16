@@ -13,6 +13,7 @@ import (
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/server-may-cry/bubble-go/market"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/platforms"
 	dig "go.uber.org/dig"
@@ -137,7 +138,7 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 				})
 				return
 			}
-			var user User
+			var user models.User
 			platformID := platforms.VK
 
 			s := newrelic.DatastoreSegment{
@@ -162,7 +163,7 @@ func VkPay(db *gorm.DB, marketInstance *market.Market) VkPayForContainer {
 			}
 
 			ts := time.Now().Unix()
-			transaction := Transaction{
+			transaction := models.Transaction{
 				OrderID:     orderID,
 				CreatedAt:   ts,
 				UserID:      user,

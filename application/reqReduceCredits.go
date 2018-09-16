@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 )
 
@@ -36,7 +37,7 @@ func ReqReduceCredits(db *gorm.DB) HTTPHandlerContainer {
 			http.Error(w, "amount to low", http.StatusBadRequest)
 			return
 		}
-		user := r.Context().Value(userCtxID).(User)
+		user := r.Context().Value(userCtxID).(models.User)
 		user.Credits -= request.Amount
 
 		s := newrelic.DatastoreSegment{

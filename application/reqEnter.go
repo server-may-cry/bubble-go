@@ -9,6 +9,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	newrelic "github.com/newrelic/go-agent"
+	"github.com/server-may-cry/bubble-go/models"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/platforms"
 )
@@ -82,7 +83,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 		var triesRestore int64
 		var userFriendsBonusCredits int
 		value := r.Context().Value(userCtxID)
-		var user User
+		var user models.User
 		now := time.Now()
 		switch value.(type) {
 		case nil:
@@ -91,7 +92,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 			if !exist {
 				log.Panicf("not exist platform %s", request.SysID)
 			}
-			user = User{
+			user = models.User{
 				SysID:                   platformID,
 				ExtID:                   request.ExtID,
 				ReachedStage01:          0,
@@ -126,8 +127,8 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 			}
 			db.Create(&user) // Gorm.NewRecord check row exists or somehow
 			_ = s.End()
-		case User:
-			user = value.(User)
+		case models.User:
+			user = value.(models.User)
 			if user.FriendsBonusCreditsTime > now.Unix() {
 				needUpdate = true
 				to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
