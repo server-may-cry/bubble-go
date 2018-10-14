@@ -216,15 +216,16 @@ func (w *VkWorker) sendRequest(method string, parameters map[string]string) erro
 		return errors.Wrap(err, "failed to send vk request")
 	}
 
-	var rawResponse map[string]interface{}
+	var rawResponse struct {
+		Error interface{} `json:"error"`
+	}
 	err = json.NewDecoder(resp.Body).Decode(&rawResponse)
 	if err != nil {
 		return errors.Wrap(err, "failed to decode vk response")
 	}
 	// https://vk.com/dev/errors
-	val, exist := rawResponse["error"]
-	if exist {
-		return fmt.Errorf("vk error response %v", val)
+	if rawResponse.Error != nil {
+		return fmt.Errorf("vk error response %v", rawResponse.Error)
 	}
 	return nil
 }

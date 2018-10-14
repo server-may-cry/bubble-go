@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/server-may-cry/bubble-go/models"
 )
 
 // Config struct for market offers and packs
@@ -51,7 +53,7 @@ func NewMarket(config Config, cdn string) *Market {
 }
 
 // Buy get user and item name (from market config). Change user
-func (m *Market) Buy(user interface{}, packName string) error {
+func (m *Market) Buy(user *models.User, packName string) error {
 	pack, exist := m.packs[packName]
 	if !exist {
 		return errors.New("try buy not existed pack " + packName)
@@ -81,7 +83,7 @@ func (m *Market) GetPack(packName string) (*Pack, error) {
 }
 
 // Validate check current market configuration for that type of user
-func (m *Market) Validate(user interface{}) error {
+func (m *Market) Validate(user *models.User) error {
 	for packName, pack := range m.packs {
 		if err := m.Buy(user, packName); err != nil {
 			return err

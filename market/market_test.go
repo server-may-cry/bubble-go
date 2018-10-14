@@ -2,6 +2,8 @@ package market
 
 import (
 	"testing"
+
+	"github.com/server-may-cry/bubble-go/models"
 )
 
 type testUser struct {
@@ -29,7 +31,7 @@ func getMarket() *Market {
 
 func TestMarketIncrease(t *testing.T) {
 	market := getMarket()
-	user := testUser{
+	user := models.User{
 		Credits: 100,
 	}
 
@@ -44,7 +46,7 @@ func TestMarketIncrease(t *testing.T) {
 
 func TestMarketSet(t *testing.T) {
 	market := getMarket()
-	user := testUser{
+	user := models.User{
 		Credits: 100,
 	}
 
@@ -59,7 +61,7 @@ func TestMarketSet(t *testing.T) {
 
 func TestMarketBuyNotExistPack(t *testing.T) {
 	market := getMarket()
-	user := testUser{
+	user := models.User{
 		Credits: 100,
 	}
 
@@ -93,7 +95,7 @@ func TestMarketGetNotExistPack(t *testing.T) {
 
 func TestMarketValidate(t *testing.T) {
 	market := getMarket()
-	user := testUser{}
+	user := models.User{}
 	err := market.Validate(&user)
 	if err != nil {
 		t.Errorf("no error expected on validation, got %s", err.Error())
