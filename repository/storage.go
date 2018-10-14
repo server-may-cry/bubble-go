@@ -7,11 +7,11 @@ import (
 
 // DB is a wrapper to dicrease dependency to gorm
 type DB struct {
-	gorm gorm.DB
+	gorm *gorm.DB
 }
 
 // New create DB
-func New(db gorm.DB) *DB {
+func New(db *gorm.DB) *DB {
 	return &DB{
 		gorm: db,
 	}

@@ -52,8 +52,8 @@ type errorResponse struct {
 }
 
 type orderResponse struct {
-	OrderID    interface{} `json:"order_id"`
-	AppOrderID uint64      `json:"app_order_id"`
+	OrderID    string `json:"order_id"`
+	AppOrderID uint64 `json:"app_order_id"`
 }
 
 type itemResponse struct {
