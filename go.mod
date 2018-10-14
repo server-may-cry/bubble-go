@@ -1,7 +1,7 @@
 module github.com/server-may-cry/bubble-go
 
 require (
-	cloud.google.com/go v0.26.0 // indirect
+	cloud.google.com/go v0.30.0 // indirect
 	github.com/certifi/gocertifi v0.0.0-20180905225744-ee1a9a0726d2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.0.0-20180901172138-1eb28afdf9b6 // indirect
@@ -20,9 +20,8 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
-	go.uber.org/dig v1.4.0
-	golang.org/x/crypto v0.0.0-20180830192347-182538f80094 // indirect
-	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d // indirect
-	golang.org/x/text v0.3.0 // indirect
-	google.golang.org/appengine v1.1.0 // indirect
+	go.uber.org/dig v1.5.0
+	golang.org/x/crypto v0.0.0-20181012144002-a92615f3c490 // indirect
+	golang.org/x/net v0.0.0-20181011144130-49bb7cea24b1 // indirect
+	google.golang.org/appengine v1.2.0 // indirect
 )
