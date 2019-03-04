@@ -6,10 +6,6 @@ import (
 	"github.com/server-may-cry/bubble-go/models"
 )
 
-type testUser struct {
-	Credits int
-}
-
 func getMarket() *Market {
 	return NewMarket(Config{
 		"increase_pack": &Pack{

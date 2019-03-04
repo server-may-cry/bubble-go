@@ -85,7 +85,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 		value := r.Context().Value(userCtxID)
 		var user models.User
 		now := time.Now()
-		switch value.(type) {
+		switch v := value.(type) {
 		case nil:
 			firstGame = 1
 			platformID, exist := platforms.GetByName(request.SysID)
@@ -128,7 +128,7 @@ func ReqEnter(db *gorm.DB) HTTPHandlerContainer {
 			db.Create(&user) // Gorm.NewRecord check row exists or somehow
 			_ = s.End()
 		case models.User:
-			user = value.(models.User)
+			user = v
 			if user.FriendsBonusCreditsTime > now.Unix() {
 				needUpdate = true
 				to := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())

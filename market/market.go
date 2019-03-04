@@ -94,7 +94,7 @@ func (m *Market) Validate(user *models.User) error {
 		}
 		for parameter := range pack.Reward.Set {
 			if _, exist := repeatMap[parameter]; exist {
-				return fmt.Errorf("Pack %s got set and increase for %s", packName, parameter)
+				return fmt.Errorf("pack %s got set and increase for %s", packName, parameter)
 			}
 		}
 	}

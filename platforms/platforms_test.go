@@ -4,17 +4,16 @@ import (
 	"testing"
 )
 
-var platformsTests = []struct {
-	platform string // input
-	expected uint8  // expected result
-	exist    bool
-}{
-	{"VK", 1, true},
-	{"OK", 2, true},
-	{"FB", 0, false},
-}
-
 func TestPlatformGetByName(t *testing.T) {
+	var platformsTests = [...]struct {
+		platform string // input
+		expected uint8  // expected result
+		exist    bool
+	}{
+		{"VK", 1, true},
+		{"OK", 2, true},
+		{"FB", 0, false},
+	}
 	for _, tt := range platformsTests {
 		actual, exist := GetByName(tt.platform)
 		if exist != tt.exist {

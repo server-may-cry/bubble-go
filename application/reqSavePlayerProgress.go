@@ -13,19 +13,6 @@ import (
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
-var completeLastLevelOnIslandEventMap []int
-
-func init() {
-	completeLastLevelOnIslandEventMap = []int{
-		4,
-		5,
-		6,
-		7,
-		8,
-		9,
-	}
-}
-
 /*
 {
     ...
@@ -131,6 +118,14 @@ func vkSocialLogic(vkWorker *notification.VkWorker, request savePlayerProgressRe
 		}
 	}
 	if request.CompleteSubStage == 14 || (request.CompleteSubStage == 8 && request.CurrentStage == 0) {
+		completeLastLevelOnIslandEventMap := [...]int{
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+		}
 		// open new island event
 		islandOrder := request.CurrentStage // complete last mission on island
 		eventID := completeLastLevelOnIslandEventMap[islandOrder]
