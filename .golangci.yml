@@ -1,0 +1,6 @@
+linters:
+  disable:
+    - gas
+    - gochecknoglobals
+  enable-all: true
+  fast: false

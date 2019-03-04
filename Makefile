@@ -17,7 +17,7 @@ clean:
 
 .PHONY: lint
 lint:
-	golangci-lint run --enable-all --disable=gas,gochecknoglobals
+	golangci-lint run
 
 .PHONY: start
 start:
