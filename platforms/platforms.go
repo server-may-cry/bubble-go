@@ -7,6 +7,7 @@ const (
 	OK = 2
 )
 
+//nolint:gochecknoglobals
 var platformsMap = map[string]uint8{
 	"VK": VK,
 	"OK": OK,

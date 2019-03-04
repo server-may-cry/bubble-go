@@ -13,6 +13,7 @@ import (
 	"github.com/server-may-cry/bubble-go/notification"
 )
 
+//nolint:gochecknoglobals
 var version = "undefined"
 
 func main() {

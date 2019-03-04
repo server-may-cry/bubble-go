@@ -14,6 +14,7 @@ import (
 	"github.com/server-may-cry/bubble-go/platforms"
 )
 
+//nolint:gochecknoglobals
 var usersProgressCache struct {
 	sync.Mutex
 	isFresh bool
