@@ -13,6 +13,7 @@ type platformsBonus struct {
 	Ok int
 }
 
+//nolint:gochecknoglobals
 var defaultConfig = gameConfig{
 	DefaultCredits: platformsBonus{
 		Vk: 1000,

@@ -26,7 +26,6 @@ type RouterDependencies struct {
 	Newrelic                newrelic.Application
 	AuthorizationMiddleware Middleware
 	NewrelicMiddleware      mynewrelic.Middleware
-	StaticHandler           *StaticHandler
 	VkWorker                *notification.VkWorker
 	VkPayHandler            http.HandlerFunc
 	Test                    bool
@@ -48,10 +47,10 @@ func GetRouter(deps RouterDependencies) http.Handler {
 					if rvr := recover(); rvr != nil {
 						var err error
 						switch v := rvr.(type) {
-						case error:
-							err = v
 						case *net.OpError:
 							err = errors.New(v.Error())
+						case error:
+							err = v
 						default:
 							err = errors.New(rvr.(string))
 						}
@@ -102,8 +101,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 			`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`,
 		))
 	})
-	router.Get("/bubble/*filePath", deps.StaticHandler.Serve)
-	router.Get("/cache-clear", deps.StaticHandler.Clear)
+	router.Handle("/bubble/*", http.FileServer(http.Dir("/app/static")))
 
 	router.Get("/exception", func(w http.ResponseWriter, r *http.Request) {
 		panic("test log.Fatal")

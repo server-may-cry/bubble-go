@@ -1,19 +1,19 @@
 version: '2'
 services:
-  go:
+  app:
     build: .
     environment:
       HEROKU_POSTGRESQL_SILVER_URL: http://docker:docker@db.local:5432/docker
       PORT: 8080
-    volumes:
-      - ./bubble-go:/app/bubble-go:ro
-      - ./config:/app/config:ro
+    # volumes:
+    #   - ./bubble-go:/app/bubble-go:ro
+    #   - ./config:/app/config:ro
     links:
       - postgres:db.local
     ports:
       - "8080:8080"
   postgres:
-    image: postgres:10.4-alpine
+    image: postgres:10.6-alpine
     expose:
       - "5432"
     environment:

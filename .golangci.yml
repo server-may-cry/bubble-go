@@ -1,0 +1,7 @@
+linters:
+  disable:
+    - gas
+  enable-all: true
+  fast: false
+service:
+  golangci-lint-version: 1.15.x

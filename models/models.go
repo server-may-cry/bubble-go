@@ -46,7 +46,7 @@ func (u *User) SetProgresStandart(progress [7][]int8) {
 	if err != nil {
 		panic(err)
 	}
-	u.ProgressStandart = string(r[:])
+	u.ProgressStandart = string(r)
 }
 
 // Transaction log payment requests

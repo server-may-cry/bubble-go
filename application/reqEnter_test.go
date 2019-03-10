@@ -54,7 +54,7 @@ func TestFirstGameField(t *testing.T) {
 		SysID:            1,
 		ExtID:            123,
 		Credits:          900,
-		ProgressStandart: string(jsonBytesResponse[:]),
+		ProgressStandart: string(jsonBytesResponse),
 	}
 	db.Create(&user)
 
