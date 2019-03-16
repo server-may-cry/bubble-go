@@ -9,10 +9,10 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/getsentry/raven-go"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	newrelic "github.com/newrelic/go-agent"
-	"github.com/server-may-cry/bubble-go/errorlisteners/sentry"
 	"github.com/server-may-cry/bubble-go/mynewrelic"
 	"github.com/server-may-cry/bubble-go/notification"
 	dig "go.uber.org/dig"
@@ -55,7 +55,7 @@ func GetRouter(deps RouterDependencies) http.Handler {
 							err = errors.New(rvr.(string))
 						}
 						_ = r.Context().Value(mynewrelic.Ctx).(newrelic.Transaction).NoticeError(err)
-						sentry.HandleError(err)
+						raven.CaptureError(err, nil)
 						logEntry := middleware.GetLogEntry(r)
 						if logEntry != nil {
 							logEntry.Panic(rvr, debug.Stack())
@@ -101,7 +101,6 @@ func GetRouter(deps RouterDependencies) http.Handler {
 			`<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" /></cross-domain-policy>`,
 		))
 	})
-	router.Handle("/bubble/*", http.FileServer(http.Dir("/app/static")))
 
 	router.Get("/exception", func(w http.ResponseWriter, r *http.Request) {
 		panic("test log.Fatal")
